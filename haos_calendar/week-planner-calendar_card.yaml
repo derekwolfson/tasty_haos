@@ -1,6 +1,9 @@
-/* 
+# DEPENDENCIES 
+# week-planner-card (HACS)
+# card-mod (HACS)
 
 type: custom:week-planner-card
+# PUT YOUR CALENDARS HERE -- CAN ALSO USE UI BUT MAY NEED TO START WEEK-PLANNER-CARD IN UI AND THEN PASTE THIS YAML AFTER CREATING IT.
 calendars:
   - entity: calendar.icmw_derek
     name: Derek-Work
@@ -51,6 +54,10 @@ visibility:
       - condition: screen
         media_query: "(min-width: 0px) and (max-width: 767px)"
 title: Monthly Calendar
+
+# CSS MODIFICATIONS BELOW
+# THESE ARE AI-DRIVEN AND MAY NOT BE EFFICIENT OR "BEST-PRACTICE"
+# YMMV
 card_mod:
   style: |
     /* === HEADER STYLING === */
