@@ -45,14 +45,6 @@ texts:
 showTitle: true
 showDescription: false
 dayFormat: <big><big><b>dd</b> | </big>ccc</big>
-visibility:
-  - condition: state
-    entity: input_select.calendar_subtab
-    state: monthly
-  - condition: not
-    conditions:
-      - condition: screen
-        media_query: "(min-width: 0px) and (max-width: 767px)"
 title: Monthly Calendar
 
 # CSS MODIFICATIONS BELOW
