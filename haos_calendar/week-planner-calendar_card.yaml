@@ -228,7 +228,8 @@ card_mod:
     .day .event .icon {
       grid-row: 1 / 2 !important;
       grid-column: 2 / 3 !important;
-      justify-self: center !important;
+      justify-self: end !important;   /* right-align */
+      transform: scale(0.5);          /* shrink by 50% */
     }
 
     .day .event .title {
