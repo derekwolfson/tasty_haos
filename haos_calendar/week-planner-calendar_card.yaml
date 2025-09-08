@@ -51,39 +51,25 @@ visibility:
 title: Monthly Calendar
 card_mod:
   style: >
-    /* === HEADER STYLING === */
-
-    .header, .navigation {
+    /* === HEADER STYLING === */ .header, .navigation {
       display: flex !important;
       flex-direction: column !important;
       align-items: center !important;
       text-align: center !important;
-    }
-
-
-    .navigation .month {
+    } .navigation .month {
       order: 1 !important;
       font-size: 1.8em !important;
       font-weight: bold !important;
       margin-bottom: 15px !important;
-    }
-
-
-    .navigation ul {
+    } .navigation ul {
       order: 2 !important;
       margin: 0 !important;
       padding: 0 !important;
       display: flex !important;
       justify-content: center !important;
-    }
-
-
-    .navigation ul li {
+    } .navigation ul li {
       margin: 0 10px !important;
-    }
-
-
-    .navigation ul li ha-icon {
+    } .navigation ul li ha-icon {
       font-size: 24px !important;
       width: 40px !important;
       height: 40px !important;
@@ -91,91 +77,47 @@ card_mod:
       align-items: center !important;
       justify-content: center !important;
       cursor: pointer !important;
-    }
-
-
-    .header::before, .header::after {
+    } .header::before, .header::after {
       content: "";
       display: block;
       width: 100% !important;
       height: 5px;
       background: var(--divider-color);
-    }
-
-
-    .header::before { margin: 1px 0 3px 0; order: 2 !important; }
-
-    .header::after  { margin: 3px 0 12px 0; order: 4 !important; }
-
-
-    /* === LEGEND STYLING === */
-
-    .legend {
+    } .header::before { margin: 1px 0 3px 0; order: 2 !important; }
+    .header::after { margin: 3px 0 12px 0; order: 4 !important; } /* === LEGEND
+    STYLING === */ .legend {
       margin-top: 0 !important;
       padding-top: 0 !important;
       border-top: none !important;
       text-align: center !important;
       order: 3 !important;
-    }
-
-
-    .legend ul {
+    } .legend ul {
       display: flex !important;
       flex-wrap: wrap !important;
       justify-content: center !important;
       gap: 15px !important;
       margin: 0 !important;
       padding: 0 !important;
-    }
-
-
-    .legend ul li {
+    } .legend ul li {
       font-size: 14px !important;
-    }
-
-
-    .legend ul li ha-icon {
+    } .legend ul li ha-icon {
       font-size: 16px !important;
       margin-right: 5px !important;
-    }
-
-
-    /* === CSS GRID FOR DAYS === */
-
-    .container {
+    } /* === CSS GRID FOR DAYS === */ .container {
       display: grid !important;
       grid-template-columns: repeat(7, 1fr) !important;
       grid-template-rows: auto !important;
       gap: 2px !important;
       padding: 0 !important;
-    }
-
-
-    .container .header,
-
-    .container .legend { grid-column: 1 / -1 !important; }
-
-
-    /* Reorder days so Sunday is first */
-
-    .day[data-weekday="1"] { grid-column: 2 !important; } /* Mon */
-
-    .day[data-weekday="2"] { grid-column: 3 !important; } /* Tue */
-
-    .day[data-weekday="3"] { grid-column: 4 !important; } /* Wed */
-
-    .day[data-weekday="4"] { grid-column: 5 !important; } /* Thu */
-
+    } .container .header, .container .legend { grid-column: 1 / -1 !important; }
+    /* Reorder days so Sunday is first */ .day[data-weekday="1"] { grid-column:
+    2 !important; } /* Mon */ .day[data-weekday="2"] { grid-column: 3
+    !important; } /* Tue */ .day[data-weekday="3"] { grid-column: 4 !important;
+    } /* Wed */ .day[data-weekday="4"] { grid-column: 5 !important; } /* Thu */
     .day[data-weekday="5"] { grid-column: 6 !important; } /* Fri */
-
     .day[data-weekday="6"] { grid-column: 7 !important; } /* Sat */
-
-    .day[data-weekday="7"] { grid-column: 1 !important; } /* Sun */
-
-
-    /* === DAY BLOCK STYLING === */
-
-    .day {
+    .day[data-weekday="7"] { grid-column: 1 !important; } /* Sun */ /* === DAY
+    BLOCK STYLING === */ .day {
       background-color: rgba(255, 255, 255, 0.05) !important;
       border-radius: 5px !important;
       display: flex !important;
@@ -186,15 +128,8 @@ card_mod:
       width: 100% !important;
       padding: 0 !important;
       overflow: hidden !important;
-    }
-
-
-    .day.today { background-color: rgba(255, 255, 255, 0.15) !important; }
-
-
-    .day > div,
-
-    .day > div > div {
+    } .day.today { background-color: rgba(255, 255, 255, 0.15) !important; }
+    .day > div, .day > div > div {
       display: flex !important;
       flex-direction: column !important;
       justify-content: flex-start !important;
@@ -202,12 +137,7 @@ card_mod:
       width: 100% !important;
       padding: 2px !important;
       background: transparent !important;
-    }
-
-
-    /* === EVENT GRID LAYOUT === */
-
-    .day .event {
+    } /* === EVENT GRID LAYOUT === */ .day .event {
       display: grid !important;
       grid-template-columns: 1fr 40px !important;
       grid-template-rows: auto auto !important;
@@ -219,27 +149,23 @@ card_mod:
       white-space: normal !important;
       word-break: break-word !important;
       position: relative !important;
-    }
-
-
-    .day .event .time { grid-row: 1; grid-column: 1; align-self: start
-    !important; margin-bottom: 2px !important; }
-
-    .day .event .title { grid-row: 2; grid-column: 1; align-self: start
-    !important; }
-
-    .day .event .icon { grid-row: 1 / 3 !important; grid-column: 2 !important;
-    justify-self: end !important; align-self: start !important; transform:
-    scale(0.75) !important; }
-
-
-    .day > div > .event:first-child { margin-top: 0 !important; }
-
-
-    /* === CARD TITLE DIVIDER === */
-
-    .card-title { text-align: center !important; }
-
+    } .day .event .time {
+      grid-row: 1;
+      grid-column: 1;
+      align-self: start !important;
+      margin-bottom: 2px !important;
+    } .day .event .title {
+      grid-row: 2;
+      grid-column: 1;
+      align-self: start !important;
+    } .day .event .icon {
+      grid-row: 1 / 3 !important;
+      grid-column: 2 !important;
+      justify-self: end !important;
+      align-self: start !important;
+      transform: scale(0.75) !important;
+    } .day > div > .event:first-child { margin-top: 0 !important; } /* === CARD
+    TITLE DIVIDER === */ .card-title { text-align: center !important; }
     .card-title::after {
       content: "";
       display: block;
@@ -248,13 +174,25 @@ card_mod:
       background: var(--divider-color);
       order: 4 !important;
       margin: 12px 0 3px 0;
+    } /* === TOP SPACING ABOVE DATE (V2) === */ .day > div:first-child {
+    margin-top: 2 !important; padding: 6px 0 0 6px !important; } .day .date {
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: 1.2em !important;
+      font-size: 1em !important;
+    } 
+
+    .day .date {
+      position: relative;
+      display: inline-block; /* lock sizing to the text */
     }
 
-
-    /* === TOP SPACING ABOVE DATE (V2) === */
-
-    .day > div:first-child { margin-top: 0 !important; padding: 6px 0 0 6px
-    !important; }
-
-    .day .date { margin: 0 !important; padding: 0 !important; line-height: 1.2em
-    !important; font-size: 1em !important; }
+    .day .date::after {
+      content: "";
+      position: absolute;
+      bottom: -4.5px; /* fixed offset below baseline */
+      left: 1px;
+      width: 95%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.2);
+    }
