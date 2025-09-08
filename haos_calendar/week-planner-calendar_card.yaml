@@ -183,7 +183,6 @@ card_mod:
       overflow: hidden !important;
     }
 
-    /* Highlight today */
     .day.today {
       background-color: rgba(255, 255, 255, 0.15) !important;
     }
@@ -193,7 +192,6 @@ card_mod:
       color: var(--primary-text-color) !important;
     }
 
-    /* Inner wrapper for day content */
     .day > div,
     .day > div > div {
       display: flex !important;
@@ -201,41 +199,48 @@ card_mod:
       justify-content: flex-start !important;
       align-items: stretch !important;
       width: 100% !important;
-      padding: 5px !important;
+      padding: 2px !important;
       background: transparent !important;
     }
 
-    /* === EVENT GRID LAYOUT === */
+        /* === EVENT GRID LAYOUT WITH SPACING === */
     .day .event {
       display: grid !important;
-      grid-template-columns: auto 40px !important; /* time + icon */
-      grid-template-rows: auto auto !important;     /* two rows */
-      gap: 2px 5px !important;
-      align-items: center !important;
-      background-color: rgba(255, 255, 255, 0.05) !important;
-      border-radius: 5px !important;
-      padding: 2px 4px !important;
+      grid-template-columns: 1fr 40px !important; /* content + icon */
+      grid-template-rows: auto auto !important;   /* time + title rows */
+      gap: 1px 0px !important;                    /* vertical gap between time and title */
+      width: calc(100% - 9px) !important;
+      margin: 0 5px !important;                   /* left/right padding inside day */
+      padding: 1px !important;              /* spacing for left line/indicator */
+      /* background-color: rgba(255, 255, 255, 0.05) !important;
+      border-radius: 1px !important;
       font-size: .75em !important;
       white-space: normal !important;
       word-break: break-word !important;
+      position: relative !important;
     }
 
     .day .event .time {
-      grid-row: 1 / 2 !important;
-      grid-column: 1 / 2 !important;
-    }
-
-    .day .event .icon {
-      grid-row: 1 / 2 !important;
-      grid-column: 2 / 3 !important;
-      justify-self: end !important;   /* right-align */
-      transform: scale(0.5);          /* shrink by 50% */
+      grid-row: 1;
+      grid-column: 1;
+      align-self: start !important;
+      margin-bottom: 2px !important;             /* extra spacing below time */
     }
 
     .day .event .title {
-      grid-row: 2 / 3 !important;
-      grid-column: 1 / 3 !important; /* span both columns */
+      grid-row: 2;
+      grid-column: 1;
+      align-self: start !important;
     }
+
+    .day .event .icon {
+      grid-row: 1 / 3 !important;     /* span both rows */
+      grid-column: 2 !important;
+      justify-self: end !important;   /* right-align */
+      align-self: start !important;   /* top-align */
+      transform: scale(0.75) !important;
+    }
+
 
     /* === CARD TITLE DIVIDER === */
     .card-title {
