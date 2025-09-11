@@ -1,0 +1,96 @@
+type: custom:mushroom-chips-card
+chips:
+  - type: template
+    entity: sensor.2025_ioniq_5_ev_battery_level
+    content: |
+      {{ states('sensor.2025_ioniq_5_ev_battery_level') }}%
+    icon: mdi:car-battery
+    icon_color: >
+      {% set stage = states('sensor.ioniq_5_battery_level_stage') | int(0) %} {%
+      if stage == 1 %}
+        red
+      {% elif stage == 2 %}
+        red
+      {% elif stage == 2 %}
+        yellow
+      {% else %}
+        green
+      {% endif %}
+    card_mod:
+      style: |
+        {% set stage = states('sensor.ioniq_5_battery_level_stage') | int(0) %}
+        {% if stage == 0 %}
+        ha-card {
+          animation: blink 1s infinite;
+        }
+        @keyframes blink {
+          50% { opacity: 0.2; }
+        }
+        {% endif %}
+  - type: template
+    entity: lock.2025_ioniq_5_door_lock
+    content: |
+      {% if is_state('lock.2025_ioniq_5_door_lock', 'locked') %}
+        Locked
+      {% else %}
+        Unlocked
+      {% endif %}
+    icon: mdi:lock
+    icon_color: |
+      {% if is_state('lock.2025_ioniq_5_door_lock', 'locked') %}
+        green
+      {% else %}
+        red
+      {% endif %}
+    tap_action:
+      action: none
+    hold_action:
+      action: toggle
+  - type: template
+    entity: binary_sensor.2025_ioniq_5_ev_battery_plug
+    use_entity_picture: false
+    icon: mdi:ev-station
+    content: |
+      {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_plug', 'on') %}
+        Plugged in
+      {% else %}
+        Unplugged
+      {% endif %}
+    icon_color: |
+      {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_plug', 'on') %}
+        blue
+      {% else %}
+        grey
+      {% endif %}
+  - type: template
+    entity: binary_sensor.2025_ioniq_5_ev_battery_charge
+    content: |
+      {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_charge', 'on') %}
+        {% set mins = states('sensor.2025_ioniq_5_estimated_charge_duration') | int(0) %}
+        {% set h = (mins // 60) %}
+        {% set m = (mins % 60) %}
+        {{ h }}h {{ m }}m
+      {% else %}
+        Idle
+      {% endif %}
+    icon: mdi:battery-charging
+    icon_color: |
+      {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_charge', 'on') %}
+        white
+      {% else %}
+        grey
+      {% endif %}
+    card_mod:
+      style: |
+        {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_charge', 'on') %}
+        ha-card {
+          animation: flash-bg 7s infinite;
+        }
+        @keyframes flash-bg {
+          0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
+          50% { background-color: rgba(0, 153, 255, 0.1); }
+        }
+        {% endif %}
+    tap_action:
+      action: more-info
+
