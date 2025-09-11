@@ -192,7 +192,7 @@ cards:
     card_mod:
       style: |
         ha-card {
-          transform: scale(.70);
+          transform: scale(.75);
           margin-bottom: -20px;
           margin-top: 0px;
           transform-origin: top left;
@@ -218,7 +218,7 @@ cards:
     card_mod:
       style: |
         ha-card {
-          transform: scale(.70);
+          transform: scale(.75);
           transform-origin: top left;
           margin-bottom: -20px;
           margin-top: 0px;
@@ -246,7 +246,7 @@ cards:
     card_mod:
       style: |
         ha-card {
-          transform: scale(.70);
+          transform: scale(.75);
           transform-origin: top left;
           margin-bottom: -40px;
           margin-top: -0px;
@@ -274,7 +274,7 @@ cards:
     card_mod:
       style: |
         ha-card {
-          transform: scale(.70);
+          transform: scale(.75);
           transform-origin: top left;
           min-width: 150px;
           min-height: 55px;  
@@ -294,7 +294,7 @@ cards:
     card_mod:
       style: |
         ha-card {
-          transform: scale(.70);
+          transform: scale(.75);
           transform-origin: top left;
           min-width: 150px;
           min-height: 55px;  
@@ -338,7 +338,7 @@ cards:
     card_mod:
       style: |
         ha-card {
-          transform: scale(.70);
+          transform: scale(.75);
           transform-origin: top left;
           min-width: 150px;
           min-height: 55px;  
