@@ -1214,7 +1214,7 @@ views:
                 card_mod:
                   style: |
                     ha-card {
-                      transform: scale(.70);
+                      transform: scale(.75);
                       margin-bottom: -20px;
                       margin-top: 0px;
                       transform-origin: top left;
@@ -1241,7 +1241,7 @@ views:
                 card_mod:
                   style: |
                     ha-card {
-                      transform: scale(.70);
+                      transform: scale(.75);
                       transform-origin: top left;
                       margin-bottom: -20px;
                       margin-top: 0px;
@@ -1270,7 +1270,7 @@ views:
                 card_mod:
                   style: |
                     ha-card {
-                      transform: scale(.70);
+                      transform: scale(.75);
                       transform-origin: top left;
                       margin-bottom: -40px;
                       margin-top: -0px;
@@ -1298,7 +1298,7 @@ views:
                 card_mod:
                   style: |
                     ha-card {
-                      transform: scale(.70);
+                      transform: scale(.75);
                       transform-origin: top left;
                       min-width: 150px;
                       min-height: 55px;  
@@ -1318,7 +1318,7 @@ views:
                 card_mod:
                   style: |
                     ha-card {
-                      transform: scale(.70);
+                      transform: scale(.75);
                       transform-origin: top left;
                       min-width: 150px;
                       min-height: 55px;  
@@ -1366,7 +1366,7 @@ views:
                 card_mod:
                   style: |
                     ha-card {
-                      transform: scale(.70);
+                      transform: scale(.75);
                       transform-origin: top left;
                       min-width: 150px;
                       min-height: 55px;  
@@ -1555,397 +1555,6 @@ views:
               grid-template-rows: 22px 44px 44px
               grid-template-areas: |
                 "1 1 1"  "a1 a2 a3" "b1 b2 b3"
-          - type: custom:mushroom-chips-card
-            chips:
-              - type: template
-                entity: sensor.2025_ioniq_5_ev_battery_level
-                content: >
-                  {% set battery_state =
-                  states('sensor.2025_ioniq_5_ev_battery_level') %}
-
-                  {% if battery_state in ['unavailable', 'unknown', 'none'] %}
-                    NaN
-                  {% else %}
-                    {{ battery_state }}%
-                  {% endif %}
-                icon: mdi:car-battery
-                icon_color: >
-                  {% set stage = states('sensor.ioniq_5_battery_level_stage') |
-                  int(0) %} {% if stage == 1 %}
-                    red
-                  {% elif stage == 2 %}
-                    red
-                  {% elif stage == 3 %}
-                    yellow
-                  {% elif stage == 4 %}
-                    green
-                  {% else %}
-                    grey
-                  {% endif %}
-                card_mod:
-                  style: >
-                    {% set stage = states('sensor.ioniq_5_battery_level_stage')
-                    | int(0) %}
-
-                    {% if stage == 0 %}
-
-                    ha-card {
-                      animation: blink 1.5s infinite;
-                    }
-
-                    @keyframes blink {
-                      50% { opacity: 0.2; }
-                    }
-
-                    {% endif %}
-              - type: template
-                entity: lock.2025_ioniq_5_door_lock
-                content: |
-                  {% if is_state('lock.2025_ioniq_5_door_lock', 'locked') %}
-                    Locked
-                  {% else %}
-                    Unlocked
-                  {% endif %}
-                icon: mdi:lock
-                icon_color: |
-                  {% if is_state('lock.2025_ioniq_5_door_lock', 'locked') %}
-                    green
-                  {% else %}
-                    red
-                  {% endif %}
-                tap_action:
-                  action: none
-                hold_action:
-                  action: toggle
-              - type: template
-                entity: binary_sensor.2025_ioniq_5_ev_battery_plug
-                use_entity_picture: false
-                icon: mdi:ev-station
-                content: >
-                  {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_plug',
-                  'on') %}
-                    Plugged in
-                  {% else %}
-                    Unplugged
-                  {% endif %}
-                icon_color: >
-                  {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_plug',
-                  'on') %}
-                    blue
-                  {% else %}
-                    grey
-                  {% endif %}
-              - type: template
-                entity: binary_sensor.2025_ioniq_5_ev_battery_charge
-                content: >
-                  {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_charge',
-                  'on') %}
-                    {% set mins = states('sensor.2025_ioniq_5_estimated_charge_duration') | int(0) %}
-                    {% set h = (mins // 60) %}
-                    {% set m = (mins % 60) %}
-                    {{ h }}h {{ m }}m
-                  {% else %}
-                    Idle
-                  {% endif %}
-                icon: mdi:battery-charging
-                icon_color: >
-                  {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_charge',
-                  'on') %}
-                    white
-                  {% else %}
-                    grey
-                  {% endif %}
-                card_mod:
-                  style: >
-                    {% if
-                    is_state('binary_sensor.2025_ioniq_5_ev_battery_charge',
-                    'on') %}
-
-                    ha-card {
-                      animation: flash-bg 7s infinite;
-                    }
-
-                    @keyframes flash-bg {
-                      0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
-                      50% { background-color: rgba(0, 153, 255, 0.1); }
-                    }
-
-                    {% endif %}
-                tap_action:
-                  action: more-info
-              - type: template
-                entity: timer.2025_ioniq_5_bluelink_climate_timer
-                content: >
-                  {% set mode =
-                  states('input_select.bluelink_remote_climate_mode') %}
-
-                  {% set timer_state =
-                  states('timer.2025_ioniq_5_bluelink_climate_timer') %}
-
-                  {% if mode == 'heating' and timer_state == 'active' %}
-                    Heat {{ states('sensor.bluelink_climate_timer_status_v2') }}
-                  {% elif mode == 'cooling' and timer_state == 'active' %}
-                    Cool {{ states('sensor.bluelink_climate_timer_status_v2') }}
-                  {% elif mode == 'heating' and timer_state != 'active' %}
-                    Initializing...
-                  {% elif mode == 'cooling' and timer_state != 'active' %}
-                    Initializing...
-                  {% else %}
-                    Climate
-                  {% endif %}
-                icon: >
-                  {% set mode =
-                  states('input_select.bluelink_remote_climate_mode') %}
-
-                  {% if mode == 'heating' %}
-                    mdi:fire
-                  {% elif mode == 'cooling' %}
-                    mdi:snowflake
-                  {% else %}
-                    mdi:thermostat
-                  {% endif %}
-                icon_color: >
-                  {% set mode =
-                  states('input_select.bluelink_remote_climate_mode') %}
-
-                  {% set timer_state =
-                  states('timer.2025_ioniq_5_bluelink_climate_timer') %}
-
-                  {% if mode == 'heating' and timer_state == 'active' %}
-                    white
-                  {% elif mode == 'cooling' and timer_state == 'active' %}
-                    white
-                  {% elif mode == 'heating' and timer_state != 'active' %}
-                    orange
-                  {% elif mode == 'cooling' and timer_state != 'active' %}
-                    blue
-                  {% else %}
-                    grey
-                  {% endif %}
-                card_mod:
-                  style: >
-                    {% set mode =
-                    states('input_select.bluelink_remote_climate_mode') %}
-
-                    {% set timer_state =
-                    states('timer.2025_ioniq_5_bluelink_climate_timer') %}
-
-                    {% if mode == 'heating' and timer_state != 'active' %}
-
-                    ha-card {
-                      animation: flash-bg-heat 7s infinite;
-                    }
-
-                    @keyframes flash-bg-heat {
-                      0%, 10%, 90%, 100% { background-color: rgba(255, 69, 0, 0.7); }
-                      50% { background-color: rgba(255, 69, 0, 0.1); }
-                    }
-
-                    {% elif mode == 'cooling' and timer_state != 'active' %}
-
-                    ha-card {
-                      animation: flash-bg-cool 7s infinite;
-                    }
-
-                    @keyframes flash-bg-cool {
-                      0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
-                      50% { background-color: rgba(0, 153, 255, 0.1); }
-                    }
-
-                    {% elif mode == 'heating' and timer_state == 'active' %}
-
-                    ha-card {
-                      animation: solid-bg-heat 1s infinite;
-                    }
-
-                    @keyframes solid-bg-heat {
-                      0%, 100% { background-color: rgba(255, 69, 0, 0.7); }
-                    }
-
-                    {% elif mode == 'cooling' and timer_state == 'active' %}
-
-                    ha-card {
-                      animation: solid-bg-cool 1s infinite;
-                    }
-
-                    @keyframes solid-bg-cool {
-                      0%, 100% { background-color: rgba(0, 153, 255, 0.7); }
-                    }
-
-                    {% endif %}
-                tap_action:
-                  action: fire-dom-event
-                  browser_mod:
-                    service: browser_mod.popup
-                    data:
-                      title: Ioniq 5 Climate Control
-                      content:
-                        type: vertical-stack
-                        cards:
-                          - type: custom:mushroom-template-card
-                            entity: timer.2025_ioniq_5_bluelink_climate_timer
-                            primary: >
-                              {% set mode =
-                              states('input_select.bluelink_remote_climate_mode')
-                              %}
-
-                              {% set timer_state =
-                              states('timer.2025_ioniq_5_bluelink_climate_timer')
-                              %}
-
-                              {% if mode == 'heating' and timer_state ==
-                              'active' %}
-                                Heating ({{ states('sensor.bluelink_climate_timer_status_v2') }} Remaining)
-                              {% elif mode == 'heating' and timer_state !=
-                              'active' %}
-                                Heating Initializing
-                              {% else %}
-                                Request Remote Heating
-                              {% endif %}
-                            icon: mdi:fire
-                            icon_color: >
-                              {% if
-                              states('input_select.bluelink_remote_climate_mode')
-                              == 'heating' %}
-                                white
-                              {% else %}
-                                grey
-                              {% endif %}
-                            tap_action:
-                              action: call-service
-                              service: script.ioniq5_climate_start_heat
-                            fill_container: true
-                            grid_options:
-                              columns: full
-                            card_mod:
-                              style: >
-                                {% set mode =
-                                states('input_select.bluelink_remote_climate_mode')
-                                %}
-
-                                {% set timer_state =
-                                states('timer.2025_ioniq_5_bluelink_climate_timer')
-                                %}
-
-                                /* Background */
-
-                                {% if mode == 'heating' and timer_state !=
-                                'active' %}
-                                  ha-card { animation: flash-bg 7s infinite; }
-                                {% elif mode == 'heating' and timer_state ==
-                                'active' %}
-                                  ha-card { background-color: rgba(255,69,0,0.7); } /* solid red */
-                                {% else %}
-
-                                {% endif %}
-
-                                /* Background keyframes */
-
-                                @keyframes flash-bg {
-                                  0%, 10%, 90%, 100% { background-color: rgba(255,69,0,0.7); }
-                                  50% { background-color: rgba(255,69,0,0.1); }
-                                }
-
-                                /* Icon fire using ha-state-icon */
-
-                                {% if mode == 'heating' %}
-                                  ha-state-icon {
-                                      animation: bounce 1.5s ease-in-out infinite
-                                  }
-                                {% else %}
-                                  ha-state-icon {
-                                      animation: none;
-                                  }
-                                {% endif %}
-
-                                /* Spin keyframes */
-
-                                @keyframes bounce {
-                                    0%, 20%, 50%, 80%, 100% {transform: translateY(0); } 
-                                    40% { transform: translateY(-1.2px) rotate(5deg); } 
-                                    60% { transform: translateY(-1.1px) rotate(-4deg); } 
-                                  }
-                          - type: custom:mushroom-template-card
-                            entity: timer.2025_ioniq_5_bluelink_climate_timer
-                            primary: >
-                              {% set mode =
-                              states('input_select.bluelink_remote_climate_mode')
-                              %}
-
-                              {% set timer_state =
-                              states('timer.2025_ioniq_5_bluelink_climate_timer')
-                              %}
-
-                              {% if mode == 'cooling' and timer_state ==
-                              'active' %}
-                                Cooling ({{ states('sensor.bluelink_climate_timer_status_v2') }} Remaining)
-                              {% elif mode == 'cooling' and timer_state !=
-                              'active' %}
-                                Cooling Initializing
-                              {% else %}
-                                Request Remote Cooling
-                              {% endif %}
-                            icon: mdi:snowflake
-                            icon_color: >
-                              {% if
-                              states('input_select.bluelink_remote_climate_mode')
-                              == 'cooling' %}
-                                white
-                              {% else %}
-                                grey
-                              {% endif %}
-                            tap_action:
-                              action: call-service
-                              service: script.ioniq5_climate_start_cool
-                            fill_container: true
-                            grid_options:
-                              columns: full
-                            card_mod:
-                              style: >
-                                {% set mode =
-                                states('input_select.bluelink_remote_climate_mode')
-                                %}
-
-                                {% set timer_state =
-                                states('timer.2025_ioniq_5_bluelink_climate_timer')
-                                %}
-
-                                /* Background */
-
-                                {% if mode == 'cooling' and timer_state !=
-                                'active' %}
-                                  ha-card { animation: flash-bg 7s infinite; }
-                                {% elif mode == 'cooling' and timer_state ==
-                                'active' %}
-                                  ha-card { background-color: #1E90FF; }
-                                {% else %}
-
-                                {% endif %}
-
-                                /* Background keyframes */
-
-                                @keyframes flash-bg {
-                                      0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
-                                      50% { background-color: rgba(0, 153, 255, 0.1); }
-                                }
-
-                                /* Icon spin using mushroom-shape-icon$ */
-                                 {% if mode == 'cooling' and timer_state == 'active' %}
-                                  ha-state-icon {
-                                      animation: spin 5s linear infinite;
-                                    }
-                                {% else %}
-                                  ha-state-icon {
-                                      animation: none;
-                                    }
-                                {% endif %}
-
-                                /* Spin keyframes */
-
-                                @keyframes spin {
-                                  0% { transform: rotate(0deg); }
-                                  100% { transform: rotate(360deg); }
-                                }
         column_span: 1
       - type: grid
         cards: []
