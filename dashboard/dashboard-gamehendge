@@ -1,4 +1,2680 @@
-      {% if is_state('input_boolean.hvac_anomaly_active', 'on') 
-        and is_state('binary_sensor.windows.window', 'on') %}            
-          background-color: red;
-      {% endif %}
+kiosk_mode:
+  hide_header: false
+  hide_sidebar: false
+views:
+  - title: Home
+    sections:
+      - type: grid
+        cards:
+          - type: custom:mushroom-chips-card
+            card_mod:
+              style: |
+                .chip-container {
+                --chip-spacing: 50px;
+                }
+            chips:
+              - type: entity
+                entity: sensor.day_of_week
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                icon: mdi:calendar-today-outline
+                icon_color: accent
+                card_mod:
+                  style: |
+                    ha-card {
+                      zoom: 1.5 !important;
+                    }
+              - type: entity
+                entity: sensor.full_date
+                icon_color: accent
+                tap_action:
+                  action: navigate
+                  navigation_path: /dashboard-planner/calendars/
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                name: Full Date
+                use_entity_picture: false
+                icon: mdi:calendar-month-outline
+                card_mod:
+                  style: |
+                    ha-card {
+                      zoom: 1.5 !important;
+                    }   
+              - type: entity
+                entity: sensor.time_am_pm
+                tap_action:
+                  action: none
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                icon: mdi:clock-outline
+                icon_color: accent
+                card_mod:
+                  style: |
+                    ha-card {
+                      zoom: 1.5 !important;
+                    }
+            alignment: center
+            grid_options:
+              columns: full
+          - type: custom:mushroom-chips-card
+            card_mod:
+              style: |
+                .chip-container {
+                  --chip-spacing: 20px;
+                }
+            chips:
+              - type: template
+                content: Home
+                icon: mdi:home-outline
+                icon_color: '#00BFFF'
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  target:
+                    entity_id: input_select.gamehendge_dashboard_selector
+                  data:
+                    option: Home
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                card_mod:
+                  style: |
+                    ha-card {
+                      zoom: 1.2 !important;
+                      {% if is_state('input_select.gamehendge_dashboard_selector', 'Home') %}
+                        background-color: var(--accent-color);
+                        color: white;
+                      {% endif %}
+                    }
+              - type: template
+                content: Planner
+                icon: mdi:calendar-outline
+                icon_color: '#00BFFF'
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  target:
+                    entity_id: input_select.gamehendge_dashboard_selector
+                  data:
+                    option: Planner
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                card_mod:
+                  style: |
+                    ha-card {
+                      zoom: 1.2 !important;
+                      {% if is_state('input_select.gamehendge_dashboard_selector', 'Planner') %}
+                        background-color: var(--accent-color);
+                        color: white;
+                      {% endif %}
+                    }
+              - type: template
+                content: Scenes
+                icon: mdi:palette-outline
+                icon_color: '#00BFFF'
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  target:
+                    entity_id: input_select.gamehendge_dashboard_selector
+                  data:
+                    option: Scenes
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                card_mod:
+                  style: |
+                    ha-card {
+                      zoom: 1.2 !important;
+                      {% if is_state('input_select.gamehendge_dashboard_selector', 'Scenes') %}
+                        background-color: var(--accent-color);
+                        color: white;
+                      {% endif %}
+                    }
+              - type: template
+                content: Security
+                icon: mdi:shield-home-outline
+                icon_color: '#00BFFF'
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  target:
+                    entity_id: input_select.gamehendge_dashboard_selector
+                  data:
+                    option: Security
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                card_mod:
+                  style: |
+                    ha-card {
+                      zoom: 1.2 !important;
+                      {% if is_state('input_select.gamehendge_dashboard_selector', 'Security') %}
+                        background-color: var(--accent-color);
+                        color: white;
+                      {% endif %}
+                    }
+              - type: template
+                content: Climate
+                icon: mdi:thermostat
+                icon_color: '#00BFFF'
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  target:
+                    entity_id: input_select.gamehendge_dashboard_selector
+                  data:
+                    option: Climate
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                card_mod:
+                  style: |
+                    ha-card {
+                      zoom: 1.2 !important;
+                      {% if is_state('input_select.gamehendge_dashboard_selector', 'Climate') %}
+                        background-color: var(--accent-color);
+                        color: white;
+                      {% endif %}
+                    }
+              - type: template
+                content: Weather
+                icon: mdi:weather-partly-cloudy
+                icon_color: '#00BFFF'
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  target:
+                    entity_id: input_select.gamehendge_dashboard_selector
+                  data:
+                    option: Weather
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                card_mod:
+                  style: |
+                    ha-card {
+                      zoom: 1.2 !important;
+                      {% if is_state('input_select.gamehendge_dashboard_selector', 'Weather') %}
+                        background-color: var(--accent-color);
+                        color: white;
+                      {% endif %}
+                    }
+              - type: template
+                content: Vehicles
+                icon: mdi:car-outline
+                icon_color: '#00BFFF'
+                tap_action:
+                  action: call-service
+                  service: input_select.select_option
+                  target:
+                    entity_id: input_select.gamehendge_dashboard_selector
+                  data:
+                    option: Vehicles
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+                card_mod:
+                  style: |
+                    ha-card {
+                      zoom: 1.2 !important;
+                      {% if is_state('input_select.gamehendge_dashboard_selector', 'Vehicles') %}
+                        background-color: var(--accent-color);
+                        color: white;
+                      {% endif %}
+                    }
+            alignment: center
+            grid_options:
+              columns: full
+        column_span: 4
+      - type: grid
+        cards:
+          - type: thermostat
+            entity: climate.nest_thermostat
+            show_current_as_primary: true
+            name: Nest
+          - type: custom:mushroom-lock-card
+            entity: lock.door_lock
+            tap_action:
+              action: none
+            hold_action:
+              action: toggle
+            double_tap_action:
+              action: none
+            layout: horizontal
+            fill_container: false
+            name: Front Door
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            cards:
+              - type: custom:mushroom-entity-card
+                view_layout:
+                  grid-area: a1
+                entity: input_boolean.hvac_anomaly_active
+                name: A/C Anomaly
+                fill_container: false
+                icon: mdi:alarm-light
+                icon_color: yellow
+                primary_info: name
+                icon_type: icon
+                tap_action:
+                  action: fire-dom-event
+                  browser_mod:
+                    service: browser_mod.popup
+                    data:
+                      title: Doors & Windows Status
+                      content:
+                        type: vertical-stack
+                        cards:
+                          - type: entities
+                            entities:
+                              - entity: binary_sensor.windows
+                                secondary_info: >
+                                  {% set sensors =
+                                  expand('binary_sensor.windows') %} {% set
+                                  open_sensors = sensors | selectattr('state',
+                                  'eq', 'on') | list %} {% if open_sensors |
+                                  count == 0 %}
+                                    All windows closed
+                                  {% else %}
+                                    {{ open_sensors | count }} of {{ sensors | count }} windows open
+                                  {% endif %}
+                              - entity: binary_sensor.doors
+                                secondary_info: >
+                                  {% set sensors = expand('binary_sensor.doors')
+                                  %} {% set open_sensors = sensors |
+                                  selectattr('state', 'eq', 'on') | list %} {%
+                                  if open_sensors | count == 0 %}
+                                    All doors closed
+                                  {% else %}
+                                    {{ open_sensors | count }} of {{ sensors | count }} doors open
+                                  {% endif %}
+                            style: |
+                              ha-card {
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                                border-radius: 12px;
+                                margin-bottom: 16px;
+                              }
+                          - type: custom:auto-entities
+                            card:
+                              type: entities
+                            filter:
+                              include:
+                                - group: binary_sensor.windows
+                                - group: binary_sensor.doors
+                            show_empty: false
+                            sort:
+                              method: state
+                            options:
+                              type: custom:mushroom-entity-card
+                              layout: horizontal
+                              icon_type: icon
+                              tap_action:
+                                action: toggle
+                              card_mod:
+                                style: |
+                                  :host {
+                                    margin-bottom: 4px;
+                                  }
+                hold_action:
+                  action: more-info
+                card_mod:
+                  style: |
+                    ha-card {
+                      {% if is_state('input_boolean.hvac_anomaly_active', 'on') %}
+                        background-color: red;
+                      {% endif %}
+                      transform: scale(0.75);
+                      transform-origin: top left;
+                      min-width: 150px;
+                      margin-bottom: 0px;
+                      margin-top: -3px;
+                      min-width: 150px;
+                      min-height: 55px;  
+                      max-height: 55px;       
+                    }
+                    ha-state-icon {
+                      padding: 4px;
+                      {% if is_state('input_boolean.hvac_anomaly_active', 'on') %}
+                        animation: pulse 4s ease-in-out infinite;
+                        color: yellow;
+                        border: 3px solid white;
+                        border-radius: 50%;
+                      {% else %}
+                        animation: none;
+                      {% endif %}
+                    }
+              - type: custom:mushroom-entity-card
+                entity: binary_sensor.windows
+                primary_info: name
+                tap_action:
+                  action: more-info
+                hold_action: none
+                double_tap_action: none
+                fill_container: false
+                icon_color: primary
+                card_mod:
+                  style: |
+                    ha-card {
+                      {% if is_state('input_boolean.hvac_anomaly_active', 'on') 
+                        and is_state('binary_sensor.windows', 'on') %}            
+                          background-color: red;
+                      {% endif %}
+                      transform: scale(0.75);
+                      transform-origin: top left;
+                      min-width: 150px;
+                      margin-bottom: 0px;
+                      margin-top: -3px;
+                      margin-left: 0px;
+                      margin-right: 0px;
+                      min-width: 150px;
+                      min-height: 55px;  
+                      max-height: 55px;       
+                    }
+              - type: custom:mushroom-entity-card
+                view_layout:
+                  grid-area: a3
+                entity: binary_sensor.doors
+                icon_color: primary
+                primary_info: name
+                tap_action:
+                  action: more-info
+                hold_action: none
+                double_tap_action: none
+                fill_container: false
+                card_mod:
+                  style: |
+                    ha-card {
+                      {% if is_state('input_boolean.hvac_anomaly_active', 'on') 
+                        and is_state('binary_sensor.doors', 'on') %}            
+                          background-color: red;
+                      {% endif %}
+                      transform: scale(0.75);
+                      transform-origin: top left;
+                      min-width: 150px;
+                      margin-bottom: 0px;
+                      margin-top: -3px;
+                      min-width: 150px;
+                      min-height: 55px;  
+                      max-height: 55px;       
+                    }    
+            layout:
+              grid-template-columns: repeat(3, minmax(0, max-content))
+              grid-template-rows: 45px
+              grid-template-areas: |
+                "a1 a2 a3" 
+              card_mod:
+                style: |
+                  :host {
+                    display: grid;
+                    grid-template-columns: repeat(3, minmax(0, max-content));
+                    grid-template-rows: repeat(3, minmax(0, max-content));
+                    gap: 5px;                  /* spacing between items */
+                    padding: 0px !important;   /* remove all padding */
+                    margin: 0px !important;    /* remove external spacing */
+                    justify-content: start;     /* align left */
+                    align-content: start;       /* align top */
+                  }
+            grid_options:
+              rows: 1
+      - type: grid
+        cards:
+          - type: custom:simple-weather-card
+            entity: weather.openweathermap
+            name: ' '
+            primary_info:
+              - extrema
+              - humidity
+              - precipitation
+              - precipitation_probability
+            secondary_info:
+              - wind_speed
+              - wind_bearing
+              - pressure
+            view_layout:
+              grid-area: span 2 / span 4
+          - type: custom:hourly-weather
+            entity: weather.openweathermap
+            num_segments: '11'
+            label_spacing: '2'
+            show_wind: 'false'
+            show_date: 'false'
+            show_precipitation_amounts: false
+            show_precipitation_probability: false
+            icons: true
+            name: ' '
+          - type: custom:clock-weather-card
+            entity: weather.openweathermap
+            title: null
+            sun_entity: sun.sun
+            temperature_sensor: sensor.openweathermap_temperature
+            humidity_sensor: sensor.outdoor_humidity
+            weather_icon_type: line
+            animated_icon: true
+            forecast_rows: 5
+            date_pattern: DDD | cccc
+            hide_today_section: true
+            hide_forecast_section: false
+            show_humidity: true
+            hide_clock: false
+            hourly_forecast: false
+            show_decimal: false
+            hide_date: false
+            apparent_sensor: sensor.openweathermap_feels_like_temperature
+          - square: false
+            type: grid
+            columns: 2
+            grid_options:
+              columns: 12
+              rows: 3
+            cards:
+              - type: custom:horizon-card
+                moon: false
+                refresh_period: 60
+                fields:
+                  sunrise: true
+                  sunset: true
+                  dawn: false
+                  noon: false
+                  dusk: false
+                  azimuth: false
+                  sun_azimuth: false
+                  moon_azimuth: false
+                  elevation: false
+                  sun_elevation: false
+                  moon_elevation: false
+                  moonrise: false
+                  moonset: false
+                  moon_phase: false
+                southern_flip: false
+                card_mod:
+                  style: >
+                    ha-card {
+                      min-height: 161px   
+                    } /* Each field container: vertical layout, small gap
+                    between label and value */
+
+                    .horizon-card-text-container {
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      gap: 2px; /* spacing between label and value */
+                    } /* Sunrise / Sunset label (field name) */
+                    .horizon-card-header .horizon-card-field-name {
+                      font-size: 14px;      /* change to desired size */
+                      font-weight: 600;     /* bold */
+                      color: var(--secondary-text-color);
+                      text-align: center;
+                    }
+
+                    /* Field value (time) - like Mushroom secondary */
+                    .horizon-card-header .horizon-card-field-value {
+                      font-size: 16px;
+                      font-weight: 400;
+                      color: 600;
+                      text-align: center;
+                    }
+
+
+                    /* Secondary span (AM/PM) */ .horizon-card-header
+                    .horizon-card-field-value-secondary {
+                      font-size: 12px;
+                      font-weight: 400;
+                      color: var(--secondary-text-color);
+                      padding-left: 2px;
+                    }
+
+
+                    /* Move the whole Sunrise/Sunset block slightly up */
+                    .horizon-card-header{
+                      transform: translateY(-5px);
+                      gap: 15px; /* space between Sunrise and Sunset */
+                    }
+              - type: custom:horizon-card
+                moon: true
+                refresh_period: 60
+                fields:
+                  sunrise: false
+                  sunset: false
+                  dawn: false
+                  noon: false
+                  dusk: false
+                  azimuth: false
+                  sun_azimuth: false
+                  moon_azimuth: false
+                  elevation: false
+                  sun_elevation: false
+                  moon_elevation: false
+                  moonrise: true
+                  moonset: true
+                  moon_phase: true
+                southern_flip: false
+                card_mod:
+                  style: >
+                    ha-card {
+                      padding: 12px;
+                      font-family: inherit;
+                      line-height: 1.2;
+                      border-radius: 12px;
+                      background: linear-gradient(135deg, rgba(200,200,196,0.05), rgba(255,255,255,0.01));
+                      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      min-height: 161px
+                    }
+
+
+                    /* Hide the SVG graph */
+
+                    .horizon-card-graph {
+                      display: none !important;
+                    }
+
+
+                    /* Footer grid layout for moonrise, moonset, and moon */
+
+                    .horizon-card-footer .horizon-card-field-row {
+                      display: grid !important;
+                      grid-template-columns: auto auto;   /* left = moonrise, right = moonset */
+                      grid-template-rows: auto auto;      /* row1 = times, row2 = moon icon + phase */
+                      justify-content: center;
+                      align-items: start;
+                      gap: 2px 26px; /* vertical gap / horizontal gap */
+                      width: auto;
+                      transform: translateY(0px); /* move everything up */
+                      margin-top: -14px
+                    }
+
+
+                    /* Moonrise container (left top) */
+
+                    .horizon-card-footer .horizon-card-field-row > :nth-child(1)
+                    {
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      grid-column: 1;
+                      grid-row: 1;
+                    }
+
+
+                    /* Moonset container (right top) */
+
+                    .horizon-card-footer .horizon-card-field-row > :nth-child(3)
+                    {
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      grid-column: 2;
+                      grid-row: 1;
+                    }
+
+
+                    /* Moon icon + phase container (middle bottom) */
+
+                    .horizon-card-footer .horizon-card-field-row > :nth-child(2)
+                    {
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      grid-column: 1 / span 2; /* span both columns */
+                      grid-row: 2;
+                      margin-top: 0px;
+                    }
+
+
+                    /* Moon icon itself */
+
+                    .horizon-card-field-moon-phase {
+                      font-size:20px;
+                      margin-top: 12px;
+                    }
+
+
+                    /* Moon phase text */ .horizon-card-footer
+                    .horizon-card-field-row .horizon-card-field-value-moon-phase
+                    {
+                      font-size: 12px !important;
+                      font-weight: 600 !important;
+                      color: var(--secondary-text-color) !important;
+                      text-align: center;
+                      margin-top: 7.5px;
+                      margin-bottom: -16px
+                    }
+
+
+                    /* Moonrise / Moonset names */
+
+                    .horizon-card-footer .horizon-card-field-name {
+                      font-size: 14px;
+                      font-weight: 600;
+                      color: var(--secondary-text-color);
+                      margin-bottom: 2px;
+                    }
+
+
+                    /* Moonrise / Moonset times */ .horizon-card-footer
+                    .horizon-card-field-value {
+                      font-size: 16px;
+                      font-weight: 400;
+                      color: var(--primary-text-color);
+                      margin-top: 3px;
+                      white-space: nowrap; /* force on one line */
+                    }
+
+
+                    /* AM/PM */
+
+                    .horizon-card-footer .horizon-card-field-value-secondary {
+                      font-size: 12px;
+                      font-weight: 400;
+                      color: var(--secondary-text-color);
+                      padding-left: 2px;
+                    }
+
+
+                    /* Reduce bottom padding of footer for vertical shrink */
+                    .horizon-card-footer {
+                      padding-bottom: 4px;
+                    }
+        column_span: 1
+      - type: grid
+        cards:
+          - type: custom:advanced-camera-card
+            cameras:
+              - camera_entity: camera.floodlight_poe_upper_driveway_fluent
+              - camera_entity: camera.floodlight_poe_lower_driveway_fluent
+            dimensions:
+              height: 200px
+            live:
+              display:
+                mode: single
+              transition_effect: slide
+            view:
+              default: live
+              default_reset:
+                every_seconds: 10
+              default_cycle_camera: true
+          - type: heading
+            icon: mdi:home-lightbulb-outline
+            heading: Lights & Scenes
+            heading_style: subtitle
+          - type: custom:mushroom-template-card
+            entity: light.indoor_lights
+            primary: Indoor
+            secondary: >
+              {% set lights = expand('light.indoor_lights') %}  {% set on_lights
+              = lights | selectattr('state', 'eq', 'on') | list %}  {% if
+              on_lights | count == 0 %}
+                Off
+              {% else %}
+                {{ on_lights | count }} Lights On
+              {% endif %}
+            icon: mdi:lightbulb-group
+            icon_color: >
+              {% if (expand('light.indoor_lights') |
+              selectattr('state','eq','on') | list | count) > 0 %}
+                yellow
+              {% else %}
+                grey
+              {% endif %}
+            tap_action:
+              action: fire-dom-event
+              browser_mod:
+                service: browser_mod.popup
+                data:
+                  title: Indoor Lights
+                  content:
+                    type: vertical-stack
+                    cards:
+                      - type: entities
+                        entities:
+                          - entity: light.indoor_lights
+                            secondary_info: >
+                              {% set lights = expand('light.indoor_lights') %} 
+                              {% set on_lights = lights | selectattr('state',
+                              'eq', 'on') | list %}  {% if on_lights | count ==
+                              0 %}
+                                All lights are off
+                              {% else %}
+                                {{ on_lights | count }} of {{ lights | count }} lights on
+                              {% endif %}
+                        style: |
+                          ha-card {
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                            border-radius: 12px;
+                            margin-bottom: 16px;
+                          }
+                      - type: custom:auto-entities
+                        card:
+                          type: entities
+                        filter:
+                          include:
+                            - group: light.indoor_lights
+                              options:
+                                card_mod:
+                                  style: |
+                                    :host:after {
+                                      {% set entity_id = config.entity %}
+                                      {% if entity_id == 'light.kitchen_lights' %}
+                                        content: "{{ states('sensor.kitchen_lights_count') }}";
+                                      {% elif entity_id == 'light.living_room_can_lights' %}
+                                        content: "{{ states('sensor.living_room_can_lights_count') }}";
+                                      {% elif entity_id == 'light.family_room_lamps' %}
+                                        content: "{{ states('sensor.family_room_lamps_count') }}";
+                                      {% elif entity_id == 'light.playroom_overhead_lights' %}
+                                        content: "{{ states('sensor.playroom_overhead_lights_count') }}";
+                                      {% else %}
+                                        content: "";
+                                      {% endif %}
+                                      position: absolute;
+                                      left: 56px;
+                                      top: 32px;
+                                      font-size: 12px;
+                                      color: var(--secondary-text-color);
+                                      opacity: 0.7;
+                                    }
+          - type: custom:mushroom-template-card
+            entity: light.outdoor_lights
+            primary: Outdoor
+            secondary: >
+              {% set lights = expand('light.outdoor_lights') %}   {% set
+              on_lights = lights | selectattr('state', 'eq', 'on') | list %}  
+              {% if on_lights | count == 0 %}
+                Off
+              {% else %}
+                {{ on_lights | count }} Lights On
+              {% endif %}
+            icon: mdi:lightbulb-group
+            icon_color: >
+              {% if (expand('light.outdoor_lights') |
+              selectattr('state','eq','on') | list | count) > 0 %}
+                yellow
+              {% else %}
+                grey
+              {% endif %}
+            tap_action:
+              action: fire-dom-event
+              browser_mod:
+                service: browser_mod.popup
+                data:
+                  title: Outdoor Lights
+                  content:
+                    type: vertical-stack
+                    cards:
+                      - type: entities
+                        entities:
+                          - entity: light.outdoor_lights
+                            secondary_info: >
+                              {% set lights = expand('light.outdoor_lights')
+                              %}   {% set on_lights = lights |
+                              selectattr('state', 'eq', 'on') | list %}   {% if
+                              on_lights | count == 0 %}
+                                All lights are off
+                              {% else %}
+                                {{ on_lights | count }} of {{ lights | count }} lights on
+                              {% endif %}
+                        style: |
+                          ha-card {
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                            border-radius: 12px;
+                            margin-bottom: 16px;
+                          }
+                      - type: custom:auto-entities
+                        card:
+                          type: entities
+                        filter:
+                          include:
+                            - group: light.outdoor_lights
+                              options:
+                                card_mod:
+                                  style: |
+                                    :host:after {
+                                      {% set entity_id = config.entity %}
+                                      {% if entity_id == 'light.outdoor_garage_lights' %}
+                                        content: "{{ states('sensor.outdoor_garage_lights_count') }}";
+                                      {% elif entity_id == 'light.floodlights' %}
+                                        content: "{{ states('sensor.floodlights_count') }}";
+                                      {% else %}
+                                        content: "";
+                                      {% endif %}
+                                      position: absolute;
+                                      left: 56px;
+                                      top: 32px;
+                                      font-size: 12px;
+                                      color: var(--secondary-text-color);
+                                      opacity: 0.7;
+                                    }
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            cards:
+              - type: heading
+                view_layout:
+                  grid-area: 1
+                  grid-column-start: 1
+                  grid-column-end: 3
+                heading_style: subtitle
+                heading: Hyundai Ioniq 5
+                card_mod:
+                  style: |
+                    ha-card {
+                      transform-origin: top left; 
+                      margin-bottom: 0px;
+                      margin-top: -10px;
+                    }
+                tap_action:
+                  action: fire-dom-event
+                  browser_mod:
+                    service: browser_mod.popup
+                    data:
+                      title: Ioniq 5 Climate Control
+                      content:
+                        type: vertical-stack
+                        cards:
+                          - type: custom:mushroom-template-card
+                            entity: timer.2025_ioniq_5_bluelink_climate_timer
+                            primary: >
+                              {% set mode =
+                              states('input_select.bluelink_remote_climate_mode')
+                              %}
+
+                              {% set timer_state =
+                              states('timer.2025_ioniq_5_bluelink_climate_timer')
+                              %}
+
+                              {% if mode == 'heating' and timer_state ==
+                              'active' %}
+                                Heating ({{ states('sensor.bluelink_climate_timer_status_v2') }} Remaining)
+                              {% elif mode == 'heating' and timer_state !=
+                              'active' %}
+                                Heating Initializing
+                              {% else %}
+                                Request Remote Heating
+                              {% endif %}
+                            icon: mdi:fire
+                            icon_color: >
+                              {% if
+                              states('input_select.bluelink_remote_climate_mode')
+                              == 'heating' %}
+                                white
+                              {% else %}
+                                grey
+                              {% endif %}
+                            tap_action:
+                              action: call-service
+                              service: script.ioniq5_climate_start_heat
+                            fill_container: true
+                            grid_options:
+                              columns: full
+                            card_mod:
+                              style: >
+                                {% set mode =
+                                states('input_select.bluelink_remote_climate_mode')
+                                %}
+
+                                {% set timer_state =
+                                states('timer.2025_ioniq_5_bluelink_climate_timer')
+                                %}
+
+                                /* Background */
+
+                                {% if mode == 'heating' and timer_state !=
+                                'active' %}
+                                  ha-card { animation: flash-bg 7s infinite; }
+                                {% elif mode == 'heating' and timer_state ==
+                                'active' %}
+                                  ha-card { background-color: rgba(255,69,0,0.7); } /* solid red */
+                                {% else %}
+
+                                {% endif %}
+
+                                /* Background keyframes */
+
+                                @keyframes flash-bg {
+                                  0%, 10%, 90%, 100% { background-color: rgba(255,69,0,0.7); }
+                                  50% { background-color: rgba(255,69,0,0.7); }
+                                }
+
+                                /* Icon fire using ha-state-icon */
+
+                                {% if mode == 'heating' %}
+                                  ha-state-icon {
+                                      animation: bounce 1.5s ease-in-out infinite
+                                  }
+                                {% else %}
+                                  ha-state-icon {
+                                      animation: none;
+                                  }
+                                {% endif %}
+
+                                /* Spin keyframes */
+
+                                @keyframes bounce {
+                                    0%, 20%, 50%, 80%, 100% {transform: translateY(0); } 
+                                    40% { transform: translateY(-1.2px) rotate(5deg); } 
+                                    60% { transform: translateY(-1.1px) rotate(-4deg); } 
+                                  }
+                          - type: custom:mushroom-template-card
+                            entity: timer.2025_ioniq_5_bluelink_climate_timer
+                            primary: >
+                              {% set mode =
+                              states('input_select.bluelink_remote_climate_mode')
+                              %}
+
+                              {% set timer_state =
+                              states('timer.2025_ioniq_5_bluelink_climate_timer')
+                              %}
+
+                              {% if mode == 'cooling' and timer_state ==
+                              'active' %}
+                                Cooling ({{ states('sensor.bluelink_climate_timer_status_v2') }} Remaining)
+                              {% elif mode == 'cooling' and timer_state !=
+                              'active' %}
+                                Cooling Initializing
+                              {% else %}
+                                Request Remote Cooling
+                              {% endif %}
+                            icon: mdi:snowflake
+                            icon_color: >
+                              {% if
+                              states('input_select.bluelink_remote_climate_mode')
+                              == 'cooling' %}
+                                white
+                              {% else %}
+                                grey
+                              {% endif %}
+                            tap_action:
+                              action: call-service
+                              service: script.ioniq5_climate_start_cool
+                            fill_container: true
+                            grid_options:
+                              columns: full
+                            card_mod:
+                              style: >
+                                {% set mode =
+                                states('input_select.bluelink_remote_climate_mode')
+                                %}
+
+                                {% set timer_state =
+                                states('timer.2025_ioniq_5_bluelink_climate_timer')
+                                %}
+
+                                /* Background */
+
+                                {% if mode == 'cooling' and timer_state !=
+                                'active' %}
+                                  ha-card { animation: flash-bg 7s infinite; }
+                                {% elif mode == 'cooling' and timer_state ==
+                                'active' %}
+                                  ha-card { background-color: #1E90FF; }
+                                {% else %}
+
+                                {% endif %}
+
+                                /* Background keyframes */
+
+                                @keyframes flash-bg {
+                                      0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
+                                      50% { background-color: rgba(0, 153, 255, 0.1); }
+                                }
+
+                                /* Icon spin using mushroom-shape-icon$ */
+                                 {% if mode == 'cooling' and timer_state == 'active' %}
+                                  ha-state-icon {
+                                      animation: spin 5s linear infinite;
+                                    }
+                                {% else %}
+                                  ha-state-icon {
+                                      animation: none;
+                                    }
+                                {% endif %}
+
+                                /* Spin keyframes */
+
+                                @keyframes spin {
+                                  0% { transform: rotate(0deg); }
+                                  100% { transform: rotate(360deg); }
+              - type: custom:mushroom-template-card
+                view_layout:
+                  grid-area: a1
+                entity: sensor.2025_ioniq_5_ev_battery_level
+                primary: Battery
+                icon: mdi:car-battery
+                icon_color: >
+                  {% set stage = states('sensor.ioniq_5_battery_level_stage') |
+                  int(0) %} {% if stage <= 2 %} red {% elif stage == 3 %} yellow
+                  {% elif stage == 4 %} green {% else %} grey {% endif %}
+                layout: horizontal
+                fill_container: false
+                multiline_secondary: false
+                secondary: >-
+                  {% set battery_state =
+                  states('sensor.2025_ioniq_5_ev_battery_level') %} {% if
+                  battery_state in ['unavailable', 'unknown', 'none'] %}
+                    NaN
+                  {% else %}
+                    {{ battery_state }}%
+                  {% endif %}
+                card_mod:
+                  style: |
+                    ha-card {
+                      transform: scale(.75);
+                      margin-bottom: -20px;
+                      margin-top: 0px;
+                      transform-origin: top left;
+                      min-width: 150px;
+                      min-height: 55px;  
+                      max-height: 55px;          
+                    }
+              - type: custom:mushroom-template-card
+                view_layout:
+                  grid-area: a2
+                entity: binary_sensor.2025_ioniq_5_ev_battery_plug
+                primary: EVSE
+                secondary: >-
+                  {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_plug',
+                  'on') %}
+                    Plugged in
+                  {% else %}
+                    Unplugged
+                  {% endif %}
+                icon: mdi:ev-station
+                icon_color: >
+                  {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_plug',
+                  'on') %} blue {% else %} grey {% endif %}
+                card_mod:
+                  style: |
+                    ha-card {
+                      transform: scale(.75);
+                      transform-origin: top left;
+                      margin-bottom: -20px;
+                      margin-top: 0px;
+                      min-width: 150px;
+                      min-height: 55px;  
+                      max-height: 55px;       
+                    }
+              - type: custom:mushroom-template-card
+                view_layout:
+                  grid-area: a3
+                entity: binary_sensor.2025_ioniq_5_ev_battery_charge
+                primary: Charging
+                secondary: >-
+                  {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_charge',
+                  'on') %}
+                    {% set mins = states('sensor.2025_ioniq_5_estimated_charge_duration') | int(0) %}
+                    {% set h = (mins // 60) %}
+                    {% set m = (mins % 60) %}
+                    {{ h }}h {{ m }}m
+                  {% else %} Idle {% endif %}
+                icon: mdi:battery-charging
+                icon_color: >
+                  {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_charge',
+                  'on') %} white {% else %} grey {% endif %}
+                tap_action: more-info
+                card_mod:
+                  style: |
+                    ha-card {
+                      transform: scale(.75);
+                      transform-origin: top left;
+                      margin-bottom: -40px;
+                      margin-top: -0px;
+                      min-width: 150px;
+                      min-height: 55px;  
+                      max-height: 55px;       
+                    }
+              - type: custom:mushroom-template-card
+                view_layout:
+                  grid-area: b1
+                entity: lock.2025_ioniq_5_door_lock
+                primary: Doors
+                secondary: |-
+                  {% if is_state('lock.2025_ioniq_5_door_lock', 'locked') %}
+                    Locked
+                  {% else %}
+                    Unlocked
+                  {% endif %}
+                icon: mdi:lock
+                icon_color: >-
+                  {% if is_state('lock.2025_ioniq_5_door_lock', 'locked') %}
+                  green {% else %} red {% endif %}
+                multiline_secondary: false
+                fill_container: false
+                card_mod:
+                  style: |
+                    ha-card {
+                      transform: scale(.75);
+                      transform-origin: top left;
+                      min-width: 150px;
+                      min-height: 55px;  
+                      max-height: 55px;  
+                      margin-bottom: -40px;
+                      margin-top: 0px;
+                    }
+              - type: custom:mushroom-template-card
+                view_layout:
+                  grid-area: b2
+                entity: binary_sensor.windows
+                primary: Location
+                secondary: Home
+                icon: mdi:map-marker
+                icon_color: primary
+                tap_action: more-info
+                card_mod:
+                  style: |
+                    ha-card {
+                      transform: scale(.75);
+                      transform-origin: top left;
+                      min-width: 150px;
+                      min-height: 55px;  
+                      max-height: 55px;   
+                      margin-bottom: -40px;
+                      margin-top: 0px;
+                    }
+              - type: custom:mushroom-template-card
+                view_layout:
+                  grid-area: b3
+                entity: timer.2025_ioniq_5_bluelink_climate_timer
+                primary: >
+                  {% set mode =
+                  states('input_select.bluelink_remote_climate_mode') %} {% set
+                  timer_state =
+                  states('timer.2025_ioniq_5_bluelink_climate_timer') %} {% if
+                  mode == 'heating' and timer_state == 'active' %}
+                    Heat {{ states('sensor.bluelink_climate_timer_status_v2') }}
+                  {% elif mode == 'cooling' and timer_state == 'active' %}
+                    Cool {{ states('sensor.bluelink_climate_timer_status_v2') }}
+                  {% elif mode == 'heating' and timer_state != 'active' %}
+                    Initializing...
+                  {% elif mode == 'cooling' and timer_state != 'active' %}
+                    Initializing...
+                  {% else %}
+                    Climate
+                  {% endif %}
+                icon: >
+                  {% set mode =
+                  states('input_select.bluelink_remote_climate_mode') %} {% if
+                  mode == 'heating' %}
+                    mdi:fire
+                  {% elif mode == 'cooling' %}
+                    mdi:snowflake
+                  {% else %}
+                    mdi:thermostat
+                  {% endif %}
+                icon_color: >
+                  {% set mode =
+                  states('input_select.bluelink_remote_climate_mode') %} {% set
+                  timer_state =
+                  states('timer.2025_ioniq_5_bluelink_climate_timer') %} {% if
+                  mode == 'heating' and timer_state == 'active' %}
+                    white
+                  {% elif mode == 'cooling' and timer_state == 'active' %}
+                    white
+                  {% elif mode == 'heating' and timer_state != 'active' %}
+                    orange
+                  {% elif mode == 'cooling' and timer_state != 'active' %}
+                    blue
+                  {% else %}
+                    grey
+                  {% endif %}
+                tap_action:
+                  action: fire-dom-event
+                  browser_mod:
+                    service: browser_mod.popup
+                    data:
+                      title: Ioniq 5 Climate Control
+                      content:
+                        type: vertical-stack
+                        cards:
+                          - type: custom:mushroom-template-card
+                            entity: timer.2025_ioniq_5_bluelink_climate_timer
+                            primary: >
+                              {% set mode =
+                              states('input_select.bluelink_remote_climate_mode')
+                              %} {% set timer_state =
+                              states('timer.2025_ioniq_5_bluelink_climate_timer')
+                              %} {% if mode == 'heating' and timer_state ==
+                              'active' %}
+                                Heating ({{ states('sensor.bluelink_climate_timer_status_v2') }} Remaining)
+                              {% elif mode == 'heating' and timer_state !=
+                              'active' %}
+                                Heating Initializing
+                              {% else %}
+                                Request Remote Heating
+                              {% endif %}
+                            icon: mdi:fire
+                            icon_color: >
+                              {% if
+                              states('input_select.bluelink_remote_climate_mode')
+                              == 'heating' %}
+                                white
+                              {% else %}
+                                grey
+                              {% endif %}
+                            tap_action:
+                              action: call-service
+                              service: script.ioniq5_climate_start_heat
+                            fill_container: true
+                          - type: custom:mushroom-template-card
+                            entity: timer.2025_ioniq_5_bluelink_climate_timer
+                            primary: >
+                              {% set mode =
+                              states('input_select.bluelink_remote_climate_mode')
+                              %} {% set timer_state =
+                              states('timer.2025_ioniq_5_bluelink_climate_timer')
+                              %} {% if mode == 'cooling' and timer_state ==
+                              'active' %}
+                                Cooling ({{ states('sensor.bluelink_climate_timer_status_v2') }} Remaining)
+                              {% elif mode == 'cooling' and timer_state !=
+                              'active' %}
+                                Cooling Initializing
+                              {% else %}
+                                Request Remote Cooling
+                              {% endif %}
+                            icon: mdi:snowflake
+                            icon_color: >
+                              {% if
+                              states('input_select.bluelink_remote_climate_mode')
+                              == 'cooling' %}
+                                white
+                              {% else %}
+                                grey
+                              {% endif %}
+                            tap_action:
+                              action: call-service
+                              service: script.ioniq5_climate_start_cool
+                            fill_container: true
+                card_mod:
+                  style: >
+                    ha-card {
+                      transform: scale(.75);
+                      transform-origin: top left;
+                      min-width: 150px;
+                      min-height: 55px;  
+                      max-height: 55px;   
+                      margin-bottom: -40px;
+                      margin-top: 0px;
+                    }
+
+
+                    {% set mode =
+                    states('input_select.bluelink_remote_climate_mode') %}
+
+                    {% set timer_state =
+                    states('timer.2025_ioniq_5_bluelink_climate_timer') %}
+
+
+                    {% if mode == 'heating' and timer_state != 'active' %}
+                      ha-card {
+                        animation: flash-bg-heat 7s infinite;
+                      }
+                      @keyframes flash-bg-heat {
+                        0%, 10%, 90%, 100% { background-color: rgba(255, 69, 0, 0.7); }
+                        50% { background-color: rgba(255, 69, 0, 0.1); }
+                      }
+                    {% elif mode == 'cooling' and timer_state != 'active' %}
+                      ha-card {
+                        animation: flash-bg-cool 7s infinite;
+                      }
+                      @keyframes flash-bg-cool {
+                        0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
+                        50% { background-color: rgba(0, 153, 255, 0.1); }
+                      }
+                    {% elif mode == 'heating' and timer_state == 'active' %}
+                      ha-card {
+                        background-color: rgba(255, 69, 0, 0.7);
+                      }
+                    {% elif mode == 'cooling' and timer_state == 'active' %}
+                      ha-card {
+                        background-color: rgba(0, 153, 255, 0.7);
+                      }
+                    {% endif %}
+
+
+                    {% if mode == 'cooling' and timer_state == 'active' %}
+                      ha-state-icon {
+                        animation: spin 5s linear infinite;
+                      }
+                    {% else %}
+                      ha-state-icon {
+                        animation: none;
+                      }
+                    {% endif %}
+
+
+                    /* Spin keyframes */
+
+                    @keyframes spin {
+                      0% { transform: rotate(0deg); }
+                      100% { transform: rotate(360deg); }
+                    }
+            layout:
+              grid-template-columns: 33% 33% 33%
+              grid-template-rows: 22px 44px 44px
+              grid-template-areas: |
+                "1 1 1"  "a1 a2 a3" "b1 b2 b3"
+        column_span: 1
+      - type: grid
+        cards: []
+        column_span: 1
+    header:
+      layout: center
+      badges_position: top
+      badges_wrap: wrap
+    badges: []
+  - type: sections
+    max_columns: 4
+    title: Calendars
+    path: calendars
+    icon: ''
+    subview: false
+    sections:
+      - type: grid
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: horizontal-stack
+                cards:
+                  - type: custom:button-card
+                    name: Daily
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_option
+                      service_data:
+                        entity_id: input_select.calendar_subtab
+                        option: daily
+                    show_state: false
+                    show_icon: false
+                    styles:
+                      card:
+                        - border-radius: 10px
+                        - padding: 12px
+                        - font-weight: bold
+                        - text-align: center
+                        - background-color: >
+                            [[[ return
+                            states['input_select.calendar_subtab'].state ===
+                            'daily' ? 'var(--primary-color)' :
+                            'rgba(255,255,255,0.1)'; ]]]
+                        - color: >
+                            [[[ return
+                            states['input_select.calendar_subtab'].state ===
+                            'daily' ? 'white' : 'var(--primary-text-color)'; ]]]
+                          card_mod:
+                            style: |
+                              ha-card {
+                                position: sticky;
+                                top: 0px;
+                                z-index: 99;
+                                background: var(--card-background-color, rgba(0,0,0,0.9));
+                              }
+                  - type: custom:button-card
+                    name: 2 Week
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_option
+                      service_data:
+                        entity_id: input_select.calendar_subtab
+                        option: 2 week
+                    show_state: false
+                    show_icon: false
+                    styles:
+                      card:
+                        - border-radius: 10px
+                        - padding: 12px
+                        - font-weight: bold
+                        - text-align: center
+                        - background-color: >
+                            [[[ return
+                            states['input_select.calendar_subtab'].state === '2
+                            week' ? 'var(--primary-color)' :
+                            'rgba(255,255,255,0.1)'; ]]]
+                        - color: >
+                            [[[ return
+                            states['input_select.calendar_subtab'].state === '2
+                            week' ? 'white' : 'var(--primary-text-color)'; ]]]
+                  - type: custom:button-card
+                    name: Monthly
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_option
+                      service_data:
+                        entity_id: input_select.calendar_subtab
+                        option: monthly
+                    show_state: false
+                    show_icon: false
+                    styles:
+                      card:
+                        - border-radius: 10px
+                        - padding: 12px
+                        - font-weight: bold
+                        - text-align: center
+                        - background-color: >
+                            [[[ return
+                            states['input_select.calendar_subtab'].state ===
+                            'monthly' ? 'var(--primary-color)' :
+                            'rgba(255,255,255,0.1)'; ]]]
+                        - color: >
+                            [[[ return
+                            states['input_select.calendar_subtab'].state ===
+                            'monthly' ? 'white' : 'var(--primary-text-color)';
+                            ]]]
+            grid_options:
+              columns: full
+              rows: 1
+          - type: custom:week-planner-card
+            calendars:
+              - entity: calendar.icmw_derek
+                name: Derek-Work
+                icon: mdi:briefcase
+                color: '#4ECDC4'
+              - entity: calendar.childcard_schedule
+                name: Childcare
+                icon: mdi:teddy-bear
+                color: '#FF6B6B'
+              - entity: calendar.quinn
+                name: Quinn
+                icon: mdi:account-cowboy-hat
+                color: orange
+              - entity: calendar.sawyer
+                name: Sawyer
+                icon: mdi:unicorn-variant
+                color: pink
+              - entity: calendar.family_events
+                name: Family
+                icon: mdi:human-male-female-child
+                color: '#96CEB4'
+            days: '1'
+            startingDay: today
+            startingDayOffset: 0
+            hideWeekend: false
+            noCardBackground: false
+            compact: false
+            weather:
+              showCondition: true
+              showTemperature: false
+              showLowTemperature: false
+              useTwiceDaily: false
+            locale: en
+            showLocation: false
+            hidePastEvents: false
+            hideDaysWithoutEvents: false
+            hideTodayWithoutEvents: false
+            combineSimilarEvents: false
+            showLegend: true
+            grid_options:
+              columns: full
+              rows: auto
+            showNavigation: true
+            visibility:
+              - condition: state
+                entity: input_select.calendar_subtab
+                state: daily
+            legendToggle: true
+            showDescription: false
+            dayFormat: cccc | DDD
+            card_mod:
+              style: |
+                /* === HEADER STYLING === */
+                .header {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  align-items: center !important;
+                  text-align: center !important;
+                }
+
+                .navigation {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  align-items: center !important;
+                  margin-bottom: 0px !important;
+                  text-align: center !important;
+                }
+
+                .navigation .month {
+                  order: 0 !important;
+                  font-size: 0em !important;
+                  font-weight: bold !important;
+                  margin-bottom: 15px !important;
+                  text-align: center !important;
+                }
+
+                .navigation ul {
+                  order: 2 !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  display: flex !important;
+                  justify-content: center !important;
+                }
+
+                .navigation ul li {
+                  margin: 0 10px !important;
+                }
+
+                .navigation ul li ha-icon {
+                  font-size: 24px !important;
+                  width: 40px !important;
+                  height: 40px !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: center !important;
+                  cursor: pointer !important;
+                }
+
+                .header::before {
+                  content: "";
+                  display: block;
+                  width: 100% !important;
+                  height: 5px;
+                  background: var(--divider-color);
+                  order: 2 !important;
+                  margin-top: 1px;
+                  margin-bottom: 3px;
+                }
+
+                /* === LEGEND STYLING === */
+                .legend {
+                  margin-top: 0px !important;
+                  padding-top: 0px !important;
+                  border-top: none !important;
+                  text-align: center !important;
+                  order: 3 !important;
+                }
+
+                .legend ul {
+                  display: flex !important;
+                  flex-wrap: wrap !important;
+                  justify-content: center !important;
+                  gap: 15px !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                }
+
+                .legend ul li {
+                  font-size: 14px !important;
+                }
+
+                .legend ul li ha-icon {
+                  font-size: 16px !important;
+                  margin-right: 5px !important;
+                }
+
+                .header::after {
+                  content: "";
+                  display: block;
+                  width: 100% !important;
+                  height: 5px;
+                  background: var(--divider-color);
+                  order: 4 !important;
+                  margin-top: 3px;
+                  margin-bottom: 12px;
+                }
+          - type: custom:week-planner-card
+            calendars:
+              - entity: calendar.icmw_derek
+                name: Derek-Work
+                icon: mdi:briefcase
+                color: '#4ECDC4'
+              - entity: calendar.childcard_schedule
+                name: Childcare
+                icon: mdi:teddy-bear
+                color: '#FF6B6B'
+              - entity: calendar.quinn
+                name: Quinn
+                icon: mdi:account-cowboy-hat
+                color: orange
+              - entity: calendar.sawyer
+                name: Sawyer
+                icon: mdi:unicorn-variant
+                color: pink
+              - entity: calendar.family_events
+                name: Family
+                icon: mdi:human-male-female-child
+                color: '#96CEB4'
+            days: '14'
+            startingDayOffset: 0
+            hideWeekend: false
+            noCardBackground: false
+            compact: true
+            showLegend: true
+            legendToggle: true
+            startingDay: sunday
+            showNavigation: false
+            grid_options:
+              columns: full
+            dateFormat: DD
+            timeFormat: t
+            texts:
+              fullDay: All-Day
+              moreEvents: More...
+              noEvents: ' '
+            showTitle: true
+            showDescription: false
+            dayFormat: <big><big><b>dd</b> | </big>ccc</big>
+            visibility:
+              - condition: state
+                entity: input_select.calendar_subtab
+                state: 2 week
+              - condition: screen
+                media_query: '(min-width: 1024px)'
+            card_mod:
+              style: >
+                /* === HEADER STYLING === */
+
+                .header {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  align-items: center !important;
+                  text-align: center !important;
+                }
+
+
+                .navigation {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  align-items: center !important;
+                  margin-bottom: 0px !important;
+                  text-align: center !important;
+                }
+
+
+                .navigation .month {
+                  order: 1 !important;
+                  font-size: 1.8em !important;
+                  font-weight: bold !important;
+                  margin-bottom: 15px !important;
+                  text-align: center !important;
+                }
+
+
+                .navigation ul {
+                  order: 2 !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  display: flex !important;
+                  justify-content: center !important;
+                }
+
+
+                .navigation ul li {
+                  margin: 0 10px !important;
+                }
+
+
+                .navigation ul li ha-icon {
+                  font-size: 24px !important;
+                  width: 40px !important;
+                  height: 40px !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: center !important;
+                  cursor: pointer !important;
+                }
+
+
+                .header::before {
+                  content: "";
+                  display: block;
+                  width: 100% !important;
+                  height: 5px;
+                  background: var(--divider-color);
+                  order: 2 !important;
+                  margin-top: 1px;
+                  margin-bottom: 3px;
+                }
+
+
+                /* === LEGEND STYLING === */
+
+                .legend {
+                  margin-top: 0px !important;
+                  padding-top: 0px !important;
+                  border-top: none !important;
+                  text-align: center !important;
+                  order: 3 !important;
+                }
+
+
+                .legend ul {
+                  display: flex !important;
+                  flex-wrap: wrap !important;
+                  justify-content: center !important;
+                  gap: 15px !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                }
+
+
+                .legend ul li {
+                  font-size: 14px !important;
+                }
+
+
+                .legend ul li ha-icon {
+                  font-size: 16px !important;
+                  margin-right: 5px !important;
+                }
+
+
+                .header::after {
+                  content: "";
+                  display: block;
+                  width: 100% !important;
+                  height: 5px;
+                  background: var(--divider-color);
+                  order: 4 !important;
+                  margin-top: 3px;
+                  margin-bottom: 12px;
+                }
+
+
+                /* === CSS GRID FOR DAYS === */
+
+                .container {
+                  display: grid !important;
+                  grid-template-columns: repeat(7, 1fr) !important;
+                  grid-template-rows: auto !important;
+                  gap: 2px !important;
+                  padding: 0px !important;
+                }
+
+
+                .container .header,
+
+                .container .legend {
+                  grid-column: 1 / -1 !important;
+                }
+
+
+                /* Reorder days so Sunday is first column */
+
+                .day[data-weekday="1"] { grid-column: 2 !important; } /* Monday
+                */
+
+                .day[data-weekday="2"] { grid-column: 3 !important; } /* Tuesday
+                */
+
+                .day[data-weekday="3"] { grid-column: 4 !important; } /*
+                Wednesday */
+
+                .day[data-weekday="4"] { grid-column: 5 !important; } /*
+                Thursday */
+
+                .day[data-weekday="5"] { grid-column: 6 !important; } /* Friday
+                */
+
+                .day[data-weekday="6"] { grid-column: 7 !important; } /*
+                Saturday */
+
+                .day[data-weekday="7"] { grid-column: 1 !important; } /* Sunday
+                */
+
+
+                /* === DAY BLOCK STYLING === */
+
+                .day {
+                  background-color: rgba(255, 255, 255, 0.05) !important;
+                  border-radius: 5px !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  justify-content: flex-start !important;
+                  align-items: stretch !important;
+                  min-height: 100px !important;
+                  width: 100% !important;
+                  padding: 0 !important;
+                  overflow: hidden !important;
+                }
+
+
+                /* Highlight today */
+
+                .day.today {
+                  background-color: rgba(255, 255, 255, 0.15) !important;
+                }
+
+
+                .day.today .date {
+                  font-weight: bold !important;
+                  color: var(--primary-text-color) !important;
+                }
+
+
+                /* Inner wrapper for day content */
+
+                .day > div,
+
+                .day > div > div {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  justify-content: flex-start !important;
+                  align-items: stretch !important;
+                  width: 100% !important;
+                  padding: 5px !important;
+                  background: transparent !important;
+                }
+
+
+                /* Individual events */
+
+                .day .event {
+                  display: inline-flex !important;
+                  flex-direction: row !important;
+                  align-items: center !important;
+                  gap: 3px !important;
+                  margin: 0 !important;
+                  padding: 2px 4px !important;
+                  font-size: .75em !important;
+                  width: auto !important;
+                  white-space: normal !important;
+                  word-break: break-word !important;
+                }
+
+
+                .day .event .icon ha-icon,
+
+                .day .event .icon ha-icon svg {
+                  width: 5px !important;
+                  height: 5px !important;
+                  font-size: 5px !important;
+                  flex-shrink: 0 !important;
+                  margin-right: 4px !important;
+                }
+
+                .card-title {
+                  text-align: center !important;
+                }
+          - type: custom:week-planner-card
+            calendars:
+              - entity: calendar.icmw_derek
+                name: Derek-Work
+                icon: mdi:briefcase
+                color: '#4ECDC4'
+              - entity: calendar.childcard_schedule
+                name: Childcare
+                icon: mdi:teddy-bear
+                color: '#FF6B6B'
+              - entity: calendar.quinn
+                name: Quinn
+                icon: mdi:account-cowboy-hat
+                color: orange
+              - entity: calendar.sawyer
+                name: Sawyer
+                icon: mdi:unicorn-variant
+                color: pink
+              - entity: calendar.family_events
+                name: Family
+                icon: mdi:human-male-female-child
+                color: '#96CEB4'
+            days: '31'
+            startingDayOffset: 0
+            hideWeekend: false
+            noCardBackground: false
+            compact: true
+            showLegend: true
+            legendToggle: true
+            startingDay: month
+            showNavigation: true
+            grid_options:
+              columns: full
+            dateFormat: DD
+            timeFormat: t
+            texts:
+              fullDay: All-Day
+              moreEvents: More...
+              noEvents: ' '
+            showTitle: true
+            showDescription: false
+            dayFormat: <big><big><b>dd</b> | </big>ccc</big>
+            visibility:
+              - condition: state
+                entity: input_select.calendar_subtab
+                state: monthly
+              - condition: not
+                conditions:
+                  - condition: screen
+                    media_query: '(min-width: 0px) and (max-width: 767px)'
+            title: Monthly Calendar
+            card_mod:
+              style: >
+                /* === HEADER STYLING === */
+
+                .header, .navigation {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  align-items: center !important;
+                  text-align: center !important;
+                }
+
+
+                .navigation .month {
+                  order: 1 !important;
+                  font-size: 1.8em !important;
+                  font-weight: bold !important;
+                  margin-bottom: 15px !important;
+                }
+
+
+                .navigation ul {
+                  order: 2 !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  display: flex !important;
+                  justify-content: center !important;
+                }
+
+
+                .navigation ul li {
+                  margin: 0 10px !important;
+                }
+
+
+                .navigation ul li ha-icon {
+                  font-size: 24px !important;
+                  width: 40px !important;
+                  height: 40px !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: center !important;
+                  cursor: pointer !important;
+                }
+
+
+                .header::before, .header::after {
+                  content: "";
+                  display: block;
+                  width: 100% !important;
+                  height: 5px;
+                  background: var(--divider-color);
+                }
+
+
+                .header::before { margin: 1px 0 3px 0; order: 2 !important; }
+
+                .header::after  { margin: 3px 0 12px 0; order: 4 !important; }
+
+
+                /* === LEGEND STYLING === */
+
+                .legend {
+                  margin-top: 0 !important;
+                  padding-top: 0 !important;
+                  border-top: none !important;
+                  text-align: center !important;
+                  order: 3 !important;
+                }
+
+
+                .legend ul {
+                  display: flex !important;
+                  flex-wrap: wrap !important;
+                  justify-content: center !important;
+                  gap: 15px !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                }
+
+
+                .legend ul li {
+                  font-size: 14px !important;
+                }
+
+
+                .legend ul li ha-icon {
+                  font-size: 16px !important;
+                  margin-right: 5px !important;
+                }
+
+
+                /* === CSS GRID FOR DAYS === */
+
+                .container {
+                  display: grid !important;
+                  grid-template-columns: repeat(7, 1fr) !important;
+                  grid-template-rows: auto !important;
+                  gap: 2px !important;
+                  padding: 0 !important;
+                }
+
+
+                .container .header,
+
+                .container .legend { grid-column: 1 / -1 !important; }
+
+
+                /* Reorder days so Sunday is first */
+
+                .day[data-weekday="1"] { grid-column: 2 !important; } /* Mon */
+
+                .day[data-weekday="2"] { grid-column: 3 !important; } /* Tue */
+
+                .day[data-weekday="3"] { grid-column: 4 !important; } /* Wed */
+
+                .day[data-weekday="4"] { grid-column: 5 !important; } /* Thu */
+
+                .day[data-weekday="5"] { grid-column: 6 !important; } /* Fri */
+
+                .day[data-weekday="6"] { grid-column: 7 !important; } /* Sat */
+
+                .day[data-weekday="7"] { grid-column: 1 !important; } /* Sun */
+
+
+                /* === DAY BLOCK STYLING === */
+
+                .day {
+                  background-color: rgba(255, 255, 255, 0.05) !important;
+                  border-radius: 5px !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  justify-content: flex-start !important;
+                  align-items: stretch !important;
+                  min-height: 100px !important;
+                  width: 100% !important;
+                  padding: 0 !important;
+                  overflow: hidden !important;
+                }
+
+
+                .day.today { background-color: rgba(255, 255, 255, 0.15)
+                !important; }
+
+
+                .day > div,
+
+                .day > div > div {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  justify-content: flex-start !important;
+                  align-items: stretch !important;
+                  width: 100% !important;
+                  padding: 2px !important;
+                  background: transparent !important;
+                }
+
+
+                /* === EVENT GRID LAYOUT === */
+
+                .day .event {
+                  display: grid !important;
+                  grid-template-columns: 1fr 40px !important;
+                  grid-template-rows: auto auto !important;
+                  gap: 1px 0 !important;
+                  width: calc(100% - 9px) !important;
+                  margin: 0 5px !important;
+                  padding: 1px !important;
+                  font-size: .75em !important;
+                  white-space: normal !important;
+                  word-break: break-word !important;
+                  position: relative !important;
+                }
+
+
+                .day .event .time {
+                  grid-row: 1;
+                  grid-column: 1;
+                  align-self: start !important;
+                  margin-bottom: 2px !important;
+                }
+
+
+                .day .event .title {
+                  grid-row: 2;
+                  grid-column: 1 / span 2;
+                  align-self: start !important;
+                  font-size: 0.9em;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 3;   /* truncate to 3 lines */
+                  -webkit-box-orient: vertical;
+                  white-space: normal;
+                }
+
+
+                .day .event .icon {
+                  grid-row: 1 / 3 !important;
+                  grid-column: 2 !important;
+                  justify-self: end !important;
+                  align-self: start !important;
+                  transform: scale(0.75) !important;
+                }
+
+
+                .day > div > .event:first-child { margin-top: 0 !important; }
+
+
+                /* === CARD TITLE DIVIDER === */
+
+                .card-title { text-align: center !important; }
+
+
+                .card-title::after {
+                  content: "";
+                  display: block;
+                  width: 100% !important;
+                  height: 5px;
+                  background: var(--divider-color);
+                  order: 4 !important;
+                  margin: 12px 0 3px 0;
+                }
+
+
+                /* === TOP SPACING ABOVE DATE (V2) === */
+
+                .day > div:first-child { margin-top: 0 !important; padding: 6px
+                0 0 6px !important; }
+
+
+                .day .date {
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  line-height: 1.2em !important;
+                  font-size: 1em !important;
+                  position: relative;
+                }
+
+
+                /* Add a simple horizontal line under the date */
+
+                .day .date::after {
+                  content: "";
+                  display: block;
+                  width: 95%;
+                  height: 1px;
+                  background: rgba(255, 255, 255, 0.2);
+                  margin-top: 4px;
+                }
+          - type: custom:week-planner-card
+            calendars:
+              - entity: calendar.icmw_derek
+                name: Derek-Work
+                icon: mdi:briefcase
+                color: '#4ECDC4'
+              - entity: calendar.childcard_schedule
+                name: Childcare
+                icon: mdi:teddy-bear
+                color: '#FF6B6B'
+              - entity: calendar.quinn
+                name: Quinn
+                icon: mdi:account-cowboy-hat
+                color: orange
+              - entity: calendar.sawyer
+                name: Sawyer
+                icon: mdi:unicorn-variant
+                color: pink
+              - entity: calendar.family_events
+                name: Family
+                icon: mdi:human-male-female-child
+                color: '#96CEB4'
+            days: '14'
+            startingDay: today
+            startingDayOffset: 0
+            hideWeekend: false
+            noCardBackground: false
+            compact: false
+            weather:
+              showCondition: true
+              showTemperature: false
+              showLowTemperature: false
+              useTwiceDaily: false
+            locale: en
+            showLocation: false
+            hidePastEvents: false
+            hideDaysWithoutEvents: false
+            hideTodayWithoutEvents: false
+            combineSimilarEvents: false
+            showLegend: true
+            grid_options:
+              columns: full
+              rows: 14
+            showNavigation: true
+            visibility:
+              - condition: state
+                entity: input_select.calendar_subtab
+                state: 2 week
+              - condition: screen
+                media_query: '(min-width: 0px) and (max-width: 767px)'
+            legendToggle: true
+            showDescription: false
+            dayFormat: cccc | DDD
+            columns:
+              extraLarge: '1'
+              large: '1'
+              medium: '1'
+              small: '1'
+              extraSmall: '1'
+            card_mod:
+              style: |
+                /* === HEADER STYLING === */
+                .header {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  align-items: center !important;
+                  text-align: center !important;
+                }
+
+                .navigation {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  align-items: center !important;
+                  margin-bottom: 0px !important;
+                  text-align: center !important;
+                }
+
+                .navigation .month {
+                  order: 0 !important;
+                  font-size: 0em !important;
+                  font-weight: bold !important;
+                  margin-bottom: 15px !important;
+                  text-align: center !important;
+                }
+
+                .navigation ul {
+                  order: 2 !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  display: flex !important;
+                  justify-content: center !important;
+                }
+
+                .navigation ul li {
+                  margin: 0 10px !important;
+                }
+
+                .navigation ul li ha-icon {
+                  font-size: 24px !important;
+                  width: 40px !important;
+                  height: 40px !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: center !important;
+                  cursor: pointer !important;
+                }
+
+                .header::before {
+                  content: "";
+                  display: block;
+                  width: 100% !important;
+                  height: 5px;
+                  background: var(--divider-color);
+                  order: 2 !important;
+                  margin-top: 1px;
+                  margin-bottom: 3px;
+                }
+
+                /* === LEGEND STYLING === */
+                .legend {
+                  margin-top: 0px !important;
+                  padding-top: 0px !important;
+                  border-top: none !important;
+                  text-align: center !important;
+                  order: 3 !important;
+                }
+
+                .legend ul {
+                  display: flex !important;
+                  flex-wrap: wrap !important;
+                  justify-content: center !important;
+                  gap: 15px !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                }
+
+                .legend ul li {
+                  font-size: 14px !important;
+                }
+
+                .legend ul li ha-icon {
+                  font-size: 16px !important;
+                  margin-right: 5px !important;
+                }
+
+                .header::after {
+                  content: "";
+                  display: block;
+                  width: 100% !important;
+                  height: 5px;
+                  background: var(--divider-color);
+                  order: 4 !important;
+                  margin-top: 3px;
+                  margin-bottom: 12px;
+                }
+          - type: custom:week-planner-card
+            calendars:
+              - entity: calendar.icmw_derek
+                name: Derek-Work
+                icon: mdi:briefcase
+                color: '#4ECDC4'
+              - entity: calendar.childcard_schedule
+                name: Childcare
+                icon: mdi:teddy-bear
+                color: '#FF6B6B'
+              - entity: calendar.quinn
+                name: Quinn
+                icon: mdi:account-cowboy-hat
+                color: orange
+              - entity: calendar.sawyer
+                name: Sawyer
+                icon: mdi:unicorn-variant
+                color: pink
+              - entity: calendar.family_events
+                name: Family
+                icon: mdi:human-male-female-child
+                color: '#96CEB4'
+            days: '31'
+            startingDay: month
+            startingDayOffset: 0
+            hideWeekend: false
+            noCardBackground: false
+            compact: false
+            weather:
+              showCondition: true
+              showTemperature: false
+              showLowTemperature: false
+              useTwiceDaily: false
+            locale: en
+            showLocation: false
+            hidePastEvents: false
+            hideDaysWithoutEvents: false
+            hideTodayWithoutEvents: false
+            combineSimilarEvents: false
+            showLegend: true
+            showNavigation: true
+            visibility:
+              - condition: state
+                entity: input_select.calendar_subtab
+                state: monthly
+              - condition: screen
+                media_query: '(min-width: 0px) and (max-width: 767px)'
+            legendToggle: true
+            showDescription: false
+            dayFormat: cccc | DDD
+            columns:
+              extraLarge: '1'
+              large: '1'
+              medium: '1'
+              small: '1'
+              extraSmall: '1'
+            card_mod:
+              style: |
+                /* === HEADER STYLING === */
+                .header {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  align-items: center !important;
+                  text-align: center !important;
+                }
+
+                .navigation {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  align-items: center !important;
+                  margin-bottom: 0px !important;
+                  text-align: center !important;
+                }
+
+                .navigation .month {
+                  order: 0 !important;
+                  font-size: 0em !important;
+                  font-weight: bold !important;
+                  margin-bottom: 15px !important;
+                  text-align: center !important;
+                }
+
+                .navigation ul {
+                  order: 2 !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  display: flex !important;
+                  justify-content: center !important;
+                }
+
+                .navigation ul li {
+                  margin: 0 10px !important;
+                }
+
+                .navigation ul li ha-icon {
+                  font-size: 24px !important;
+                  width: 40px !important;
+                  height: 40px !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: center !important;
+                  cursor: pointer !important;
+                }
+
+                .header::before {
+                  content: "";
+                  display: block;
+                  width: 100% !important;
+                  height: 5px;
+                  background: var(--divider-color);
+                  order: 2 !important;
+                  margin-top: 1px;
+                  margin-bottom: 3px;
+                }
+
+                /* === LEGEND STYLING === */
+                .legend {
+                  margin-top: 0px !important;
+                  padding-top: 0px !important;
+                  border-top: none !important;
+                  text-align: center !important;
+                  order: 3 !important;
+                }
+
+                .legend ul {
+                  display: flex !important;
+                  flex-wrap: wrap !important;
+                  justify-content: center !important;
+                  gap: 15px !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                }
+
+                .legend ul li {
+                  font-size: 14px !important;
+                }
+
+                .legend ul li ha-icon {
+                  font-size: 16px !important;
+                  margin-right: 5px !important;
+                }
+
+                .header::after {
+                  content: "";
+                  display: block;
+                  width: 100% !important;
+                  height: 5px;
+                  background: var(--divider-color);
+                  order: 4 !important;
+                  margin-top: 3px;
+                  margin-bottom: 12px;
+                }
+            grid_options:
+              columns: 48
+              rows: 8
+        column_span: 4
+    cards: []
+  - type: panel
+    title: Modify Calendar
+    path: modify-calendar
+    cards:
+      - type: calendar
+        entities:
+          - calendar.icmw_derek_v1
+          - calendar.icmw_derek
+          - calendar.working_location
+          - calendar.childcard_schedule
+          - calendar.wolfsonhomeassistant_gmail_com
+          - calendar.quinn
+          - calendar.sawyer
+type: vertical-stack
+cards:
+  - type: horizontal-stack
+    cards:
+      - type: button
+        name: Daily
+        tap_action:
+          action: call-service
+          service: input_select.select_option
+          service_data:
+            entity_id: input_select.calendar_subtab
+            option: daily
+        show_icon: false
+        card_mod:
+          style: |
+            ha-card {
+              background: {% if is_state('input_select.calendar_subtab','daily') %} #4ECDC4 !important; {% else %} #1e1e1e !important; {% endif %}
+              color: {% if is_state('input_select.calendar_subtab','daily') %} white !important; {% else %} #aaa !important; {% endif %}
+              font-weight: bold;
+              border-radius: 5px;
+            }
+      - type: button
+        name: 2-Week
+        tap_action:
+          action: call-service
+          service: input_select.select_option
+          service_data:
+            entity_id: input_select.calendar_subtab
+            option: 2week
+        show_icon: false
+        card_mod:
+          style: |
+            ha-card {
+              background: {% if is_state('input_select.calendar_subtab','2week') %} #4ECDC4 !important; {% else %} #1e1e1e !important; {% endif %}
+              color: {% if is_state('input_select.calendar_subtab','2week') %} white !important; {% else %} #aaa !important; {% endif %}
+              font-weight: bold;
+              border-radius: 5px;
+            }
+      - type: button
+        name: Monthly
+        tap_action:
+          action: call-service
+          service: input_select.select_option
+          service_data:
+            entity_id: input_select.calendar_subtab
+            option: monthly
+        show_icon: false
+        card_mod:
+          style: |
+            ha-card {
+              background: {% if is_state('input_select.calendar_subtab','monthly') %} #4ECDC4 !important; {% else %} #1e1e1e !important; {% endif %}
+              color: {% if is_state('input_select.calendar_subtab','monthly') %} white !important; {% else %} #aaa !important; {% endif %}
+              font-weight: bold;
+              border-radius: 5px;
+            }
+  - type: conditional
+    conditions:
+      - entity: input_select.calendar_subtab
+        state: daily
+    card:
+      type: custom:week-planner-card
+      calendars:
+        - entity: calendar.icmw_derek
+          name: Derek-Work
+          icon: mdi:briefcase
+          color: '#4ECDC4'
+        - entity: calendar.childcard_schedule
+          name: Childcare
+          icon: mdi:teddy-bear
+          color: '#FF6B6B'
+        - entity: calendar.quinn
+          name: Quinn
+          icon: mdi:account-cowboy-hat
+          color: orange
+        - entity: calendar.sawyer
+          name: Sawyer
+          icon: mdi:unicorn-variant
+          color: pink
+        - entity: calendar.family_events
+          name: Family
+          icon: mdi:human-male-female-child
+          color: '#96CEB4'
+      days: 1
+      startingDayOffset: 0
+      compact: true
+      showLegend: true
+      showNavigation: true
+      dayFormat: <big><big><b>dd</b> | </big>ccc</big>
+  - type: conditional
+    conditions:
+      - entity: input_select.calendar_subtab
+        state: 2week
+    card:
+      type: custom:week-planner-card
+      calendars:
+        - entity: calendar.icmw_derek
+          name: Derek-Work
+          icon: mdi:briefcase
+          color: '#4ECDC4'
+        - entity: calendar.childcard_schedule
+          name: Childcare
+          icon: mdi:teddy-bear
+          color: '#FF6B6B'
+        - entity: calendar.quinn
+          name: Quinn
+          icon: mdi:account-cowboy-hat
+          color: orange
+        - entity: calendar.sawyer
+          name: Sawyer
+          icon: mdi:unicorn-variant
+          color: pink
+        - entity: calendar.family_events
+          name: Family
+          icon: mdi:human-male-female-child
+          color: '#96CEB4'
+      days: 14
+      startingDayOffset: 0
+      compact: true
+      showLegend: true
+      showNavigation: true
+      dayFormat: <big><big><b>dd</b> | </big>ccc</big>
+  - type: conditional
+    conditions:
+      - entity: input_select.calendar_subtab
+        state: monthly
+    card:
+      type: custom:week-planner-card
+      calendars:
+        - entity: calendar.icmw_derek
+          name: Derek-Work
+          icon: mdi:briefcase
+          color: '#4ECDC4'
+        - entity: calendar.childcard_schedule
+          name: Childcare
+          icon: mdi:teddy-bear
+          color: '#FF6B6B'
+        - entity: calendar.quinn
+          name: Quinn
+          icon: mdi:account-cowboy-hat
+          color: orange
+        - entity: calendar.sawyer
+          name: Sawyer
+          icon: mdi:unicorn-variant
+          color: pink
+        - entity: calendar.family_events
+          name: Family
+          icon: mdi:human-male-female-child
+          color: '#96CEB4'
+      days: 31
+      startingDayOffset: 0
+      compact: true
+      showLegend: true
+      showNavigation: true
+      dayFormat: <big><big><b>dd</b> | </big>ccc</big>
