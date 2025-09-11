@@ -393,6 +393,165 @@ views:
             grid_options:
               columns: full
               rows: 1
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            cards:
+              - type: custom:mushroom-entity-card
+                view_layout:
+                  grid-area: a1
+                entity: input_boolean.hvac_anomaly_active
+                name: A/C Anomaly
+                fill_container: false
+                icon: mdi:alarm-light
+                icon_color: yellow
+                primary_info: name
+                icon_type: icon
+                tap_action:
+                  action: fire-dom-event
+                  browser_mod:
+                    service: browser_mod.popup
+                    data:
+                      title: Doors & Windows Status
+                      content:
+                        type: vertical-stack
+                        cards:
+                          - type: entities
+                            entities:
+                              - entity: binary_sensor.windows
+                                secondary_info: >
+                                  {% set sensors =
+                                  expand('binary_sensor.windows') %} {% set
+                                  open_sensors = sensors | selectattr('state',
+                                  'eq', 'on') | list %} {% if open_sensors |
+                                  count == 0 %}
+                                    All windows closed
+                                  {% else %}
+                                    {{ open_sensors | count }} of {{ sensors | count }} windows open
+                                  {% endif %}
+                              - entity: binary_sensor.doors
+                                secondary_info: >
+                                  {% set sensors = expand('binary_sensor.doors')
+                                  %} {% set open_sensors = sensors |
+                                  selectattr('state', 'eq', 'on') | list %} {%
+                                  if open_sensors | count == 0 %}
+                                    All doors closed
+                                  {% else %}
+                                    {{ open_sensors | count }} of {{ sensors | count }} doors open
+                                  {% endif %}
+                            style: |
+                              ha-card {
+                                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                                border-radius: 12px;
+                                margin-bottom: 16px;
+                              }
+                          - type: custom:auto-entities
+                            card:
+                              type: entities
+                            filter:
+                              include:
+                                - group: binary_sensor.windows
+                                - group: binary_sensor.doors
+                            show_empty: false
+                            sort:
+                              method: state
+                            options:
+                              type: custom:mushroom-entity-card
+                              layout: horizontal
+                              icon_type: icon
+                              tap_action:
+                                action: toggle
+                              card_mod:
+                                style: |
+                                  :host {
+                                    margin-bottom: 4px;
+                                  }
+                hold_action:
+                  action: more-info
+                card_mod:
+                  style: |
+                    ha-card {
+                      {% if is_state('input_boolean.hvac_anomaly_active', 'on') %}
+                        background-color: red;
+                      {% endif %}
+                      transform: scale(0.75);
+                      transform-origin: top left;
+                      min-width: 150px;
+                      margin-bottom: 0px;
+                      margin-top: -3px;
+                      min-width: 150px;
+                      min-height: 55px;  
+                      max-height: 55px;       
+                    }
+                    ha-state-icon {
+                      padding: 4px;
+                      {% if is_state('input_boolean.hvac_anomaly_active', 'on') %}
+                        animation: pulse 4s ease-in-out infinite;
+                        color: yellow;
+                        border: 3px solid white;
+                        border-radius: 50%;
+                      {% else %}
+                        animation: none;
+                      {% endif %}
+                    }
+              - type: custom:mushroom-entity-card
+                entity: binary_sensor.windows
+                primary_info: name
+                tap_action:
+                  action: more-info
+                hold_action: none
+                double_tap_action: none
+                fill_container: false
+                icon_color: primary
+                card_mod:
+                  style: |
+                    ha-card {
+                      {% if is_state('input_boolean.hvac_anomaly_active', 'on') 
+                        and is_state('binary_sensor.windows.window', 'on') %}            
+                          background-color: red;
+                      {% endif %}
+                      transform: scale(0.75);
+                      transform-origin: top left;
+                      min-width: 150px;
+                      margin-bottom: 0px;
+                      margin-top: -3px;
+                      min-width: 150px;
+                      min-height: 55px;  
+                      max-height: 55px;       
+                    }
+              - type: custom:mushroom-entity-card
+                view_layout:
+                  grid-area: a3
+                entity: binary_sensor.doors
+                icon_color: primary
+                primary_info: name
+                tap_action:
+                  action: more-info
+                hold_action: none
+                double_tap_action: none
+                fill_container: false
+                card_mod:
+                  style: |
+                    ha-card {
+                      {% if is_state('input_boolean.hvac_anomaly_active', 'on') 
+                        and is_state('binary_sensor.windows.window', 'on') %}            
+                          background-color: red;
+                      {% endif %}
+                      transform: scale(0.75);
+                      transform-origin: top left;
+                      min-width: 150px;
+                      margin-bottom: 0px;
+                      margin-top: -3px;
+                      min-width: 150px;
+                      min-height: 55px;  
+                      max-height: 55px;       
+                    }    
+            layout:
+              grid-template-columns: 33% 33% 33%
+              grid-template-rows: 45px
+              grid-template-areas: |
+                "a1 a2 a3" 
+            grid_options:
+              columns: full
       - type: grid
         cards:
           - type: custom:simple-weather-card
