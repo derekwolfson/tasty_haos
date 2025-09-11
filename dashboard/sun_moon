@@ -1,0 +1,213 @@
+square: false
+type: grid
+columns: 2
+grid_options:
+  columns: 12
+  rows: 3
+cards:
+  - type: custom:horizon-card
+    moon: false
+    refresh_period: 60
+    fields:
+      sunrise: true
+      sunset: true
+      dawn: false
+      noon: false
+      dusk: false
+      azimuth: false
+      sun_azimuth: false
+      moon_azimuth: false
+      elevation: false
+      sun_elevation: false
+      moon_elevation: false
+      moonrise: false
+      moonset: false
+      moon_phase: false
+    southern_flip: false
+    card_mod:
+      style: >
+        ha-card {
+          min-height: 161px   
+        } /* Each field container: vertical layout, small gap between label and
+        value */
+
+        .horizon-card-text-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px; /* spacing between label and value */
+        } /* Sunrise / Sunset label (field name) */ .horizon-card-header
+        .horizon-card-field-name {
+          font-size: 14px;      /* change to desired size */
+          font-weight: 600;     /* bold */
+          color: var(--secondary-text-color);
+          text-align: center;
+        }
+
+        /* Field value (time) - like Mushroom secondary */ .horizon-card-header
+        .horizon-card-field-value {
+          font-size: 16px;
+          font-weight: 400;
+          color: 600;
+          text-align: center;
+        }
+
+
+        /* Secondary span (AM/PM) */ .horizon-card-header
+        .horizon-card-field-value-secondary {
+          font-size: 12px;
+          font-weight: 400;
+          color: var(--secondary-text-color);
+          padding-left: 2px;
+        }
+
+
+        /* Move the whole Sunrise/Sunset block slightly up */
+        .horizon-card-header{
+          transform: translateY(-5px);
+          gap: 15px; /* space between Sunrise and Sunset */
+        }
+  - type: custom:horizon-card
+    moon: true
+    refresh_period: 60
+    fields:
+      sunrise: false
+      sunset: false
+      dawn: false
+      noon: false
+      dusk: false
+      azimuth: false
+      sun_azimuth: false
+      moon_azimuth: false
+      elevation: false
+      sun_elevation: false
+      moon_elevation: false
+      moonrise: true
+      moonset: true
+      moon_phase: true
+    southern_flip: false
+    card_mod:
+      style: >
+        ha-card {
+          padding: 12px;
+          font-family: inherit;
+          line-height: 1.2;
+          border-radius: 12px;
+          background: linear-gradient(135deg, rgba(200,200,196,0.05), rgba(255,255,255,0.01));
+          box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          min-height: 161px
+        }
+
+
+        /* Hide the SVG graph */
+
+        .horizon-card-graph {
+          display: none !important;
+        }
+
+
+        /* Footer grid layout for moonrise, moonset, and moon */
+
+        .horizon-card-footer .horizon-card-field-row {
+          display: grid !important;
+          grid-template-columns: auto auto;   /* left = moonrise, right = moonset */
+          grid-template-rows: auto auto;      /* row1 = times, row2 = moon icon + phase */
+          justify-content: center;
+          align-items: start;
+          gap: 2px 26px; /* vertical gap / horizontal gap */
+          width: auto;
+          transform: translateY(0px); /* move everything up */
+          margin-top: -14px
+        }
+
+
+        /* Moonrise container (left top) */
+
+        .horizon-card-footer .horizon-card-field-row > :nth-child(1) {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          grid-column: 1;
+          grid-row: 1;
+        }
+
+
+        /* Moonset container (right top) */
+
+        .horizon-card-footer .horizon-card-field-row > :nth-child(3) {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          grid-column: 2;
+          grid-row: 1;
+        }
+
+
+        /* Moon icon + phase container (middle bottom) */
+
+        .horizon-card-footer .horizon-card-field-row > :nth-child(2) {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          grid-column: 1 / span 2; /* span both columns */
+          grid-row: 2;
+          margin-top: 0px;
+        }
+
+
+        /* Moon icon itself */
+
+        .horizon-card-field-moon-phase {
+          font-size:20px;
+          margin-top: 12px;
+        }
+
+
+        /* Moon phase text */ .horizon-card-footer .horizon-card-field-row
+        .horizon-card-field-value-moon-phase {
+          font-size: 12px !important;
+          font-weight: 600 !important;
+          color: var(--secondary-text-color) !important;
+          text-align: center;
+          margin-top: 7.5px;
+          margin-bottom: -16px
+        }
+
+
+        /* Moonrise / Moonset names */
+
+        .horizon-card-footer .horizon-card-field-name {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--secondary-text-color);
+          margin-bottom: 2px;
+        }
+
+
+        /* Moonrise / Moonset times */ .horizon-card-footer
+        .horizon-card-field-value {
+          font-size: 16px;
+          font-weight: 400;
+          color: var(--primary-text-color);
+          margin-top: 3px;
+          white-space: nowrap; /* force on one line */
+        }
+
+
+        /* AM/PM */
+
+        .horizon-card-footer .horizon-card-field-value-secondary {
+          font-size: 12px;
+          font-weight: 400;
+          color: var(--secondary-text-color);
+          padding-left: 2px;
+        }
+
+
+        /* Reduce bottom padding of footer for vertical shrink */
+        .horizon-card-footer {
+          padding-bottom: 4px;
+        }
