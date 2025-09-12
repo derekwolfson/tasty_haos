@@ -1,6 +1,6 @@
 kiosk_mode:
-  hide_header: false
-  hide_sidebar: false
+  hide_header: true
+  hide_sidebar: true
 views:
   - title: Home
     sections:
@@ -249,23 +249,28 @@ views:
             entity: climate.nest_thermostat
             show_current_as_primary: true
             name: Nest
-          - type: custom:mushroom-lock-card
-            entity: lock.door_lock
-            tap_action:
-              action: none
-            hold_action:
-              action: toggle
-            double_tap_action:
-              action: none
-            layout: horizontal
-            fill_container: false
-            name: Front Door
+            card_mod:
+              style: |
+                ha-card {
+                  transform: scale(1.035);           /* 50% larger */
+                  transform-origin: top left;      /* anchor scale to top-left */
+                  width: 100%;                     /* fill the grid cell */
+                  height: auto;                    /* adjust height automatically */
+                }
+            grid_options:
+              columns: 6
+              rows: 3
           - type: custom:layout-card
             layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: 100%
+              grid-template-rows: auto auto auto auto
+              grid-template-areas: |
+                "a" "b" "c" "d"
             cards:
               - type: custom:mushroom-entity-card
                 view_layout:
-                  grid-area: a1
+                  grid-area: a
                 entity: input_boolean.hvac_anomaly_active
                 name: A/C Anomaly
                 fill_container: false
@@ -340,14 +345,10 @@ views:
                       {% if is_state('input_boolean.hvac_anomaly_active', 'on') %}
                         background-color: red;
                       {% endif %}
-                      transform: scale(0.75);
+                      transform: scale(0.80);
+                      width: 240px;
                       transform-origin: top left;
-                      min-width: 150px;
-                      margin-bottom: 0px;
-                      margin-top: -3px;
-                      min-width: 150px;
-                      min-height: 55px;  
-                      max-height: 55px;       
+                      margin-top: -9px;     
                     }
                     ha-state-icon {
                       padding: 4px;
@@ -362,6 +363,8 @@ views:
                     }
               - type: custom:mushroom-entity-card
                 entity: binary_sensor.windows
+                view_layout:
+                  grid-area: b
                 primary_info: name
                 tap_action:
                   action: more-info
@@ -376,20 +379,15 @@ views:
                         and is_state('binary_sensor.windows', 'on') %}            
                           background-color: red;
                       {% endif %}
-                      transform: scale(0.75);
+                      transform: scale(0.80);
+                      width: 240px;
                       transform-origin: top left;
-                      min-width: 150px;
-                      margin-bottom: 0px;
-                      margin-top: -3px;
-                      margin-left: 0px;
-                      margin-right: 0px;
-                      min-width: 150px;
-                      min-height: 55px;  
-                      max-height: 55px;       
+                      margin-top: -19px;
+
                     }
               - type: custom:mushroom-entity-card
                 view_layout:
-                  grid-area: a3
+                  grid-area: c
                 entity: binary_sensor.doors
                 icon_color: primary
                 primary_info: name
@@ -405,34 +403,306 @@ views:
                         and is_state('binary_sensor.doors', 'on') %}            
                           background-color: red;
                       {% endif %}
-                      transform: scale(0.75);
+                      transform: scale(0.8);
+                      width: 240px;
                       transform-origin: top left;
-                      min-width: 150px;
-                      margin-bottom: 0px;
-                      margin-top: -3px;
-                      min-width: 150px;
-                      min-height: 55px;  
-                      max-height: 55px;       
+                      margin-top: -19px;        
                     }    
-            layout:
-              grid-template-columns: repeat(3, minmax(0, max-content))
-              grid-template-rows: 45px
-              grid-template-areas: |
-                "a1 a2 a3" 
-              card_mod:
-                style: |
-                  :host {
-                    display: grid;
-                    grid-template-columns: repeat(3, minmax(0, max-content));
-                    grid-template-rows: repeat(3, minmax(0, max-content));
-                    gap: 5px;                  /* spacing between items */
-                    padding: 0px !important;   /* remove all padding */
-                    margin: 0px !important;    /* remove external spacing */
-                    justify-content: start;     /* align left */
-                    align-content: start;       /* align top */
-                  }
+              - type: custom:mushroom-entity-card
+                entity: sensor.nest_thermostat_humidity
+                name: Indoor Humidity
+                view_layout:
+                  grid-area: d
+                card_mod:
+                  style: |
+                    ha-card {
+                      transform: scale(0.80);
+                      width: 235px;
+                      transform-origin: top left;
+                      margin-top: -19px;        
+                    }  
+              - type: custom:mushroom-empty-card
+                view_layout:
+                  grid-area: d
+                card_mod:
+                  style: |
+                    ha-card {
+                      transform: scale(0.80);
+                      width: 240px;
+                      transform-origin: top left;
+                      margin-top: -19px;        
+                    }  
             grid_options:
-              rows: 1
+              columns: 6
+              rows: 3
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: repeat(16)
+              grid-template-rows: auto auto auto
+              grid-template-areas: >
+                "t t t t t t t t t t t t" "a a a a b b b b c c c c" "d d d e e e
+                f f f g g g"
+            cards:
+              - type: custom:mushroom-title-card
+                view_layout:
+                  grid-area: t
+                card_mod:
+                  style: |
+                    ha-card {
+                        margin-top: 0px;
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; 
+                        margin-bottom: -20px;
+                        margin-top: -25px;
+                      }
+                      
+              - type: custom:mushroom-entity-card
+                entity: sensor.nest_thermostat_temperature
+                name: Primary Bed
+                icon: mdi:thermometer-lines
+                icon_color: deep-orange
+                view_layout:
+                  grid-area: a
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -9px;
+                        margin-right: -40px;
+                      }
+              - type: custom:mushroom-entity-card
+                entity: sensor.nest_thermostat_temperature
+                name: Office
+                icon: mdi:thermometer-lines
+                icon_color: deep-orange
+                view_layout:
+                  grid-area: c
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -9px;
+                        margin-right: -40px;
+                      }  
+              - type: custom:mushroom-entity-card
+                entity: sensor.nest_thermostat_temperature
+                name: Kids Bed
+                icon: mdi:thermometer-lines
+                icon_color: deep-orange
+                view_layout:
+                  grid-area: b
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -9px;
+                        margin-right: -40px;
+                      }
+              - type: custom:mushroom-entity-card
+                entity: sensor.nest_thermostat_temperature
+                name: Garage
+                icon: mdi:thermometer-lines
+                icon_color: deep-orange
+                view_layout:
+                  grid-area: d
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -30px;
+                        margin-bottom: -30px;            
+                      }
+              - type: custom:mushroom-entity-card
+                entity: sensor.nest_thermostat_temperature
+                name: Fridge 1
+                icon: mdi:thermometer-lines
+                icon_color: deep-orange
+                view_layout:
+                  grid-area: e
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -30px; 
+                        margin-bottom: -30px;            
+                      }      
+                    mushroom-name-info$ span.primary{
+                        white-space: normal !important;
+                        overflow: visible !important;
+                        text-overflow: unset !important;
+                        display: block !important;
+                      }
+              - type: custom:mushroom-entity-card
+                entity: sensor.nest_thermostat_temperature
+                name: Fridge 2
+                icon: mdi:thermometer-lines
+                icon_color: deep-orange
+                view_layout:
+                  grid-area: f
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -30px;
+                        margin-bottom: -30px;
+                      }      
+              - type: custom:mushroom-entity-card
+                entity: sensor.nest_thermostat_temperature
+                name: Bath
+                icon: mdi:thermometer-lines
+                icon_color: deep-orange
+                fill_container: false
+                view_layout:
+                  grid-area: g
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -30px;   
+                        margin-bottom: -30px;
+                      }      
+            grid_options:
+              columns: 12
+              rows: auto
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: repeat(16)
+              grid-template-rows: auto auto auto
+              grid-template-areas: >
+                "t t t t t t t t t t t t" "a a a a b b b b c c c c" "d d d e e e
+                f f f g g g"
+            cards:
+              - type: custom:mushroom-title-card
+                subtitle: Locks & Doors
+                view_layout:
+                  grid-area: t
+                card_mod:
+                  style: |
+                    ha-card {
+                        margin-top: 0px;
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; 
+                        margin-bottom: -20px;
+                        margin-top: -25px;
+                      }
+                      
+              - type: custom:mushroom-entity-card
+                entity: lock.door_lock
+                name: Front Door
+                view_layout:
+                  grid-area: a
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -9px;
+                        margin-right: -40px;
+                      }
+              - type: custom:mushroom-entity-card
+                entity: lock.door_lock
+                name: Ext. Garage
+                view_layout:
+                  grid-area: b
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -9px;
+                        margin-right: -40px;
+                      }
+              - type: custom:mushroom-entity-card
+                entity: lock.door_lock
+                name: Int. Garage
+                view_layout:
+                  grid-area: c
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -9px;
+                        margin-right: -40px;
+                      }  
+              - type: custom:mushroom-entity-card
+                entity: lock.door_lock
+                name: OHD-W
+                view_layout:
+                  grid-area: d
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -30px;
+                        margin-bottom: -30px;            
+                      }
+              - type: custom:mushroom-entity-card
+                entity: lock.door_lock
+                name: OHD-E
+                view_layout:
+                  grid-area: e
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -30px; 
+                        margin-bottom: -30px;            
+                      }      
+                    mushroom-name-info$ span.primary{
+                        white-space: normal !important;
+                        overflow: visible !important;
+                        text-overflow: unset !important;
+                        display: block !important;
+                      }
+              - type: custom:mushroom-entity-card
+                entity: lock.door_lock
+                name: CNX 1
+                view_layout:
+                  grid-area: f
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -30px;
+                        margin-bottom: -30px;
+                      }      
+              - type: custom:mushroom-entity-card
+                entity: lock.door_lock
+                name: CNX 2
+                view_layout:
+                  grid-area: g
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -30px;   
+                        margin-bottom: -30px;
+                      }      
+            grid_options:
+              columns: 12
+              rows: auto
       - type: grid
         cards:
           - type: custom:simple-weather-card
@@ -712,156 +982,9 @@ views:
               default_reset:
                 every_seconds: 10
               default_cycle_camera: true
-          - type: heading
-            icon: mdi:home-lightbulb-outline
-            heading: Lights & Scenes
-            heading_style: subtitle
-          - type: custom:mushroom-template-card
-            entity: light.indoor_lights
-            primary: Indoor
-            secondary: >
-              {% set lights = expand('light.indoor_lights') %}  {% set on_lights
-              = lights | selectattr('state', 'eq', 'on') | list %}  {% if
-              on_lights | count == 0 %}
-                Off
-              {% else %}
-                {{ on_lights | count }} Lights On
-              {% endif %}
-            icon: mdi:lightbulb-group
-            icon_color: >
-              {% if (expand('light.indoor_lights') |
-              selectattr('state','eq','on') | list | count) > 0 %}
-                yellow
-              {% else %}
-                grey
-              {% endif %}
-            tap_action:
-              action: fire-dom-event
-              browser_mod:
-                service: browser_mod.popup
-                data:
-                  title: Indoor Lights
-                  content:
-                    type: vertical-stack
-                    cards:
-                      - type: entities
-                        entities:
-                          - entity: light.indoor_lights
-                            secondary_info: >
-                              {% set lights = expand('light.indoor_lights') %} 
-                              {% set on_lights = lights | selectattr('state',
-                              'eq', 'on') | list %}  {% if on_lights | count ==
-                              0 %}
-                                All lights are off
-                              {% else %}
-                                {{ on_lights | count }} of {{ lights | count }} lights on
-                              {% endif %}
-                        style: |
-                          ha-card {
-                            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-                            border-radius: 12px;
-                            margin-bottom: 16px;
-                          }
-                      - type: custom:auto-entities
-                        card:
-                          type: entities
-                        filter:
-                          include:
-                            - group: light.indoor_lights
-                              options:
-                                card_mod:
-                                  style: |
-                                    :host:after {
-                                      {% set entity_id = config.entity %}
-                                      {% if entity_id == 'light.kitchen_lights' %}
-                                        content: "{{ states('sensor.kitchen_lights_count') }}";
-                                      {% elif entity_id == 'light.living_room_can_lights' %}
-                                        content: "{{ states('sensor.living_room_can_lights_count') }}";
-                                      {% elif entity_id == 'light.family_room_lamps' %}
-                                        content: "{{ states('sensor.family_room_lamps_count') }}";
-                                      {% elif entity_id == 'light.playroom_overhead_lights' %}
-                                        content: "{{ states('sensor.playroom_overhead_lights_count') }}";
-                                      {% else %}
-                                        content: "";
-                                      {% endif %}
-                                      position: absolute;
-                                      left: 56px;
-                                      top: 32px;
-                                      font-size: 12px;
-                                      color: var(--secondary-text-color);
-                                      opacity: 0.7;
-                                    }
-          - type: custom:mushroom-template-card
-            entity: light.outdoor_lights
-            primary: Outdoor
-            secondary: >
-              {% set lights = expand('light.outdoor_lights') %}   {% set
-              on_lights = lights | selectattr('state', 'eq', 'on') | list %}  
-              {% if on_lights | count == 0 %}
-                Off
-              {% else %}
-                {{ on_lights | count }} Lights On
-              {% endif %}
-            icon: mdi:lightbulb-group
-            icon_color: >
-              {% if (expand('light.outdoor_lights') |
-              selectattr('state','eq','on') | list | count) > 0 %}
-                yellow
-              {% else %}
-                grey
-              {% endif %}
-            tap_action:
-              action: fire-dom-event
-              browser_mod:
-                service: browser_mod.popup
-                data:
-                  title: Outdoor Lights
-                  content:
-                    type: vertical-stack
-                    cards:
-                      - type: entities
-                        entities:
-                          - entity: light.outdoor_lights
-                            secondary_info: >
-                              {% set lights = expand('light.outdoor_lights')
-                              %}   {% set on_lights = lights |
-                              selectattr('state', 'eq', 'on') | list %}   {% if
-                              on_lights | count == 0 %}
-                                All lights are off
-                              {% else %}
-                                {{ on_lights | count }} of {{ lights | count }} lights on
-                              {% endif %}
-                        style: |
-                          ha-card {
-                            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-                            border-radius: 12px;
-                            margin-bottom: 16px;
-                          }
-                      - type: custom:auto-entities
-                        card:
-                          type: entities
-                        filter:
-                          include:
-                            - group: light.outdoor_lights
-                              options:
-                                card_mod:
-                                  style: |
-                                    :host:after {
-                                      {% set entity_id = config.entity %}
-                                      {% if entity_id == 'light.outdoor_garage_lights' %}
-                                        content: "{{ states('sensor.outdoor_garage_lights_count') }}";
-                                      {% elif entity_id == 'light.floodlights' %}
-                                        content: "{{ states('sensor.floodlights_count') }}";
-                                      {% else %}
-                                        content: "";
-                                      {% endif %}
-                                      position: absolute;
-                                      left: 56px;
-                                      top: 32px;
-                                      font-size: 12px;
-                                      color: var(--secondary-text-color);
-                                      opacity: 0.7;
-                                    }
+            performance:
+              style:
+                border_radius: true
           - type: custom:layout-card
             layout_type: custom:grid-layout
             cards:
@@ -1078,18 +1201,16 @@ views:
                   {% endif %}
                 card_mod:
                   style: >
-
                     {% set stage = states('sensor.ioniq_5_battery_level_stage')
                     | int(0) %}
 
                     ha-card {
-                      transform: scale(.75);
-                      margin-bottom: -20px;
-                      margin-top: 0px;
-                      transform-origin: top left;
-                      min-width: 150px;
-                      min-height: 55px;  
-                      max-height: 55px;
+                      transform: scale(0.8);   /* 50% width, 100% height */
+                      transform-origin: top left; /* anchor the shrink */
+                      margin-top: -9px;
+                      margin-right: -40px;
+                    }
+
                     }
 
                     {% if stage == 1 %}
@@ -1141,13 +1262,10 @@ views:
                 card_mod:
                   style: |
                     ha-card {
-                      transform: scale(.75);
-                      transform-origin: top left;
-                      margin-bottom: -20px;
-                      margin-top: 0px;
-                      min-width: 150px;
-                      min-height: 55px;  
-                      max-height: 55px;       
+                      transform: scale(0.8);   /* 50% width, 100% height */
+                      transform-origin: top left; /* anchor the shrink */
+                      margin-top: -9px;
+                      margin-right: -40px;      
                     }
               - type: custom:mushroom-template-card
                 view_layout:
@@ -1176,13 +1294,10 @@ views:
                 card_mod:
                   style: >
                     ha-card {
-                      transform: scale(.75);
-                      transform-origin: top left;
-                      margin-bottom: -40px;
-                      margin-top: 0px;
-                      min-width: 150px;
-                      min-height: 55px;  
-                      max-height: 55px;       
+                      transform: scale(0.8);   /* 50% width, 100% height */
+                      transform-origin: top left; /* anchor the shrink */
+                      margin-top: -9px;
+                      margin-right: -40px;    
                     }
 
                     {% if
@@ -1219,13 +1334,11 @@ views:
                 card_mod:
                   style: |
                     ha-card {
-                      transform: scale(.75);
-                      transform-origin: top left;
-                      min-width: 150px;
-                      min-height: 55px;  
-                      max-height: 55px;  
-                      margin-bottom: -40px;
-                      margin-top: 0px;
+                      transform: scale(0.8);   /* 50% width, 100% height */
+                      transform-origin: top left; /* anchor the shrink */
+                      margin-top: -15px;
+                      margin-right: -40px;
+                      margin-bottom: -30px;
                     }
               - type: custom:mushroom-template-card
                 view_layout:
@@ -1254,13 +1367,11 @@ views:
                 card_mod:
                   style: |
                     ha-card {
-                      transform: scale(.75);
-                      transform-origin: top left;
-                      min-width: 150px;
-                      min-height: 55px;  
-                      max-height: 55px;   
-                      margin-bottom: -40px;
-                      margin-top: 0px;
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -40px;
+                        margin-bottom: -20px;
                     }
               - type: custom:mushroom-template-card
                 view_layout:
@@ -1311,13 +1422,11 @@ views:
                 card_mod:
                   style: >
                     ha-card {
-                      transform: scale(.75);
-                      transform-origin: top left;
-                      min-width: 150px;
-                      min-height: 55px;  
-                      max-height: 55px;   
-                      margin-bottom: -40px;
-                      margin-top: 0px;
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -40px;
+                        margin-bottom: -20px;
                     }
 
                     {% set mode =
@@ -1543,9 +1652,296 @@ views:
                                   100% { transform: rotate(360deg); }
             layout:
               grid-template-columns: 33% 33% 33%
-              grid-template-rows: 22px 44px 44px
+              grid-template-rows: auto auto auto
               grid-template-areas: |
                 "1 1 1"  "a1 a2 a3" "b1 b2 b3"
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              grid-template-columns: repeat(16)
+              grid-template-rows: auto auto auto
+              grid-template-areas: >
+                "t t t t t t t t t t t t" "a a a a b b b b c c c c" "d d d e e e
+                f f f g g g"
+            cards:
+              - type: custom:mushroom-title-card
+                subtitle: Lights & Scenes
+                view_layout:
+                  grid-area: t
+                card_mod:
+                  style: |
+                    ha-card {
+                        margin-top: 0px;
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; 
+                        margin-bottom: -20px;
+                        margin-top: -25px;
+                      }
+                      
+              - type: custom:mushroom-entity-card
+                entity: scene.commons_night
+                name: Night
+                icon_color: accent
+                secondary_info: state
+                primary_info: name
+                view_layout:
+                  grid-area: b
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -9px;
+                        margin-right: -40px;
+                      }
+                tap_action:
+                  action: toggle
+              - type: custom:mushroom-entity-card
+                entity: scene.commons_dinner_party
+                name: Daytime
+                tap_action:
+                  action: toggle
+                view_layout:
+                  grid-area: a
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -9px;
+                        margin-right: -40px;
+                      }
+              - type: custom:mushroom-entity-card
+                entity: scene.cleaning_mode_duplicate
+                name: All Lights Off
+                tap_action:
+                  action: toggle
+                hold_action:
+                  action: more-info
+                view_layout:
+                  grid-area: c
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -9px;
+                        margin-right: -40px;
+                      }  
+              - type: custom:mushroom-entity-card
+                entity: lock.door_lock
+                name: OHD-W
+                view_layout:
+                  grid-area: d
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -30px;
+                        margin-bottom: -30px;            
+                      }
+              - type: custom:mushroom-entity-card
+                entity: lock.door_lock
+                name: OHD-E
+                view_layout:
+                  grid-area: e
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -30px; 
+                        margin-bottom: -30px;            
+                      }      
+                    mushroom-name-info$ span.primary{
+                        white-space: normal !important;
+                        overflow: visible !important;
+                        text-overflow: unset !important;
+                        display: block !important;
+                      }
+              - type: custom:mushroom-entity-card
+                entity: lock.door_lock
+                name: CNX 1
+                view_layout:
+                  grid-area: f
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -30px;
+                        margin-bottom: -20px;
+                      }      
+              - type: custom:mushroom-entity-card
+                entity: lock.door_lock
+                name: CNX 2
+                view_layout:
+                  grid-area: g
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -30px;   
+                        margin-bottom: -30px;
+                      }      
+            grid_options:
+              columns: 12
+              rows: auto
+          - type: custom:mushroom-template-card
+            entity: light.indoor_lights
+            primary: Indoor
+            secondary: >
+              {% set lights = expand('light.indoor_lights') %}  {% set on_lights
+              = lights | selectattr('state', 'eq', 'on') | list %}  {% if
+              on_lights | count == 0 %}
+                Off
+              {% else %}
+                {{ on_lights | count }} Lights On
+              {% endif %}
+            icon: mdi:lightbulb-group
+            icon_color: >
+              {% if (expand('light.indoor_lights') |
+              selectattr('state','eq','on') | list | count) > 0 %}
+                yellow
+              {% else %}
+                grey
+              {% endif %}
+            tap_action:
+              action: fire-dom-event
+              browser_mod:
+                service: browser_mod.popup
+                data:
+                  title: Indoor Lights
+                  content:
+                    type: vertical-stack
+                    cards:
+                      - type: entities
+                        entities:
+                          - entity: light.indoor_lights
+                            secondary_info: >
+                              {% set lights = expand('light.indoor_lights') %} 
+                              {% set on_lights = lights | selectattr('state',
+                              'eq', 'on') | list %}  {% if on_lights | count ==
+                              0 %}
+                                All lights are off
+                              {% else %}
+                                {{ on_lights | count }} of {{ lights | count }} lights on
+                              {% endif %}
+                        style: |
+                          ha-card {
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                            border-radius: 12px;
+                            margin-bottom: 16px;
+                          }
+                      - type: custom:auto-entities
+                        card:
+                          type: entities
+                        filter:
+                          include:
+                            - group: light.indoor_lights
+                              options:
+                                card_mod:
+                                  style: |
+                                    :host:after {
+                                      {% set entity_id = config.entity %}
+                                      {% if entity_id == 'light.kitchen_lights' %}
+                                        content: "{{ states('sensor.kitchen_lights_count') }}";
+                                      {% elif entity_id == 'light.living_room_can_lights' %}
+                                        content: "{{ states('sensor.living_room_can_lights_count') }}";
+                                      {% elif entity_id == 'light.family_room_lamps' %}
+                                        content: "{{ states('sensor.family_room_lamps_count') }}";
+                                      {% elif entity_id == 'light.playroom_overhead_lights' %}
+                                        content: "{{ states('sensor.playroom_overhead_lights_count') }}";
+                                      {% else %}
+                                        content: "";
+                                      {% endif %}
+                                      position: absolute;
+                                      left: 56px;
+                                      top: 32px;
+                                      font-size: 12px;
+                                      color: var(--secondary-text-color);
+                                      opacity: 0.7;
+                                    }
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:mushroom-template-card
+            entity: light.outdoor_lights
+            primary: Outdoor
+            secondary: >
+              {% set lights = expand('light.outdoor_lights') %}   {% set
+              on_lights = lights | selectattr('state', 'eq', 'on') | list %}  
+              {% if on_lights | count == 0 %}
+                Off
+              {% else %}
+                {{ on_lights | count }} Lights On
+              {% endif %}
+            icon: mdi:lightbulb-group
+            icon_color: >
+              {% if (expand('light.outdoor_lights') |
+              selectattr('state','eq','on') | list | count) > 0 %}
+                yellow
+              {% else %}
+                grey
+              {% endif %}
+            tap_action:
+              action: fire-dom-event
+              browser_mod:
+                service: browser_mod.popup
+                data:
+                  title: Outdoor Lights
+                  content:
+                    type: vertical-stack
+                    cards:
+                      - type: entities
+                        entities:
+                          - entity: light.outdoor_lights
+                            secondary_info: >
+                              {% set lights = expand('light.outdoor_lights')
+                              %}   {% set on_lights = lights |
+                              selectattr('state', 'eq', 'on') | list %}   {% if
+                              on_lights | count == 0 %}
+                                All lights are off
+                              {% else %}
+                                {{ on_lights | count }} of {{ lights | count }} lights on
+                              {% endif %}
+                        style: |
+                          ha-card {
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                            border-radius: 12px;
+                            margin-bottom: 16px;
+                          }
+                      - type: custom:auto-entities
+                        card:
+                          type: entities
+                        filter:
+                          include:
+                            - group: light.outdoor_lights
+                              options:
+                                card_mod:
+                                  style: |
+                                    :host:after {
+                                      {% set entity_id = config.entity %}
+                                      {% if entity_id == 'light.outdoor_garage_lights' %}
+                                        content: "{{ states('sensor.outdoor_garage_lights_count') }}";
+                                      {% elif entity_id == 'light.floodlights' %}
+                                        content: "{{ states('sensor.floodlights_count') }}";
+                                      {% else %}
+                                        content: "";
+                                      {% endif %}
+                                      position: absolute;
+                                      left: 56px;
+                                      top: 32px;
+                                      font-size: 12px;
+                                      color: var(--secondary-text-color);
+                                      opacity: 0.7;
+                                    }
         column_span: 1
       - type: grid
         cards: []
