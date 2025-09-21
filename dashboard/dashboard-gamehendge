@@ -103,23 +103,127 @@ views:
                       {% endif %}
                       }
               - type: custom:mushroom-template-card
-                icon: mdi:checkbox
-                icon_color: grey
+                primary: AirNow AQI
+                secondary: '{{ states(''sensor.airnow_air_quality_index'') }}'
+                icon: mdi:air-filter
+                icon_color: >-
+                  {% set aqi = states('sensor.airnow_air_quality_index') |
+                  int(0) %} {% if aqi <= 50 %}
+                    green
+                  {% elif aqi <= 100 %}
+                    yellow
+                  {% elif aqi <= 150 %}
+                    orange
+                  {% elif aqi <= 200 %}
+                    red
+                  {% elif aqi <= 300 %}
+                    purple
+                  {% else %}
+                    brown
+                  {% endif %}
                 tap_action:
-                  action: none
+                  action: more-info
                 hold_action:
                   action: more-info
                 double_tap_action:
                   action: none
+                entity: sensor.airnow_air_quality_index
                 view_layout:
                   grid-area: a2
                 card_mod:
-                  style: |
+                  style: >
                     ha-card {
-                      transform: scale(0.8);   /* 50% width, 100% height */
-                      transform-origin: top left; /* anchor the shrink */
+                      transform: scale(0.8);
+                      transform-origin: top left;
                       margin-top: -9px;
-                      margin-right: -40px;      
+                      margin-right: -40px;
+                      {% set aqi = states('sensor.airnow_air_quality_index') | int(0) %}
+                      {% if aqi <= 50 %}
+                        border: 2px solid rgba(0, 153, 0, 0.7) !important;
+                      {% elif aqi <= 100 %}
+                        border: 2px solid rgba(255, 204, 0, 0.7) !important;
+                      {% elif aqi <= 150 %}
+                        border: 2px solid rgba(255, 102, 0, 0.7) !important;
+                      {% elif aqi <= 200 %}
+                        border: 2px solid rgba(204, 0, 0, 0.7) !important;
+                      {% elif aqi <= 300 %}
+                        border: 2px solid rgba(102, 0, 102, 0.7) !important;
+                      {% else %}
+                        border: 2px solid rgba(102, 0, 25, 0.7) !important;
+                      {% endif %}
+                    }
+
+                    {% set aqi = states('sensor.airnow_air_quality_index') |
+                    int(0) %}
+
+                    {% if aqi <= 50 %}
+
+                    ha-card {
+                      animation: flash-bg-green 7s infinite;
+                    }
+
+                    @keyframes flash-bg-green {
+                      0%, 10%, 90%, 100% { background-color: rgba(0, 228, 0, 0.7); }
+                      50% { background-color: rgba(0, 228, 0, 0.1); }
+                    }
+
+                    {% elif aqi <= 100 %}
+
+                    ha-card {
+                      animation: flash-bg-yellow 7s infinite;
+                    }
+
+                    @keyframes flash-bg-yellow {
+                      0%, 10%, 90%, 100% { background-color: rgba(255, 255, 0, 0.7); }
+                      50% { background-color: rgba(255, 255, 0, 0.1); }
+                    }
+
+                    {% elif aqi <= 150 %}
+
+                    ha-card {
+                      animation: flash-bg-orange 7s infinite;
+                    }
+
+                    @keyframes flash-bg-orange {
+                      0%, 10%, 90%, 100% { background-color: rgba(255, 126, 0, 0.7); }
+                      50% { background-color: rgba(255, 126, 0, 0.1); }
+                    }
+
+                    {% elif aqi <= 200 %}
+
+                    ha-card {
+                      animation: flash-bg-red 7s infinite;
+                    }
+
+                    @keyframes flash-bg-red {
+                      0%, 10%, 90%, 100% { background-color: rgba(255, 0, 0, 0.7); }
+                      50% { background-color: rgba(255, 0, 0, 0.1); }
+                    }
+
+                    {% elif aqi <= 300 %}
+
+                    ha-card {
+                      animation: flash-bg-purple 7s infinite;
+                    }
+
+                    @keyframes flash-bg-purple {
+                      0%, 10%, 90%, 100% { background-color: rgba(153, 0, 153, 0.7); }
+                      50% { background-color: rgba(153, 0, 153, 0.1); }
+                    }
+
+                    {% else %}
+
+                    ha-card {
+                      animation: flash-bg-maroon 7s infinite;
+                    }
+
+                    @keyframes flash-bg-maroon {
+                      0%, 10%, 90%, 100% { background-color: rgba(126, 0, 35, 0.7); }
+                      50% { background-color: rgba(126, 0, 35, 0.1); }
+                    }
+
+                    {% endif %}
+
                     }
               - type: custom:mushroom-template-card
                 icon: mdi:checkbox
@@ -130,6 +234,7 @@ views:
                   action: more-info
                 double_tap_action:
                   action: none
+                entity: sensor.airnow_air_quality_index
                 view_layout:
                   grid-area: a3
                 card_mod:
