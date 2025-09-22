@@ -27,7 +27,7 @@ views:
                       margin-bottom: 0px;
                       margin-top: -10px;
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: Smoke Alarm
                 secondary: >
                   {% set smoke = states('binary_sensor.smoke_alarms') %} {% set
@@ -102,25 +102,16 @@ views:
                         --shape-color: blue !important;
                       {% endif %}
                       }
-              - type: custom:mushroom-template-card
-                primary: AirNow AQI
+              - type: custom:mushroom-legacy-template-card
+                primary: >-
+                  AQI -  {% set aqi = states('sensor.airnow_air_quality_index')
+                  | int(0) %} {% if aqi <= 50 %}Good {% elif aqi <= 100
+                  %}Moderate {% elif aqi <= 150 %}USG {% elif aqi <= 200
+                  %}Unhealthy {% elif aqi <= 300 %}Very Unhealthy {% else
+                  %}Hazardous {% endif %}
                 secondary: '{{ states(''sensor.airnow_air_quality_index'') }}'
                 icon: mdi:air-filter
-                icon_color: >-
-                  {% set aqi = states('sensor.airnow_air_quality_index') |
-                  int(0) %} {% if aqi <= 50 %}
-                    green
-                  {% elif aqi <= 100 %}
-                    yellow
-                  {% elif aqi <= 150 %}
-                    orange
-                  {% elif aqi <= 200 %}
-                    red
-                  {% elif aqi <= 300 %}
-                    purple
-                  {% else %}
-                    brown
-                  {% endif %}
+                icon_color: white
                 tap_action:
                   action: more-info
                 hold_action:
@@ -137,115 +128,323 @@ views:
                       transform-origin: top left;
                       margin-top: -9px;
                       margin-right: -40px;
-                      {% set aqi = states('sensor.airnow_air_quality_index') | int(0) %}
-                      {% if aqi <= 50 %}
-                        border: 2px solid rgba(0, 153, 0, 0.7) !important;
-                      {% elif aqi <= 100 %}
-                        border: 2px solid rgba(255, 204, 0, 0.7) !important;
-                      {% elif aqi <= 150 %}
-                        border: 2px solid rgba(255, 102, 0, 0.7) !important;
-                      {% elif aqi <= 200 %}
-                        border: 2px solid rgba(204, 0, 0, 0.7) !important;
-                      {% elif aqi <= 300 %}
-                        border: 2px solid rgba(102, 0, 102, 0.7) !important;
-                      {% else %}
-                        border: 2px solid rgba(102, 0, 25, 0.7) !important;
-                      {% endif %}
                     }
+
+
+                    /* Icon shape styling for all AQI values */
 
                     {% set aqi = states('sensor.airnow_air_quality_index') |
                     int(0) %}
 
-                    {% if aqi <= 50 %}
-
-                    ha-card {
-                      animation: flash-bg-green 7s infinite;
+                    mushroom-shape-icon {
+                      {% if aqi <= 50 %}
+                        --shape-color: rgba(0, 153, 0, 0.8) !important;
+                      {% elif aqi <= 100 %}
+                        background: linear-gradient(135deg, rgba(255, 204, 0, 0.8), rgba(255, 255, 0, 0.6)) !important;
+                      {% elif aqi <= 150 %}
+                        background: linear-gradient(135deg, rgba(255, 102, 0, 0.8), rgba(255, 165, 0, 0.6)) !important;
+                      {% elif aqi <= 200 %}
+                        background: linear-gradient(135deg, rgba(204, 0, 0, 0.8), rgba(255, 0, 0, 0.6)) !important;
+                      {% elif aqi <= 300 %}
+                        background: linear-gradient(135deg, rgba(102, 0, 102, 0.8), rgba(153, 0, 153, 0.6)) !important;
+                      {% else %}
+                        background: linear-gradient(135deg, rgba(102, 0, 25, 0.8), rgba(139, 0, 0, 0.6)) !important;
+                      {% endif %}
                     }
 
-                    @keyframes flash-bg-green {
-                      0%, 10%, 90%, 100% { background-color: rgba(0, 228, 0, 0.7); }
-                      50% { background-color: rgba(0, 228, 0, 0.1); }
-                    }
 
-                    {% elif aqi <= 100 %}
+                    {% if aqi > 50 %}
 
-                    ha-card {
-                      animation: flash-bg-yellow 7s infinite;
-                    }
-
-                    @keyframes flash-bg-yellow {
-                      0%, 10%, 90%, 100% { background-color: rgba(255, 255, 0, 0.7); }
-                      50% { background-color: rgba(255, 255, 0, 0.1); }
-                    }
-
-                    {% elif aqi <= 150 %}
-
-                    ha-card {
-                      animation: flash-bg-orange 7s infinite;
-                    }
-
-                    @keyframes flash-bg-orange {
-                      0%, 10%, 90%, 100% { background-color: rgba(255, 126, 0, 0.7); }
-                      50% { background-color: rgba(255, 126, 0, 0.1); }
-                    }
-
-                    {% elif aqi <= 200 %}
-
-                    ha-card {
-                      animation: flash-bg-red 7s infinite;
-                    }
-
-                    @keyframes flash-bg-red {
-                      0%, 10%, 90%, 100% { background-color: rgba(255, 0, 0, 0.7); }
-                      50% { background-color: rgba(255, 0, 0, 0.1); }
-                    }
-
-                    {% elif aqi <= 300 %}
-
-                    ha-card {
-                      animation: flash-bg-purple 7s infinite;
-                    }
-
-                    @keyframes flash-bg-purple {
-                      0%, 10%, 90%, 100% { background-color: rgba(153, 0, 153, 0.7); }
-                      50% { background-color: rgba(153, 0, 153, 0.1); }
-                    }
-
-                    {% else %}
-
-                    ha-card {
-                      animation: flash-bg-maroon 7s infinite;
-                    }
-
-                    @keyframes flash-bg-maroon {
-                      0%, 10%, 90%, 100% { background-color: rgba(126, 0, 35, 0.7); }
-                      50% { background-color: rgba(126, 0, 35, 0.1); }
+                    mushroom-shape-icon {
+                      border-radius: 50%;
                     }
 
                     {% endif %}
 
-                    }
-              - type: custom:mushroom-template-card
-                icon: mdi:checkbox
-                icon_color: grey
+
+                    /* Animation code - only flash when AQI is not good (> 50)
+                    */
+
+                    {% if aqi > 50 %}
+                      {% if aqi <= 100 %}
+                      ha-card {
+                        animation: flash-bg-yellow 7s infinite;
+                      }
+                      @keyframes flash-bg-yellow {
+                        0%, 10%, 90%, 100% { background-color: rgba(255, 255, 0, 0.3); }
+                        50% { background-color: rgba(255, 255, 0, 0.1); }
+                      }
+                      {% elif aqi <= 150 %}
+                      ha-card {
+                        animation: flash-bg-orange 7s infinite;
+                      }
+                      @keyframes flash-bg-orange {
+                        0%, 10%, 90%, 100% { background-color: rgba(255, 126, 0, 0.7); }
+                        50% { background-color: rgba(255, 126, 0, 0.1); }
+                      }
+                      {% elif aqi <= 200 %}
+                      ha-card {
+                        animation: flash-bg-red 7s infinite;
+                      }
+                      @keyframes flash-bg-red {
+                        0%, 10%, 90%, 100% { background-color: rgba(255, 0, 0, 0.7); }
+                        50% { background-color: rgba(255, 0, 0, 0.1); }
+                      }
+                      {% elif aqi <= 300 %}
+                      ha-card {
+                        animation: flash-bg-purple 7s infinite;
+                      }
+                      @keyframes flash-bg-purple {
+                        0%, 10%, 90%, 100% { background-color: rgba(153, 0, 153, 0.7); }
+                        50% { background-color: rgba(153, 0, 153, 0.1); }
+                      }
+                      {% else %}
+                      ha-card {
+                        animation: flash-bg-maroon 7s infinite;
+                      }
+                      @keyframes flash-bg-maroon {
+                        0%, 10%, 90%, 100% { background-color: rgba(126, 0, 35, 0.7); }
+                        50% { background-color: rgba(126, 0, 35, 0.1); }
+                      }
+                      {% endif %}
+                    {% endif %}
+              - type: custom:mushroom-legacy-template-card
+                primary: >-
+                  {% set forecast =
+                  states.sensor.weather_forecast_hourly.attributes.forecast %}
+                  {% if forecast %}
+                    {% set warnings = [] %}
+                    {% set now = now() %}
+                    {% for hour in forecast[:12] %}
+                      {% set hour_time = hour.datetime | as_datetime %}
+                      {% if hour_time > now %}
+                        {% if hour.precipitation and hour.precipitation > 0 %}
+                          {% if hour.condition in ['rainy', 'pouring', 'heavy-rain'] %}
+                            {% set warnings = warnings + ['Rain'] %}
+                          {% elif hour.condition in ['snowy', 'snowy-rainy', 'snow'] %}
+                            {% set warnings = warnings + ['Snow'] %}
+                          {% endif %}
+                        {% endif %}
+                        {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                          {% set warnings = warnings + ['Wind'] %}
+                        {% endif %}
+                        {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                          {% set warnings = warnings + ['Storms'] %}
+                        {% endif %}
+                        {% if hour.condition in ['fog', 'mist'] %}
+                          {% set warnings = warnings + ['Fog'] %}
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                    {% set unique_warnings = warnings | unique | list %}
+                    {% if unique_warnings | length > 0 %}
+                      ⚠️ {{ unique_warnings | join(', ') }} Expected
+                    {% else %}
+                      ✅ Clear Conditions Ahead
+                    {% endif %}
+                  {% else %}
+                    Weather data unavailable
+                  {% endif %}
+                secondary: >-
+                  {% set forecast =
+                  states.sensor.weather_forecast_hourly.attributes.forecast %}
+                  {% if forecast %}
+                    {% set next_event_time = none %}
+                    {% set next_event_type = none %}
+                    {% set now = now() %}
+                    {% for hour in forecast[:12] %}
+                      {% set hour_time = hour.datetime | as_datetime %}
+                      {% if hour_time > now and next_event_time is none %}
+                        {% if (hour.precipitation and hour.precipitation > 0) or 
+                              (hour.wind_speed and (hour.wind_speed * 2.237) > 25) or 
+                              hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm', 'fog', 'mist'] %}
+                          {% set next_event_time = hour_time %}
+                          {% if hour.precipitation and hour.precipitation > 0 %}
+                            {% if hour.condition in ['rainy', 'pouring', 'heavy-rain'] %}
+                              {% set next_event_type = 'Rain' %}
+                            {% elif hour.condition in ['snowy', 'snowy-rainy', 'snow'] %}
+                              {% set next_event_type = 'Snow' %}
+                            {% endif %}
+                          {% elif hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                            {% set next_event_type = 'Wind' %}
+                          {% elif hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                            {% set next_event_type = 'Storms' %}
+                          {% elif hour.condition in ['fog', 'mist'] %}
+                            {% set next_event_type = 'Fog' %}
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                    {% if next_event_time and next_event_type %}
+                      Next {{ next_event_type }}: {{ next_event_time.strftime('%I:%M %p') }}
+                    {% else %}
+                      Next 12 hours look good
+                    {% endif %}
+                  {% else %}
+                    Tap to see forecast
+                  {% endif %}
+                icon: >-
+                  {% set forecast =
+                  states.sensor.weather_forecast_hourly.attributes.forecast %}
+                  {% if forecast %}
+                    {% set warnings = [] %}
+                    {% set now = now() %}
+                    {% for hour in forecast[:12] %}
+                      {% set hour_time = hour.datetime | as_datetime %}
+                      {% if hour_time > now %}
+                        {% if hour.precipitation and hour.precipitation > 0 %}
+                          {% set warnings = warnings + ['precip'] %}
+                        {% endif %}
+                        {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                          {% set warnings = warnings + ['wind'] %}
+                        {% endif %}
+                        {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                          {% set warnings = warnings + ['storm'] %}
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                    {% if 'storm' in warnings %}
+                      mdi:weather-lightning
+                    {% elif 'precip' in warnings %}
+                      mdi:weather-rainy
+                    {% elif 'wind' in warnings %}
+                      mdi:weather-windy
+                    {% else %}
+                      mdi:weather-sunny
+                    {% endif %}
+                  {% else %}
+                    mdi:weather-partly-cloudy
+                  {% endif %}
+                icon_color: >-
+                  {% set forecast =
+                  states.sensor.weather_forecast_hourly.attributes.forecast %}
+                  {% if forecast %}
+                    {% set warnings = [] %}
+                    {% set now = now() %}
+                    {% for hour in forecast[:12] %}
+                      {% set hour_time = hour.datetime | as_datetime %}
+                      {% if hour_time > now %}
+                        {% if hour.precipitation and hour.precipitation > 0 %}
+                          {% set warnings = warnings + ['precip'] %}
+                        {% endif %}
+                        {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                          {% set warnings = warnings + ['wind'] %}
+                        {% endif %}
+                        {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                          {% set warnings = warnings + ['storm'] %}
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                    {% if 'storm' in warnings %}
+                      red
+                    {% elif 'precip' in warnings %}
+                      blue
+                    {% elif 'wind' in warnings %}
+                      orange
+                    {% else %}
+                      green
+                    {% endif %}
+                  {% else %}
+                    grey
+                  {% endif %}
                 tap_action:
-                  action: none
-                hold_action:
-                  action: more-info
-                double_tap_action:
-                  action: none
-                entity: sensor.airnow_air_quality_index
-                view_layout:
-                  grid-area: a3
+                  action: fire-dom-event
+                  browser_mod:
+                    service: browser_mod.popup
+                    data:
+                      title: 12-Hour Weather Forecast
+                      content:
+                        type: markdown
+                        content: >
+                          {% set forecast =
+                          states.sensor.weather_forecast_hourly.attributes.forecast
+                          %} {% if forecast %}
+                            {% set now = now() %}
+                            {% set content_lines = [] %}
+                            {% for hour in forecast[:12] %}
+                              {% set hour_time = hour.datetime | as_datetime %}
+                              {% if hour_time > now %}
+                                {% set time_str = hour_time.strftime('%I:%M %p') %}
+                                {% set temp = hour.temperature | round(0) if hour.temperature else 'N/A' %}
+                                {% set condition = hour.condition | title if hour.condition else 'Unknown' %}
+                                {% set precip = (hour.precipitation | round(2)) if hour.precipitation else 0 %}
+                                {% set wind_ms = hour.wind_speed if hour.wind_speed else 0 %}
+                                {% set wind_mph = (wind_ms * 2.237) | round(0) %}
+                                {% set humidity = (hour.humidity | round(0)) if hour.humidity else 'N/A' %}
+                                {% set precip_prob = (hour.precipitation_probability | round(0)) if hour.precipitation_probability else 0 %}
+                                
+                                {% set warning_icons = [] %}
+                                {% if precip > 0 %}
+                                  {% if hour.condition in ['snowy', 'snowy-rainy', 'snow'] %}
+                                    {% set warning_icons = warning_icons + ['❄️'] %}
+                                  {% else %}
+                                    {% set warning_icons = warning_icons + ['🌧️'] %}
+                                  {% endif %}
+                                {% endif %}
+                                {% if wind_mph > 25 %}
+                                  {% set warning_icons = warning_icons + ['💨'] %}
+                                {% endif %}
+                                {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                                  {% set warning_icons = warning_icons + ['⚡'] %}
+                                {% endif %}
+                                {% if hour.condition in ['fog', 'mist'] %}
+                                  {% set warning_icons = warning_icons + ['🌫️'] %}
+                                {% endif %}
+                                
+                                {% set warning_str = ' ' + (warning_icons | join(' ')) if warning_icons | length > 0 else '' %}
+                                
+                                {% set line = '**' + time_str + '**' + warning_str + '<br>' %}
+                                {% set line = line + '🌡️ ' + temp|string + '°F | ' + condition + '<br>' %}
+                                {% set line = line + '💧 ' + precip|string + 'mm (' + precip_prob|string + '%) | 💨 ' + wind_mph|string + ' mph | 💦 ' + humidity|string + '%<br><br>' %}
+                                {% set content_lines = content_lines + [line] %}
+                              {% endif %}
+                            {% endfor %}
+                            {{ content_lines | join('') }}
+                          {% else %}
+                            Weather forecast data is not available.
+                          {% endif %}
                 card_mod:
                   style: |
                     ha-card {
-                      transform: scale(0.8);   /* 50% width, 100% height */
+                      transform: scale(0.8);   /* shrink card */
                       transform-origin: top left; /* anchor the shrink */
                       margin-top: -9px;
-                      margin-right: -40px;      
+                      margin-right: -40px;
+
+                      {% set forecast = states.sensor.weather_forecast_hourly.attributes.forecast %}
+                      {% if forecast %}
+                        {% set warnings = [] %}
+                        {% set now = now() %}
+                        {% for hour in forecast[:12] %}
+                          {% set hour_time = hour.datetime | as_datetime %}
+                          {% if hour_time > now %}
+                            {% if hour.precipitation and hour.precipitation > 0 %}
+                              {% set warnings = warnings + ['precip'] %}
+                            {% endif %}
+                            {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                              {% set warnings = warnings + ['wind'] %}
+                            {% endif %}
+                            {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                              {% set warnings = warnings + ['storm'] %}
+                            {% endif %}
+                          {% endif %}
+                        {% endfor %}
+                        {% if 'storm' in warnings %}
+                          #border: 4px solid red !important;
+                        {% elif 'precip' in warnings %}
+                          #border: 4px solid blue !important;
+                        {% elif 'wind' in warnings %}
+                          #border: 4px solid orange !important;
+                        {% else %}
+                          #border: 4px solid green !important;
+                        {% endif %}
+                      {% else %}
+                        #border: 4px solid grey !important;
+                      {% endif %}
                     }
-              - type: custom:mushroom-template-card
+                view_layout:
+                  grid-area: a3
+              - type: custom:mushroom-legacy-template-card
                 primary: >
                   {% set cans_out = states('input_boolean.put_out_trash') %}   
                   {% if cans_out == 'on' %}
@@ -346,7 +545,7 @@ views:
                         #--shape-color: rgba(255,255,255,0.7) !important;
                       {% endif %}
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 icon: mdi:checkbox
                 icon_color: grey
                 tap_action:
@@ -366,26 +565,72 @@ views:
                         margin-right: -40px;
                         margin-bottom: -20px;
                     }
-              - type: custom:mushroom-template-card
-                icon: mdi:checkbox
-                icon_color: grey
-                tap_action:
-                  action: none
-                hold_action:
-                  action: more-info
-                double_tap_action:
-                  action: none
+              - type: custom:mushroom-legacy-template-card
+                primary: >-
+                  {% set minutecast = states.sensor.weather_minutecast %} {% if
+                  minutecast and minutecast.state %}
+                    {% if minutecast.state == 'raining' %}
+                      Currently raining
+                    {% elif minutecast.state == 'incoming' %}
+                      Rain incoming
+                    {% elif minutecast.state == 'clear' %}
+                      No rain next hour
+                    {% else %}
+                      MinuteCast ready
+                    {% endif %}
+                  {% else %}
+                    MinuteCast unavailable
+                  {% endif %}
+                secondary: >-
+                  {% set minutecast = states.sensor.weather_minutecast %} {% if
+                  minutecast and minutecast.attributes.summary %}
+                    {{ minutecast.attributes.summary | title }}
+                  {% else %}
+                    Tap for details
+                  {% endif %}
+                icon: mdi:water
+                entity: sensor.weather_minutecast
+                icon_color: >-
+                  {% set minutecast = states.sensor.weather_minutecast %} {% if
+                  minutecast and minutecast.state %}
+                    {% if minutecast.state == 'raining' %}
+                      blue
+                    {% elif minutecast.state == 'incoming' %}
+                      orange
+                    {% elif minutecast.state == 'clear' %}
+                      white
+                    {% else %}
+                      gray
+                    {% endif %}
+                  {% else %}
+                    gray
+                  {% endif %}
                 view_layout:
                   grid-area: b3
                 card_mod:
                   style: |
                     ha-card {
-                        transform: scale(0.8);   /* 50% width, 100% height */
-                        transform-origin: top left; /* anchor the shrink */
-                        margin-top: -15px;
-                        margin-right: -40px;
-                        margin-bottom: -20px;
+                      transform: scale(0.8);
+                      transform-origin: top left;
+                      margin-top: -15px;
+                      margin-right: -40px;
+                      margin-bottom: -20px;
                     }
+
+                    {% set mc_state = states('sensor.weather_minutecast') %}
+                    {% if mc_state == 'incoming' %}
+                    ha-card {
+                      animation: flash-bg 7s infinite;
+                    }
+                    @keyframes flash-bg {
+                      0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
+                      50% { background-color: rgba(0, 153, 255, 0.1); }
+                    }
+                    {% elif mc_state == 'raining' %}
+                    ha-card {
+                      background-color: rgba(0, 153, 255, 0.7) !important;
+                    }
+                    {% endif %}
             layout:
               grid-template-columns: 33% 33% 33%
               grid-template-rows: auto auto auto
@@ -483,7 +728,7 @@ views:
                       margin-top: -9px;
                       margin-right: -40px;
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 icon: mdi:checkbox
                 icon_color: grey
                 tap_action:
@@ -502,7 +747,7 @@ views:
                       margin-top: -9px;
                       margin-right: -40px;      
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 icon: mdi:checkbox
                 icon_color: grey
                 tap_action:
@@ -534,7 +779,7 @@ views:
                       margin-right: -40px;
                       margin-bottom: -30px;
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 icon: mdi:checkbox
                 icon_color: grey
                 tap_action:
@@ -554,7 +799,7 @@ views:
                         margin-right: -40px;
                         margin-bottom: -20px;
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 icon: mdi:checkbox
                 icon_color: grey
                 tap_action:
@@ -998,7 +1243,7 @@ views:
                         margin-top: -9px;
                         margin-right: -40px;
                       }  
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: West
                 secondary: >
                   {% if
@@ -1050,7 +1295,7 @@ views:
                       50%  { background: rgba(255, 0, 0, 0.35); }
                       100% { background: rgba(255, 0, 0, 0.15); }
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: East
                 secondary: >
                   {% if
@@ -1102,7 +1347,7 @@ views:
                       50%  { background: rgba(255, 0, 0, 0.35); }
                       100% { background: rgba(255, 0, 0, 0.15); }
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: binary_sensor.ring_outdoor_contact_sensor_001_intrusion
                 primary: CNX 1
                 secondary: >
@@ -1141,7 +1386,7 @@ views:
                       50%  { background: rgba(255, 0, 0, 0.35); }
                       100% { background: rgba(255, 0, 0, 0.15); }
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: binary_sensor.ring_outdoor_contact_sensor_intrusion
                 primary: CNX 2
                 secondary: >
@@ -1215,6 +1460,66 @@ views:
             show_precipitation_probability: false
             icons: true
             name: ' '
+          - type: custom:mushroom-template-card
+            primary: >-
+              {% set minutecast = states.sensor.weather_minutecast %} {% if
+              minutecast and minutecast.state %}
+                {% if minutecast.state == 'raining' %}
+                  Currently raining
+                {% elif minutecast.state == 'incoming' %}
+                  Rain incoming
+                {% elif minutecast.state == 'clear' %}
+                  No rain next hour
+                {% else %}
+                  MinuteCast ready
+                {% endif %}
+              {% else %}
+                MinuteCast unavailable
+              {% endif %}
+            secondary: >-
+              {% set minutecast = states.sensor.weather_minutecast %} {% if
+              minutecast and minutecast.attributes.summary %}
+                {{ minutecast.attributes.summary | title }}
+              {% else %}
+                Tap for details
+              {% endif %}
+            icon: mdi:water
+            color: >-
+              {% set minutecast = states.sensor.weather_minutecast %} {% if
+              minutecast %}
+                {% if minutecast.state == 'raining' %}
+                  blue
+                {% elif minutecast.state == 'incoming' %}
+                  orange
+                {% else %}
+                  green
+                {% endif %}
+              {% else %}
+                grey
+              {% endif %}
+            features_position: bottom
+            entity: sensor.weather_minutecast
+            card_mod:
+              style: |
+                ha-card {
+                  {% set minutecast = states.sensor.weather_minutecast %}
+                  {% if minutecast %}
+                    {% if minutecast.state == 'raining' %}
+                      background-color: rgba(33, 150, 243, 0.3) !important;
+                    {% elif minutecast.state == 'incoming' %}
+                      background-color: rgba(33, 150, 243, 0.3) !important;
+                      animation: pulse 7s infinite !important;
+                    {% endif %}
+                  {% endif %}
+                }
+
+                @keyframes pulse {
+                  0% { background-color: rgba(33, 150, 243, 0.1) !important; }
+                  50% { background-color: rgba(33, 150, 243, 0.5) !important; }
+                  100% { background-color: rgba(33, 150, 243, 0.1) !important; }
+                }
+            grid_options:
+              columns: full
           - type: custom:clock-weather-card
             entity: weather.openweathermap
             title: null
@@ -1493,7 +1798,7 @@ views:
                       content:
                         type: vertical-stack
                         cards:
-                          - type: custom:mushroom-template-card
+                          - type: custom:mushroom-legacy-template-card
                             entity: timer.ev9_climate_timer
                             primary: >
                               {% set mode =
@@ -1573,7 +1878,7 @@ views:
                                     40% { transform: translateY(-1.2px) rotate(5deg); } 
                                     60% { transform: translateY(-1.1px) rotate(-4deg); } 
                                   }
-                          - type: custom:mushroom-template-card
+                          - type: custom:mushroom-legacy-template-card
                             entity: timer.ev9_climate_timer
                             primary: >
                               {% set mode =
@@ -1656,7 +1961,7 @@ views:
                   grid-area: 1
                   grid-column-start: 1
                   grid-column-end: 3
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: sensor.ev9_ev_battery_level
                 primary: Battery
                 icon: mdi:car-battery
@@ -1731,7 +2036,7 @@ views:
                     }
 
                     {% endif %}
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: binary_sensor.ev9_ev_battery_plug
                 primary: EVSE
                 secondary: |-
@@ -1760,7 +2065,7 @@ views:
                       margin-top: -9px;
                       margin-right: -40px;      
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: binary_sensor.2025_ioniq_5_ev_battery_charge
                 secondary: |
                   {% if is_state('binary_sensor.ev9_ev_battery_charge', 'on') %}
@@ -1809,7 +2114,7 @@ views:
                     }
 
                     {% endif %}
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: lock.ev9_door_lock
                 primary: Doors
                 secondary: |-
@@ -1841,7 +2146,7 @@ views:
                       margin-right: -40px;
                       margin-bottom: -30px;
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: device_tracker.2025_ioniq_5_location
                 primary: Location
                 secondary: >
@@ -1881,7 +2186,7 @@ views:
                         margin-right: -40px;
                         margin-bottom: -20px;
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: timer.ev9_climate_timer
                 primary: >
                   {% set mode = states('input_select.ev9_remote_climate_mode')
@@ -1929,7 +2234,7 @@ views:
                       content:
                         type: vertical-stack
                         cards:
-                          - type: custom:mushroom-template-card
+                          - type: custom:mushroom-legacy-template-card
                             entity: timer.ev9_climate_timer
                             primary: >
                               {% set mode =
@@ -2009,7 +2314,7 @@ views:
                                     40% { transform: translateY(-1.2px) rotate(5deg); } 
                                     60% { transform: translateY(-1.1px) rotate(-4deg); } 
                                   }
-                          - type: custom:mushroom-template-card
+                          - type: custom:mushroom-legacy-template-card
                             entity: timer.ev9_climate_timer
                             primary: >
                               {% set mode =
@@ -2177,7 +2482,7 @@ views:
                       margin-bottom: -20px;
                       margin-top: -25px;
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: Daytime
                 icon: mdi:white-balance-sunny
                 tap_action:
@@ -2208,7 +2513,7 @@ views:
                         color: white;
                       {% endif %}
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: Evening
                 icon: mdi:weather-night
                 tap_action:
@@ -2239,7 +2544,7 @@ views:
                         color: white;
                       {% endif %}
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: All Lights Off
                 icon: mdi:lightbulb-off
                 tap_action:
@@ -2272,7 +2577,7 @@ views:
                   {% else %}
                     var(--accent-color)
                   {% endif %}
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: Cook
                 icon: mdi:chef-hat
                 tap_action:
@@ -2304,7 +2609,7 @@ views:
                   {% else %}
                     var(--accent-color)
                   {% endif %}
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: Clean
                 icon: mdi:broom
                 tap_action:
@@ -2342,7 +2647,7 @@ views:
                   {% else %}
                     var(--accent-color)
                   {% endif %}
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: Night
                 icon: mdi:weather-night
                 tap_action:
@@ -2375,7 +2680,7 @@ views:
                         color: white;
                       {% endif %}
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: TV
                 icon: mdi:television
                 tap_action:
@@ -2419,7 +2724,7 @@ views:
                 "t t t t t t t t t t t t" "a a a a a a b b b b b b" "d d d e e e
                 f f f g g g"
             cards:
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: light.indoor_lights
                 view_layout:
                   grid-area: a
@@ -2496,7 +2801,7 @@ views:
                                           color: var(--secondary-text-color);
                                           opacity: 0.7;
                                         }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: light.outdoor_lights
                 primary: Outdoor
                 view_layout:
@@ -2581,11 +2886,6 @@ views:
                 show_header: true
                 name: Trash Pickup
                 icon: mdi:delete-empty
-              - type: entities
-                entities:
-                  - sensor.backup_backup_manager_state
-                  - light.family_room_lamps
-                  - light.outdoor_garage_lights
               - type: custom:bubble-card
                 card_type: button
                 button_type: switch
@@ -2758,7 +3058,11 @@ views:
                 name: Family
                 icon: mdi:human-male-female-child
                 color: '#96CEB4'
-            days: '1'
+              - entity: calendar.trash_pickup
+                name: Trash
+                icon: mdi:delete-circle-outline
+                color: magenta
+            days: '3'
             startingDay: today
             startingDayOffset: 0
             hideWeekend: false
@@ -2787,6 +3091,12 @@ views:
             legendToggle: true
             showDescription: false
             dayFormat: cccc | DDD
+            columns:
+              extraLarge: '3'
+              large: '3'
+              medium: '3'
+              small: '3'
+              extraSmall: '3'
             card_mod:
               style: |
                 /* === HEADER STYLING === */
@@ -2883,279 +3193,74 @@ views:
                   margin-top: 3px;
                   margin-bottom: 12px;
                 }
-          - type: custom:week-planner-card
-            calendars:
-              - entity: calendar.icmw_derek
-                name: Derek-Work
-                icon: mdi:briefcase
-                color: '#4ECDC4'
-              - entity: calendar.childcard_schedule
-                name: Childcare
-                icon: mdi:teddy-bear
-                color: '#FF6B6B'
-              - entity: calendar.quinn
-                name: Quinn
-                icon: mdi:account-cowboy-hat
-                color: orange
-              - entity: calendar.sawyer
-                name: Sawyer
-                icon: mdi:unicorn-variant
-                color: pink
-              - entity: calendar.family_events
-                name: Family
-                icon: mdi:human-male-female-child
-                color: '#96CEB4'
-            days: '14'
-            startingDayOffset: 0
-            hideWeekend: false
-            noCardBackground: false
-            compact: true
-            showLegend: true
-            legendToggle: true
-            startingDay: sunday
-            showNavigation: false
-            grid_options:
-              columns: full
-            dateFormat: DD
-            timeFormat: t
-            texts:
-              fullDay: All-Day
-              moreEvents: More...
-              noEvents: ' '
-            showTitle: true
-            showDescription: false
-            dayFormat: <big><big><b>dd</b> | </big>ccc</big>
-            visibility:
-              - condition: state
-                entity: input_select.calendar_subtab
-                state: 2 week
-              - condition: screen
-                media_query: '(min-width: 1024px)'
-            card_mod:
-              style: >
-                /* === HEADER STYLING === */
 
-                .header {
-                  display: flex !important;
-                  flex-direction: column !important;
-                  align-items: center !important;
-                  text-align: center !important;
-                }
-
-
-                .navigation {
-                  display: flex !important;
-                  flex-direction: column !important;
-                  align-items: center !important;
-                  margin-bottom: 0px !important;
-                  text-align: center !important;
-                }
-
-
-                .navigation .month {
-                  order: 1 !important;
-                  font-size: 1.8em !important;
-                  font-weight: bold !important;
-                  margin-bottom: 15px !important;
-                  text-align: center !important;
-                }
-
-
-                .navigation ul {
-                  order: 2 !important;
-                  margin: 0 !important;
-                  padding: 0 !important;
-                  display: flex !important;
-                  justify-content: center !important;
-                }
-
-
-                .navigation ul li {
-                  margin: 0 10px !important;
-                }
-
-
-                .navigation ul li ha-icon {
-                  font-size: 24px !important;
-                  width: 40px !important;
-                  height: 40px !important;
-                  display: flex !important;
-                  align-items: center !important;
-                  justify-content: center !important;
-                  cursor: pointer !important;
-                }
-
-
-                .header::before {
-                  content: "";
-                  display: block;
-                  width: 100% !important;
-                  height: 5px;
-                  background: var(--divider-color);
-                  order: 2 !important;
-                  margin-top: 1px;
-                  margin-bottom: 3px;
-                }
-
-
-                /* === LEGEND STYLING === */
-
-                .legend {
-                  margin-top: 0px !important;
-                  padding-top: 0px !important;
-                  border-top: none !important;
-                  text-align: center !important;
-                  order: 3 !important;
-                }
-
-
-                .legend ul {
-                  display: flex !important;
-                  flex-wrap: wrap !important;
-                  justify-content: center !important;
-                  gap: 15px !important;
-                  margin: 0 !important;
-                  padding: 0 !important;
-                }
-
-
-                .legend ul li {
-                  font-size: 14px !important;
-                }
-
-
-                .legend ul li ha-icon {
-                  font-size: 16px !important;
-                  margin-right: 5px !important;
-                }
-
-
-                .header::after {
-                  content: "";
-                  display: block;
-                  width: 100% !important;
-                  height: 5px;
-                  background: var(--divider-color);
-                  order: 4 !important;
-                  margin-top: 3px;
-                  margin-bottom: 12px;
-                }
-
-
-                /* === CSS GRID FOR DAYS === */
-
-                .container {
-                  display: grid !important;
-                  grid-template-columns: repeat(7, 1fr) !important;
-                  grid-template-rows: auto !important;
-                  gap: 2px !important;
-                  padding: 0px !important;
-                }
-
-
-                .container .header,
-
-                .container .legend {
-                  grid-column: 1 / -1 !important;
-                }
-
-
-                /* Reorder days so Sunday is first column */
-
-                .day[data-weekday="1"] { grid-column: 2 !important; } /* Monday
-                */
-
-                .day[data-weekday="2"] { grid-column: 3 !important; } /* Tuesday
-                */
-
-                .day[data-weekday="3"] { grid-column: 4 !important; } /*
-                Wednesday */
-
-                .day[data-weekday="4"] { grid-column: 5 !important; } /*
-                Thursday */
-
-                .day[data-weekday="5"] { grid-column: 6 !important; } /* Friday
-                */
-
-                .day[data-weekday="6"] { grid-column: 7 !important; } /*
-                Saturday */
-
-                .day[data-weekday="7"] { grid-column: 1 !important; } /* Sunday
-                */
-
-
-                /* === DAY BLOCK STYLING === */
-
-                .day {
-                  background-color: rgba(255, 255, 255, 0.05) !important;
-                  border-radius: 5px !important;
-                  display: flex !important;
-                  flex-direction: column !important;
-                  justify-content: flex-start !important;
-                  align-items: stretch !important;
-                  min-height: 100px !important;
-                  width: 100% !important;
-                  padding: 0 !important;
-                  overflow: hidden !important;
-                }
-
-
-                /* Highlight today */
-
-                .day.today {
-                  background-color: rgba(255, 255, 255, 0.15) !important;
-                }
-
-
-                .day.today .date {
-                  font-weight: bold !important;
-                  color: var(--primary-text-color) !important;
-                }
-
-
-                /* Inner wrapper for day content */
-
-                .day > div,
-
-                .day > div > div {
-                  display: flex !important;
-                  flex-direction: column !important;
-                  justify-content: flex-start !important;
-                  align-items: stretch !important;
-                  width: 100% !important;
-                  padding: 5px !important;
-                  background: transparent !important;
-                }
-
-
-                /* Individual events */
-
+                /* === EVENT STYLING (from monthly) === */
                 .day .event {
-                  display: inline-flex !important;
-                  flex-direction: row !important;
-                  align-items: center !important;
-                  gap: 3px !important;
-                  margin: 0 !important;
-                  padding: 2px 4px !important;
-                  font-size: .75em !important;
-                  width: auto !important;
+                  display: grid !important;
+                  grid-template-columns: 1fr 40px !important;
+                  grid-template-rows: auto auto !important;
+                  gap: 1px 0 !important;
+                  width: calc(100% - 9px) !important;
+                  margin: 0 5px 3px 5px !important;
+                  padding: 3px !important;
+                  font-size: 0.9em !important;   /* bigger text */
                   white-space: normal !important;
                   word-break: break-word !important;
+                  position: relative !important;
+                  border-radius: 4px !important;
+                  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                  background-color: var(--border-color) !important;
+                  
+                  /* Rounded only on the left side */
+                  border-top-left-radius: 4px !important;
+                  border-bottom-left-radius: 4px !important;
+                  border-top-right-radius: 0 !important;
+                  border-bottom-right-radius: 0 !important;
                 }
 
-
-                .day .event .icon ha-icon,
-
-                .day .event .icon ha-icon svg {
-                  width: 5px !important;
-                  height: 5px !important;
-                  font-size: 5px !important;
-                  flex-shrink: 0 !important;
-                  margin-right: 4px !important;
+                .day .event .time {
+                  grid-row: 1;
+                  grid-column: 1;
+                  align-self: start !important;
+                  margin-bottom: 2px !important;
+                  font-weight: bold !important;
+                  font-size: 1em !important;     /* larger */
+                  color: black !important;
                 }
 
-                .card-title {
-                  text-align: center !important;
+                .day .event .title {
+                  grid-row: 2;
+                  grid-column: 1 / span 2;
+                  align-self: start !important;
+                  font-size: 1em !important;     /* larger */
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 3;
+                  -webkit-box-orient: vertical;
+                  white-space: normal;
+                  color: black !important;
+                  font-weight: bold !important;
+                }
+
+                .day .event .icon {
+                  grid-row: 1 / 3 !important;
+                  grid-column: 2 !important;
+                  justify-self: end !important;
+                  align-self: start !important;
+                  transform: scale(0.9) !important;  /* slightly larger */
+                  color: white !important;
+                  background-color: #404040 !important;
+                  border-radius: 50% !important;
+                  width: 28px !important;            /* larger icon */
+                  height: 28px !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: center !important;
+                }
+
+                .day > div > .event:first-child {
+                  margin-top: 0 !important;
                 }
           - type: custom:week-planner-card
             calendars:
@@ -3179,6 +3284,10 @@ views:
                 name: Family
                 icon: mdi:human-male-female-child
                 color: '#96CEB4'
+              - entity: calendar.trash_pickup
+                name: Trash
+                icon: mdi:delete-circle-outline
+                color: magenta
             days: '31'
             startingDayOffset: 0
             hideWeekend: false
@@ -3372,12 +3481,22 @@ views:
                   grid-template-rows: auto auto !important;
                   gap: 1px 0 !important;
                   width: calc(100% - 9px) !important;
-                  margin: 0 5px !important;
-                  padding: 1px !important;
+                  margin: 0 5px 3px 5px !important;
+                  padding: 3px !important;
                   font-size: .75em !important;
                   white-space: normal !important;
                   word-break: break-word !important;
                   position: relative !important;
+                  border-radius: 4px !important;
+                  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                }
+
+
+                /* === EVENT BACKGROUND COLORS === */
+
+                /* Use the calendar's border color as background at full opacity
+                */ .day .event {
+                  background-color: var(--border-color) !important;
                 }
 
 
@@ -3386,6 +3505,8 @@ views:
                   grid-column: 1;
                   align-self: start !important;
                   margin-bottom: 2px !important;
+                  font-weight: bold !important;
+                  color: black !important;
                 }
 
 
@@ -3400,15 +3521,27 @@ views:
                   -webkit-line-clamp: 3;   /* truncate to 3 lines */
                   -webkit-box-orient: vertical;
                   white-space: normal;
+                  color: black !important;
+                  font-weight: bold !important;
                 }
 
 
                 .day .event .icon {
                   grid-row: 1 / 3 !important;
                   grid-column: 2 !important;
-                  justify-self: end !important;
-                  align-self: start !important;
+
+                  justify-self: center !important;   /* center horizontally */
+                  align-self: center !important;     /* center vertically */
+
                   transform: scale(0.75) !important;
+                  color: white !important;
+                  background-color: #404040 !important;
+                  border-radius: 50% !important;
+                  width: 24px !important;
+                  height: 24px !important;
+                  display: flex !important;
+                  align-items: center !important;
+                  justify-content: center !important;
                 }
 
 
@@ -3478,68 +3611,53 @@ views:
                 name: Family
                 icon: mdi:human-male-female-child
                 color: '#96CEB4'
+              - entity: calendar.trash_pickup
+                name: Trash
+                icon: mdi:delete-circle-outline
+                color: magenta
             days: '14'
-            startingDay: today
             startingDayOffset: 0
             hideWeekend: false
             noCardBackground: false
-            compact: false
-            weather:
-              showCondition: true
-              showTemperature: false
-              showLowTemperature: false
-              useTwiceDaily: false
-            locale: en
-            showLocation: false
-            hidePastEvents: false
-            hideDaysWithoutEvents: false
-            hideTodayWithoutEvents: false
-            combineSimilarEvents: false
+            compact: true
             showLegend: true
+            legendToggle: true
+            startingDay: today
+            showNavigation: true
             grid_options:
               columns: full
-              rows: 14
-            showNavigation: true
+            dateFormat: DD
+            timeFormat: t
+            texts:
+              fullDay: All-Day
+              moreEvents: More...
+              noEvents: ' '
+            showTitle: true
+            showDescription: false
+            dayFormat: <big><big><b>dd</b> | </big>ccc</big>
             visibility:
               - condition: state
                 entity: input_select.calendar_subtab
                 state: 2 week
-              - condition: screen
-                media_query: '(min-width: 0px) and (max-width: 767px)'
-            legendToggle: true
-            showDescription: false
-            dayFormat: cccc | DDD
-            columns:
-              extraLarge: '1'
-              large: '1'
-              medium: '1'
-              small: '1'
-              extraSmall: '1'
             card_mod:
-              style: |
+              style: >
                 /* === HEADER STYLING === */
-                .header {
+
+                .header, .navigation {
                   display: flex !important;
                   flex-direction: column !important;
                   align-items: center !important;
                   text-align: center !important;
                 }
 
-                .navigation {
-                  display: flex !important;
-                  flex-direction: column !important;
-                  align-items: center !important;
-                  margin-bottom: 0px !important;
-                  text-align: center !important;
-                }
 
                 .navigation .month {
-                  order: 0 !important;
-                  font-size: 0em !important;
+                  order: 1 !important;
+                  font-size: 1.8em !important;
                   font-weight: bold !important;
                   margin-bottom: 15px !important;
-                  text-align: center !important;
                 }
+
 
                 .navigation ul {
                   order: 2 !important;
@@ -3549,9 +3667,11 @@ views:
                   justify-content: center !important;
                 }
 
+
                 .navigation ul li {
                   margin: 0 10px !important;
                 }
+
 
                 .navigation ul li ha-icon {
                   font-size: 24px !important;
@@ -3563,25 +3683,31 @@ views:
                   cursor: pointer !important;
                 }
 
-                .header::before {
+
+                .header::before, .header::after {
                   content: "";
                   display: block;
                   width: 100% !important;
                   height: 5px;
                   background: var(--divider-color);
-                  order: 2 !important;
-                  margin-top: 1px;
-                  margin-bottom: 3px;
                 }
 
+
+                .header::before { margin: 1px 0 3px 0; order: 2 !important; }
+
+                .header::after  { margin: 3px 0 12px 0; order: 4 !important; }
+
+
                 /* === LEGEND STYLING === */
+
                 .legend {
-                  margin-top: 0px !important;
-                  padding-top: 0px !important;
+                  margin-top: 0 !important;
+                  padding-top: 0 !important;
                   border-top: none !important;
                   text-align: center !important;
                   order: 3 !important;
                 }
+
 
                 .legend ul {
                   display: flex !important;
@@ -3592,180 +3718,200 @@ views:
                   padding: 0 !important;
                 }
 
+
                 .legend ul li {
                   font-size: 14px !important;
                 }
+
 
                 .legend ul li ha-icon {
                   font-size: 16px !important;
                   margin-right: 5px !important;
                 }
 
-                .header::after {
-                  content: "";
-                  display: block;
+
+                /* === CSS GRID FOR DAYS === */
+
+                .container {
+                  display: grid !important;
+                  grid-template-columns: repeat(7, 1fr) !important;
+                  grid-template-rows: auto !important;
+                  gap: 2px !important;
+                  padding: 0 !important;
+                }
+
+
+                .container .header,
+
+                .container .legend { grid-column: 1 / -1 !important; }
+
+
+                /* Reorder days so Sunday is first */
+
+                .day[data-weekday="1"] { grid-column: 2 !important; } /* Mon */
+
+                .day[data-weekday="2"] { grid-column: 3 !important; } /* Tue */
+
+                .day[data-weekday="3"] { grid-column: 4 !important; } /* Wed */
+
+                .day[data-weekday="4"] { grid-column: 5 !important; } /* Thu */
+
+                .day[data-weekday="5"] { grid-column: 6 !important; } /* Fri */
+
+                .day[data-weekday="6"] { grid-column: 7 !important; } /* Sat */
+
+                .day[data-weekday="7"] { grid-column: 1 !important; } /* Sun */
+
+
+                /* === DAY BLOCK STYLING === */
+
+                .day {
+                  background-color: rgba(255, 255, 255, 0.05) !important;
+                  border-radius: 5px !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  justify-content: flex-start !important;
+                  align-items: stretch !important;
+                  min-height: 100px !important;
                   width: 100% !important;
-                  height: 5px;
-                  background: var(--divider-color);
-                  order: 4 !important;
-                  margin-top: 3px;
-                  margin-bottom: 12px;
-                }
-          - type: custom:week-planner-card
-            calendars:
-              - entity: calendar.icmw_derek
-                name: Derek-Work
-                icon: mdi:briefcase
-                color: '#4ECDC4'
-              - entity: calendar.childcard_schedule
-                name: Childcare
-                icon: mdi:teddy-bear
-                color: '#FF6B6B'
-              - entity: calendar.quinn
-                name: Quinn
-                icon: mdi:account-cowboy-hat
-                color: orange
-              - entity: calendar.sawyer
-                name: Sawyer
-                icon: mdi:unicorn-variant
-                color: pink
-              - entity: calendar.family_events
-                name: Family
-                icon: mdi:human-male-female-child
-                color: '#96CEB4'
-            days: '31'
-            startingDay: month
-            startingDayOffset: 0
-            hideWeekend: false
-            noCardBackground: false
-            compact: false
-            weather:
-              showCondition: true
-              showTemperature: false
-              showLowTemperature: false
-              useTwiceDaily: false
-            locale: en
-            showLocation: false
-            hidePastEvents: false
-            hideDaysWithoutEvents: false
-            hideTodayWithoutEvents: false
-            combineSimilarEvents: false
-            showLegend: true
-            showNavigation: true
-            visibility:
-              - condition: state
-                entity: input_select.calendar_subtab
-                state: monthly
-              - condition: screen
-                media_query: '(min-width: 0px) and (max-width: 767px)'
-            legendToggle: true
-            showDescription: false
-            dayFormat: cccc | DDD
-            columns:
-              extraLarge: '1'
-              large: '1'
-              medium: '1'
-              small: '1'
-              extraSmall: '1'
-            card_mod:
-              style: |
-                /* === HEADER STYLING === */
-                .header {
-                  display: flex !important;
-                  flex-direction: column !important;
-                  align-items: center !important;
-                  text-align: center !important;
+                  padding: 0 !important;
+                  overflow: hidden !important;
                 }
 
-                .navigation {
+
+                .day.today { background-color: rgba(255, 255, 255, 0.15)
+                !important; }
+
+
+                .day > div,
+
+                .day > div > div {
                   display: flex !important;
                   flex-direction: column !important;
-                  align-items: center !important;
-                  margin-bottom: 0px !important;
-                  text-align: center !important;
+                  justify-content: flex-start !important;
+                  align-items: stretch !important;
+                  width: 100% !important;
+                  padding: 2px !important;
+                  background: transparent !important;
                 }
 
-                .navigation .month {
-                  order: 0 !important;
-                  font-size: 0em !important;
+
+                /* === EVENT GRID LAYOUT === */
+
+                .day .event {
+                  display: grid !important;
+                  grid-template-columns: 1fr 40px !important;
+                  grid-template-rows: auto auto !important;
+                  gap: 1px 0 !important;
+                  width: calc(100% - 9px) !important;
+                  margin: 0 5px 3px 5px !important;
+                  padding: 3px !important;
+                  font-size: .75em !important;
+                  white-space: normal !important;
+                  word-break: break-word !important;
+                  position: relative !important;
+                  border-radius: 4px !important;
+                  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                }
+
+
+                /* === EVENT BACKGROUND COLORS === */
+
+                /* Use the calendar's border color as background at full opacity
+                */ .day .event {
+                  background-color: var(--border-color) !important;
+                }
+
+
+                .day .event .time {
+                  grid-row: 1;
+                  grid-column: 1;
+                  align-self: start !important;
+                  margin-bottom: 2px !important;
                   font-weight: bold !important;
-                  margin-bottom: 15px !important;
-                  text-align: center !important;
+                  color: black !important;
                 }
 
-                .navigation ul {
-                  order: 2 !important;
-                  margin: 0 !important;
-                  padding: 0 !important;
-                  display: flex !important;
-                  justify-content: center !important;
+
+                .day .event .title {
+                  grid-row: 2;
+                  grid-column: 1 / span 2;
+                  align-self: start !important;
+                  font-size: 0.9em;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 3;   /* truncate to 3 lines */
+                  -webkit-box-orient: vertical;
+                  white-space: normal;
+                  color: black !important;
+                  font-weight: bold !important;
                 }
 
-                .navigation ul li {
-                  margin: 0 10px !important;
-                }
 
-                .navigation ul li ha-icon {
-                  font-size: 24px !important;
-                  width: 40px !important;
-                  height: 40px !important;
+                .day .event .icon {
+                  grid-row: 1 / 3 !important;
+                  grid-column: 2 !important;
+
+                  justify-self: center !important;   /* center horizontally */
+                  align-self: center !important;     /* center vertically */
+
+                  transform: scale(0.75) !important;
+                  color: white !important;
+                  background-color: #404040 !important;
+                  border-radius: 50% !important;
+                  width: 24px !important;
+                  height: 24px !important;
                   display: flex !important;
                   align-items: center !important;
                   justify-content: center !important;
-                  cursor: pointer !important;
                 }
 
-                .header::before {
-                  content: "";
-                  display: block;
-                  width: 100% !important;
-                  height: 5px;
-                  background: var(--divider-color);
-                  order: 2 !important;
-                  margin-top: 1px;
-                  margin-bottom: 3px;
-                }
 
-                /* === LEGEND STYLING === */
-                .legend {
-                  margin-top: 0px !important;
-                  padding-top: 0px !important;
-                  border-top: none !important;
-                  text-align: center !important;
-                  order: 3 !important;
-                }
+                .day > div > .event:first-child { margin-top: 0 !important; }
 
-                .legend ul {
-                  display: flex !important;
-                  flex-wrap: wrap !important;
-                  justify-content: center !important;
-                  gap: 15px !important;
-                  margin: 0 !important;
-                  padding: 0 !important;
-                }
 
-                .legend ul li {
-                  font-size: 14px !important;
-                }
+                /* === CARD TITLE DIVIDER === */
 
-                .legend ul li ha-icon {
-                  font-size: 16px !important;
-                  margin-right: 5px !important;
-                }
+                .card-title { text-align: center !important; }
 
-                .header::after {
+
+                .card-title::after {
                   content: "";
                   display: block;
                   width: 100% !important;
                   height: 5px;
                   background: var(--divider-color);
                   order: 4 !important;
-                  margin-top: 3px;
-                  margin-bottom: 12px;
+                  margin: 12px 0 3px 0;
                 }
-            grid_options:
-              columns: 48
-              rows: 8
+
+
+                /* === TOP SPACING ABOVE DATE (V2) === */
+
+                .day > div:first-child { margin-top: 0 !important; padding: 6px
+                0 0 6px !important; }
+
+
+                .day .date {
+                  margin: 0 !important;
+                  padding: 0 !important;
+                  line-height: 1.2em !important;
+                  font-size: 1em !important;
+                  position: relative;
+                }
+
+
+                /* Add a simple horizontal line under the date */
+
+                .day .date::after {
+                  content: "";
+                  display: block;
+                  width: 95%;
+                  height: 1px;
+                  background: rgba(255, 255, 255, 0.2);
+                  margin-top: 4px;
+                }
         column_span: 4
     cards: []
   - title: Home-Backup
@@ -3776,7 +3922,7 @@ views:
             layout_type: custom:vertical-layout
             layout: {}
             cards:
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: Smoke Alarm Status
                 secondary: >
                   {% set smoke = states('binary_sensor.smoke_alarms') %} {% set
@@ -3837,7 +3983,7 @@ views:
                         --shape-color: blue !important;
                       {% endif %}
                       }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: >
                   {% set cans_out = states('input_boolean.put_out_trash') %}  {%
                   if cans_out == 'on' %}
@@ -4425,7 +4571,7 @@ views:
                         margin-top: -9px;
                         margin-right: -40px;
                       }  
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: West
                 secondary: >
                   {% if
@@ -4477,7 +4623,7 @@ views:
                       50%  { background: rgba(255, 0, 0, 0.35); }
                       100% { background: rgba(255, 0, 0, 0.15); }
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: East
                 secondary: >
                   {% if
@@ -4529,7 +4675,7 @@ views:
                       50%  { background: rgba(255, 0, 0, 0.35); }
                       100% { background: rgba(255, 0, 0, 0.15); }
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: binary_sensor.ring_outdoor_contact_sensor_001_intrusion
                 primary: CNX 1
                 secondary: >
@@ -4568,7 +4714,7 @@ views:
                       50%  { background: rgba(255, 0, 0, 0.35); }
                       100% { background: rgba(255, 0, 0, 0.15); }
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: binary_sensor.ring_outdoor_contact_sensor_intrusion
                 primary: CNX 2
                 secondary: >
@@ -4920,7 +5066,7 @@ views:
                       content:
                         type: vertical-stack
                         cards:
-                          - type: custom:mushroom-template-card
+                          - type: custom:mushroom-legacy-template-card
                             entity: timer.ev9_climate_timer
                             primary: >
                               {% set mode =
@@ -5000,7 +5146,7 @@ views:
                                     40% { transform: translateY(-1.2px) rotate(5deg); } 
                                     60% { transform: translateY(-1.1px) rotate(-4deg); } 
                                   }
-                          - type: custom:mushroom-template-card
+                          - type: custom:mushroom-legacy-template-card
                             entity: timer.ev9_climate_timer
                             primary: >
                               {% set mode =
@@ -5082,7 +5228,7 @@ views:
                   grid-area: 1
                   grid-column-start: 1
                   grid-column-end: 3
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: sensor.ev9_ev_battery_level
                 primary: Battery
                 icon: mdi:car-battery
@@ -5151,7 +5297,7 @@ views:
                     }
 
                     {% endif %}
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: binary_sensor.ev9_ev_battery_plug
                 primary: EVSE
                 secondary: |-
@@ -5174,7 +5320,7 @@ views:
                       margin-top: -9px;
                       margin-right: -40px;      
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: binary_sensor.2025_ioniq_5_ev_battery_charge
                 secondary: |
                   {% if is_state('binary_sensor.ev9_ev_battery_charge', 'on') %}
@@ -5223,7 +5369,7 @@ views:
                     }
 
                     {% endif %}
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: lock.ev9_door_lock
                 primary: Doors
                 secondary: |-
@@ -5255,7 +5401,7 @@ views:
                       margin-right: -40px;
                       margin-bottom: -30px;
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: device_tracker.2025_ioniq_5_location
                 primary: Location
                 secondary: >
@@ -5295,7 +5441,7 @@ views:
                         margin-right: -40px;
                         margin-bottom: -20px;
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 entity: timer.ev9_climate_timer
                 primary: >
                   {% set mode = states('input_select.ev9_remote_climate_mode')
@@ -5343,7 +5489,7 @@ views:
                       content:
                         type: vertical-stack
                         cards:
-                          - type: custom:mushroom-template-card
+                          - type: custom:mushroom-legacy-template-card
                             entity: timer.ev9_climate_timer
                             primary: >
                               {% set mode =
@@ -5423,7 +5569,7 @@ views:
                                     40% { transform: translateY(-1.2px) rotate(5deg); } 
                                     60% { transform: translateY(-1.1px) rotate(-4deg); } 
                                   }
-                          - type: custom:mushroom-template-card
+                          - type: custom:mushroom-legacy-template-card
                             entity: timer.ev9_climate_timer
                             primary: >
                               {% set mode =
@@ -5591,7 +5737,7 @@ views:
                       margin-bottom: -20px;
                       margin-top: -25px;
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: Daytime
                 icon: mdi:white-balance-sunny
                 tap_action:
@@ -5622,7 +5768,7 @@ views:
                         color: white;
                       {% endif %}
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: Evening
                 icon: mdi:weather-night
                 tap_action:
@@ -5653,7 +5799,7 @@ views:
                         color: white;
                       {% endif %}
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: All Lights Off
                 icon: mdi:lightbulb-off
                 tap_action:
@@ -5686,7 +5832,7 @@ views:
                   {% else %}
                     var(--accent-color)
                   {% endif %}
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: Cook
                 icon: mdi:chef-hat
                 tap_action:
@@ -5718,7 +5864,7 @@ views:
                   {% else %}
                     var(--accent-color)
                   {% endif %}
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: Clean
                 icon: mdi:broom
                 tap_action:
@@ -5756,7 +5902,7 @@ views:
                   {% else %}
                     var(--accent-color)
                   {% endif %}
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: Night
                 icon: mdi:weather-night
                 tap_action:
@@ -5789,7 +5935,7 @@ views:
                         color: white;
                       {% endif %}
                     }
-              - type: custom:mushroom-template-card
+              - type: custom:mushroom-legacy-template-card
                 primary: TV
                 icon: mdi:television
                 tap_action:
@@ -5824,7 +5970,7 @@ views:
             grid_options:
               columns: 12
               rows: auto
-          - type: custom:mushroom-template-card
+          - type: custom:mushroom-legacy-template-card
             entity: light.indoor_lights
             primary: Indoor
             secondary: >
@@ -5902,7 +6048,7 @@ views:
             grid_options:
               columns: 6
               rows: 1
-          - type: custom:mushroom-template-card
+          - type: custom:mushroom-legacy-template-card
             entity: light.outdoor_lights
             primary: Outdoor
             secondary: >
@@ -6280,7 +6426,7 @@ views:
         cards:
           - type: heading
             heading: New section
-          - type: custom:mushroom-template-card
+          - type: custom:mushroom-legacy-template-card
             primary: >
               {% set cans_out = states('input_boolean.put_out_trash') %}  {% if
               cans_out == 'on' %}
@@ -6381,6 +6527,297 @@ views:
               - entity: input_boolean.this_week_trash
               - entity: input_boolean.this_week_recycling
               - entity: input_boolean.put_out_trash
+      - type: grid
+        cards:
+          - type: heading
+            heading: New section
+          - type: custom:mushroom-legacy-template-card
+            primary: >-
+              {% set forecast =
+              states.sensor.weather_forecast_hourly.attributes.forecast %} {% if
+              forecast %}
+                {% set warnings = [] %}
+                {% set now = now() %}
+                {% for hour in forecast[:12] %}
+                  {% set hour_time = hour.datetime | as_datetime %}
+                  {% if hour_time > now %}
+                    {% if hour.precipitation and hour.precipitation > 0 %}
+                      {% if hour.condition in ['rainy', 'pouring', 'heavy-rain'] %}
+                        {% set warnings = warnings + ['Rain'] %}
+                      {% elif hour.condition in ['snowy', 'snowy-rainy', 'snow'] %}
+                        {% set warnings = warnings + ['Snow'] %}
+                      {% endif %}
+                    {% endif %}
+                    {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                      {% set warnings = warnings + ['Wind'] %}
+                    {% endif %}
+                    {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                      {% set warnings = warnings + ['Storms'] %}
+                    {% endif %}
+                    {% if hour.condition in ['fog', 'mist'] %}
+                      {% set warnings = warnings + ['Fog'] %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+                {% set unique_warnings = warnings | unique | list %}
+                {% if unique_warnings | length > 0 %}
+                  ⚠️ {{ unique_warnings | join(', ') }} Expected
+                {% else %}
+                  Clear Conditions
+                {% endif %}
+              {% else %}
+                Weather data unavailable
+              {% endif %}
+            secondary: >-
+              {% set forecast =
+              states.sensor.weather_forecast_hourly.attributes.forecast %} {% if
+              forecast %}
+                {% set next_event_time = none %}
+                {% set next_event_type = none %}
+                {% set now = now() %}
+                {% for hour in forecast[:12] %}
+                  {% set hour_time = hour.datetime | as_datetime %}
+                  {% if hour_time > now and next_event_time is none %}
+                    {% if (hour.precipitation and hour.precipitation > 0) or 
+                          (hour.wind_speed and (hour.wind_speed * 2.237) > 25) or 
+                          hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm', 'fog', 'mist'] %}
+                      {% set next_event_time = hour_time %}
+                      {% if hour.precipitation and hour.precipitation > 0 %}
+                        {% if hour.condition in ['rainy', 'pouring', 'heavy-rain'] %}
+                          {% set next_event_type = 'Rain' %}
+                        {% elif hour.condition in ['snowy', 'snowy-rainy', 'snow'] %}
+                          {% set next_event_type = 'Snow' %}
+                        {% endif %}
+                      {% elif hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                        {% set next_event_type = 'Wind' %}
+                      {% elif hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                        {% set next_event_type = 'Storms' %}
+                      {% elif hour.condition in ['fog', 'mist'] %}
+                        {% set next_event_type = 'Fog' %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+                {% if next_event_time and next_event_type %}
+                  Next {{ next_event_type }}: {{ next_event_time.strftime('%I:%M %p') }}
+                {% else %}
+                  Next 12H Clear
+                {% endif %}
+              {% else %}
+                Tap to see forecast
+              {% endif %}
+            icon: >-
+              {% set forecast =
+              states.sensor.weather_forecast_hourly.attributes.forecast %} {% if
+              forecast %}
+                {% set warnings = [] %}
+                {% set now = now() %}
+                {% for hour in forecast[:12] %}
+                  {% set hour_time = hour.datetime | as_datetime %}
+                  {% if hour_time > now %}
+                    {% if hour.precipitation and hour.precipitation > 0 %}
+                      {% set warnings = warnings + ['precip'] %}
+                    {% endif %}
+                    {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                      {% set warnings = warnings + ['wind'] %}
+                    {% endif %}
+                    {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                      {% set warnings = warnings + ['storm'] %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+                {% if 'storm' in warnings %}
+                  mdi:weather-lightning
+                {% elif 'precip' in warnings %}
+                  mdi:weather-rainy
+                {% elif 'wind' in warnings %}
+                  mdi:weather-windy
+                {% else %}
+                  mdi:weather-sunny
+                {% endif %}
+              {% else %}
+                mdi:weather-partly-cloudy
+              {% endif %}
+            icon_color: >-
+              {% set forecast =
+              states.sensor.weather_forecast_hourly.attributes.forecast %} {% if
+              forecast %}
+                {% set warnings = [] %}
+                {% set now = now() %}
+                {% for hour in forecast[:12] %}
+                  {% set hour_time = hour.datetime | as_datetime %}
+                  {% if hour_time > now %}
+                    {% if hour.precipitation and hour.precipitation > 0 %}
+                      {% set warnings = warnings + ['precip'] %}
+                    {% endif %}
+                    {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                      {% set warnings = warnings + ['wind'] %}
+                    {% endif %}
+                    {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                      {% set warnings = warnings + ['storm'] %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+                {% if 'storm' in warnings %}
+                  red
+                {% elif 'precip' in warnings %}
+                  blue
+                {% elif 'wind' in warnings %}
+                  orange
+                {% else %}
+                  green
+                {% endif %}
+              {% else %}
+                grey
+              {% endif %}
+            tap_action:
+              action: fire-dom-event
+              browser_mod:
+                service: browser_mod.popup
+                data:
+                  title: 12-Hour Weather Forecast
+                  content:
+                    type: markdown
+                    content: >
+                      {% set forecast =
+                      states.sensor.weather_forecast_hourly.attributes.forecast
+                      %} {% if forecast %}
+                        {% set now = now() %}
+                        {% set content_lines = [] %}
+                        {% for hour in forecast[:12] %}
+                          {% set hour_time = hour.datetime | as_datetime %}
+                          {% if hour_time > now %}
+                            {% set time_str = hour_time.strftime('%I:%M %p') %}
+                            {% set temp = hour.temperature | round(0) if hour.temperature else 'N/A' %}
+                            {% set condition = hour.condition | title if hour.condition else 'Unknown' %}
+                            {% set precip = (hour.precipitation | round(2)) if hour.precipitation else 0 %}
+                            {% set wind_ms = hour.wind_speed if hour.wind_speed else 0 %}
+                            {% set wind_mph = (wind_ms * 2.237) | round(0) %}
+                            {% set humidity = (hour.humidity | round(0)) if hour.humidity else 'N/A' %}
+                            {% set precip_prob = (hour.precipitation_probability | round(0)) if hour.precipitation_probability else 0 %}
+                            
+                            {% set warning_icons = [] %}
+                            {% if precip > 0 %}
+                              {% if hour.condition in ['snowy', 'snowy-rainy', 'snow'] %}
+                                {% set warning_icons = warning_icons + ['❄️'] %}
+                              {% else %}
+                                {% set warning_icons = warning_icons + ['🌧️'] %}
+                              {% endif %}
+                            {% endif %}
+                            {% if wind_mph > 25 %}
+                              {% set warning_icons = warning_icons + ['💨'] %}
+                            {% endif %}
+                            {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                              {% set warning_icons = warning_icons + ['⚡'] %}
+                            {% endif %}
+                            {% if hour.condition in ['fog', 'mist'] %}
+                              {% set warning_icons = warning_icons + ['🌫️'] %}
+                            {% endif %}
+                            
+                            {% set warning_str = ' ' + (warning_icons | join(' ')) if warning_icons | length > 0 else '' %}
+                            
+                            {% set line = '**' + time_str + '**' + warning_str + '<br>' %}
+                            {% set line = line + '🌡️ ' + temp|string + '°F | ' + condition + '<br>' %}
+                            {% set line = line + '💧 ' + precip|string + 'mm (' + precip_prob|string + '%) | 💨 ' + wind_mph|string + ' mph | 💦 ' + humidity|string + '%<br><br>' %}
+                            {% set content_lines = content_lines + [line] %}
+                          {% endif %}
+                        {% endfor %}
+                        {{ content_lines | join('') }}
+                      {% else %}
+                        Weather forecast data is not available.
+                      {% endif %}
+            card_mod:
+              style: |
+                ha-card {
+                  {% set forecast = states.sensor.weather_forecast_hourly.attributes.forecast %}
+                  {% if forecast %}
+                    {% set warnings = [] %}
+                    {% set now = now() %}
+                    {% for hour in forecast[:12] %}
+                      {% set hour_time = hour.datetime | as_datetime %}
+                      {% if hour_time > now %}
+                        {% if hour.precipitation and hour.precipitation > 0 %}
+                          {% set warnings = warnings + ['precip'] %}
+                        {% endif %}
+                        {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                          {% set warnings = warnings + ['wind'] %}
+                        {% endif %}
+                        {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                          {% set warnings = warnings + ['storm'] %}
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                    {% if 'storm' in warnings %}
+                      border-left: 4px solid red !important;
+                    {% elif 'precip' in warnings %>
+                      border-left: 4px solid blue !important;
+                    {% elif 'wind' in warnings %}
+                      border-left: 4px solid orange !important;
+                    {% else %}
+                      border-left: 4px solid green !important;
+                    {% endif %}
+                  {% else %}
+                    border-left: 4px solid grey !important;
+                  {% endif %}
+                }
+          - type: custom:mushroom-template-card
+            primary: >-
+              {% set minutecast = states.sensor.weather_minutecast %} {% if
+              minutecast and minutecast.state %}
+                {% if minutecast.state == 'raining' %}
+                  Currently raining
+                {% elif minutecast.state == 'incoming' %}
+                  Rain incoming
+                {% elif minutecast.state == 'clear' %}
+                  No rain next hour
+                {% else %}
+                  MinuteCast ready
+                {% endif %}
+              {% else %}
+                MinuteCast unavailable
+              {% endif %}
+            secondary: >-
+              {% set minutecast = states.sensor.weather_minutecast %} {% if
+              minutecast and minutecast.attributes.summary %}
+                {{ minutecast.attributes.summary | title }}
+              {% else %}
+                Tap for details
+              {% endif %}
+            icon: mdi:water
+            color: >-
+              {% set minutecast = states.sensor.weather_minutecast %} {% if
+              minutecast %}
+                {% if minutecast.state == 'raining' %}
+                  blue
+                {% elif minutecast.state == 'incoming' %}
+                  orange
+                {% else %}
+                  green
+                {% endif %}
+              {% else %}
+                grey
+              {% endif %}
+            features_position: bottom
+            entity: sensor.weather_minutecast
+            card_mod:
+              style: |
+                ha-card {
+                  {% set minutecast = states.sensor.weather_minutecast %}
+                  {% if minutecast %}
+                    {% if minutecast.state == 'raining' %}
+                      background-color: rgba(33, 150, 243, 0.3) !important;
+                    {% elif minutecast.state == 'incoming' %}
+                      background-color: rgba(33, 150, 243, 0.3) !important;
+                      animation: pulse 7s infinite !important;
+                    {% endif %}
+                  {% endif %}
+                }
+
+                @keyframes pulse {
+                  0% { background-color: rgba(33, 150, 243, 0.1) !important; }
+                  50% { background-color: rgba(33, 150, 243, 0.5) !important; }
+                  100% { background-color: rgba(33, 150, 243, 0.1) !important; }
+                }
     subview: true
     cards: []
 type: vertical-stack
@@ -6532,6 +6969,39 @@ cards:
           icon: mdi:human-male-female-child
           color: '#96CEB4'
       days: 31
+      startingDayOffset: 0
+      compact: true
+      showLegend: true
+      showNavigation: true
+      dayFormat: <big><big><b>dd</b> | </big>ccc</big>
+  - type: conditional
+    conditions:
+      - entity: input_select.calendar_subtab
+        state: 2week
+    card:
+      type: custom:week-planner-card
+      calendars:
+        - entity: calendar.icmw_derek
+          name: Derek-Work
+          icon: mdi:briefcase
+          color: '#4ECDC4'
+        - entity: calendar.childcard_schedule
+          name: Childcare
+          icon: mdi:teddy-bear
+          color: '#FF6B6B'
+        - entity: calendar.quinn
+          name: Quinn
+          icon: mdi:account-cowboy-hat
+          color: orange
+        - entity: calendar.sawyer
+          name: Sawyer
+          icon: mdi:unicorn-variant
+          color: pink
+        - entity: calendar.family_events
+          name: Family
+          icon: mdi:human-male-female-child
+          color: '#96CEB4'
+      days: 14
       startingDayOffset: 0
       compact: true
       showLegend: true
