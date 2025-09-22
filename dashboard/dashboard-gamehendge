@@ -3090,22 +3090,28 @@ views:
                 state: daily
             legendToggle: true
             showDescription: false
-            dayFormat: cccc | DDD
             columns:
               extraLarge: '3'
               large: '3'
               medium: '3'
               small: '3'
               extraSmall: '3'
+            texts:
+              noEvents: NOEVENT
+            dateFormat: cccc
+            dayFormat: <big>DDDD</big>
+            timeFormat: t
             card_mod:
-              style: |
+              style: >
                 /* === HEADER STYLING === */
+
                 .header {
                   display: flex !important;
                   flex-direction: column !important;
                   align-items: center !important;
                   text-align: center !important;
                 }
+
 
                 .navigation {
                   display: flex !important;
@@ -3115,6 +3121,7 @@ views:
                   text-align: center !important;
                 }
 
+
                 .navigation .month {
                   order: 0 !important;
                   font-size: 0em !important;
@@ -3122,6 +3129,7 @@ views:
                   margin-bottom: 15px !important;
                   text-align: center !important;
                 }
+
 
                 .navigation ul {
                   order: 2 !important;
@@ -3131,9 +3139,11 @@ views:
                   justify-content: center !important;
                 }
 
+
                 .navigation ul li {
                   margin: 0 10px !important;
                 }
+
 
                 .navigation ul li ha-icon {
                   font-size: 24px !important;
@@ -3144,6 +3154,7 @@ views:
                   justify-content: center !important;
                   cursor: pointer !important;
                 }
+
 
                 .header::before {
                   content: "";
@@ -3156,7 +3167,9 @@ views:
                   margin-bottom: 3px;
                 }
 
+
                 /* === LEGEND STYLING === */
+
                 .legend {
                   margin-top: 0px !important;
                   padding-top: 0px !important;
@@ -3164,6 +3177,7 @@ views:
                   text-align: center !important;
                   order: 3 !important;
                 }
+
 
                 .legend ul {
                   display: flex !important;
@@ -3174,14 +3188,17 @@ views:
                   padding: 0 !important;
                 }
 
+
                 .legend ul li {
                   font-size: 14px !important;
                 }
+
 
                 .legend ul li ha-icon {
                   font-size: 16px !important;
                   margin-right: 5px !important;
                 }
+
 
                 .header::after {
                   content: "";
@@ -3194,7 +3211,9 @@ views:
                   margin-bottom: 12px;
                 }
 
+
                 /* === EVENT STYLING (from monthly) === */
+
                 .day .event {
                   display: grid !important;
                   grid-template-columns: 1fr 40px !important;
@@ -3203,7 +3222,7 @@ views:
                   width: calc(100% - 9px) !important;
                   margin: 0 5px 3px 5px !important;
                   padding: 3px !important;
-                  font-size: 0.9em !important;   /* bigger text */
+                  font-size: 0.9em !important;   
                   white-space: normal !important;
                   word-break: break-word !important;
                   position: relative !important;
@@ -3218,21 +3237,41 @@ views:
                   border-bottom-right-radius: 0 !important;
                 }
 
+
+                /* === DAY BLOCK STYLING === */ 
+
+                .day {
+                  background-color: rgba(255, 255, 255, 0.05) !important;
+                  border-radius: 5px !important;
+                  display: flex !important;
+                  flex-direction: column !important;
+                  justify-content: flex-start !important;
+                  align-items: stretch !important;
+                  min-height: 100px !important;
+                  padding: 0 !important;
+                  overflow: hidden !important;
+                }
+
+                .day.today { background-color: rgba(255, 255, 255, 0.15)
+                !important; }
+
+
                 .day .event .time {
                   grid-row: 1;
                   grid-column: 1;
                   align-self: start !important;
                   margin-bottom: 2px !important;
                   font-weight: bold !important;
-                  font-size: 1em !important;     /* larger */
+                  font-size: 1em !important;     
                   color: black !important;
                 }
+
 
                 .day .event .title {
                   grid-row: 2;
                   grid-column: 1 / span 2;
                   align-self: start !important;
-                  font-size: 1em !important;     /* larger */
+                  font-size: 1em !important;     
                   overflow: hidden;
                   text-overflow: ellipsis;
                   display: -webkit-box;
@@ -3243,24 +3282,59 @@ views:
                   font-weight: bold !important;
                 }
 
+
                 .day .event .icon {
                   grid-row: 1 / 3 !important;
                   grid-column: 2 !important;
                   justify-self: end !important;
                   align-self: start !important;
-                  transform: scale(0.9) !important;  /* slightly larger */
+                  transform: scale(0.9) !important;  
                   color: white !important;
                   background-color: #404040 !important;
                   border-radius: 50% !important;
-                  width: 28px !important;            /* larger icon */
+                  width: 28px !important;            
                   height: 28px !important;
                   display: flex !important;
                   align-items: center !important;
                   justify-content: center !important;
                 }
 
+
                 .day > div > .event:first-child {
                   margin-top: 0 !important;
+                }
+
+
+                /* Add a simple horizontal line under the date */ 
+
+                .day .date::after {
+                  content: "";
+                  display: block;
+                  width: 95%;
+                  height: 1px;
+                  background: rgba(255, 255, 255, 0.2);
+                  margin-top: 4px;
+                }
+
+
+                /* === DAY TEXT STYLING === */
+
+                .day .date {
+                  font-size: 1.2em !important;    
+                  font-weight: bold !important;   
+                  color: var(--primary-text-color) !important; 
+                  width: 100% !important;      /* fixed width wide enough for longest weekday */
+                  display: inline-block !important;
+                  overflow: hidden !important;
+                  text-overflow: ellipsis !important;
+                  white-space: nowrap !important;
+                }
+
+
+                /* Hide no-event placeholders */
+
+                .day div.none {
+                  display: none !important;
                 }
           - type: custom:week-planner-card
             calendars:
@@ -3318,37 +3392,40 @@ views:
                     media_query: '(min-width: 0px) and (max-width: 767px)'
             card_mod:
               style: >
-                /* === HEADER STYLING === */
-
-                .header, .navigation {
+                /* === HEADER STYLING === */ .header {
                   display: flex !important;
                   flex-direction: column !important;
-                  align-items: center !important;
-                  text-align: center !important;
+                  align-items: stretch !important;
+                  text-align: left !important;
                 }
 
+                /* === HEADER NAVIGATION LAYOUT === */ .navigation {
+                  display: flex !important;
+                  flex-direction: row !important;       
+                  align-items: center !important;       
+                  gap: 20px !important;                 /* space between month and buttons */
+                  width: auto !important;
+                  margin-bottom: 10px !important;
+                }
 
                 .navigation .month {
-                  order: 1 !important;
                   font-size: 1.8em !important;
                   font-weight: bold !important;
-                  margin-bottom: 15px !important;
+                  text-align: left !important;
+                  order: 1 !important;                  
+                  width: 160px !important;             /* fixed width for month */
+                  white-space: nowrap !important;       /* prevent wrapping */
+                  overflow: hidden !important;
+                  text-overflow: ellipsis !important;
                 }
-
 
                 .navigation ul {
-                  order: 2 !important;
+                  display: flex !important;
+                  gap: 20px !important;                 /* space between prev/next buttons */
                   margin: 0 !important;
                   padding: 0 !important;
-                  display: flex !important;
-                  justify-content: center !important;
+                  order: 2 !important;                  
                 }
-
-
-                .navigation ul li {
-                  margin: 0 10px !important;
-                }
-
 
                 .navigation ul li ha-icon {
                   font-size: 24px !important;
@@ -3360,7 +3437,6 @@ views:
                   cursor: pointer !important;
                 }
 
-
                 .header::before, .header::after {
                   content: "";
                   display: block;
@@ -3369,22 +3445,16 @@ views:
                   background: var(--divider-color);
                 }
 
-
                 .header::before { margin: 1px 0 3px 0; order: 2 !important; }
-
                 .header::after  { margin: 3px 0 12px 0; order: 4 !important; }
 
-
-                /* === LEGEND STYLING === */
-
-                .legend {
+                /* === LEGEND STYLING === */ .legend {
                   margin-top: 0 !important;
                   padding-top: 0 !important;
                   border-top: none !important;
                   text-align: center !important;
                   order: 3 !important;
                 }
-
 
                 .legend ul {
                   display: flex !important;
@@ -3395,21 +3465,14 @@ views:
                   padding: 0 !important;
                 }
 
-
                 .legend ul li {
                   font-size: 14px !important;
                 }
 
-
                 .legend ul li ha-icon {
                   font-size: 16px !important;
                   margin-right: 5px !important;
-                }
-
-
-                /* === CSS GRID FOR DAYS === */
-
-                .container {
+                } /* === CSS GRID FOR DAYS === */ .container {
                   display: grid !important;
                   grid-template-columns: repeat(7, 1fr) !important;
                   grid-template-rows: auto !important;
@@ -3417,32 +3480,19 @@ views:
                   padding: 0 !important;
                 }
 
+                .container .header, .container .legend { grid-column: 1 / -1
+                !important; }
 
-                .container .header,
+                /* Reorder days so Sunday is first */ .day[data-weekday="1"] {
+                grid-column: 2 !important; } /* Mon */ .day[data-weekday="2"] {
+                grid-column: 3 !important; } /* Tue */ .day[data-weekday="3"] {
+                grid-column: 4 !important; } /* Wed */ .day[data-weekday="4"] {
+                grid-column: 5 !important; } /* Thu */ .day[data-weekday="5"] {
+                grid-column: 6 !important; } /* Fri */ .day[data-weekday="6"] {
+                grid-column: 7 !important; } /* Sat */ .day[data-weekday="7"] {
+                grid-column: 1 !important; } /* Sun */
 
-                .container .legend { grid-column: 1 / -1 !important; }
-
-
-                /* Reorder days so Sunday is first */
-
-                .day[data-weekday="1"] { grid-column: 2 !important; } /* Mon */
-
-                .day[data-weekday="2"] { grid-column: 3 !important; } /* Tue */
-
-                .day[data-weekday="3"] { grid-column: 4 !important; } /* Wed */
-
-                .day[data-weekday="4"] { grid-column: 5 !important; } /* Thu */
-
-                .day[data-weekday="5"] { grid-column: 6 !important; } /* Fri */
-
-                .day[data-weekday="6"] { grid-column: 7 !important; } /* Sat */
-
-                .day[data-weekday="7"] { grid-column: 1 !important; } /* Sun */
-
-
-                /* === DAY BLOCK STYLING === */
-
-                .day {
+                /* === DAY BLOCK STYLING === */ .day {
                   background-color: rgba(255, 255, 255, 0.05) !important;
                   border-radius: 5px !important;
                   display: flex !important;
@@ -3455,14 +3505,10 @@ views:
                   overflow: hidden !important;
                 }
 
-
                 .day.today { background-color: rgba(255, 255, 255, 0.15)
                 !important; }
 
-
-                .day > div,
-
-                .day > div > div {
+                .day > div, .day > div > div {
                   display: flex !important;
                   flex-direction: column !important;
                   justify-content: flex-start !important;
@@ -3472,10 +3518,7 @@ views:
                   background: transparent !important;
                 }
 
-
-                /* === EVENT GRID LAYOUT === */
-
-                .day .event {
+                /* === EVENT GRID LAYOUT === */  .day .event {
                   display: grid !important;
                   grid-template-columns: 1fr 40px !important;
                   grid-template-rows: auto auto !important;
@@ -3489,16 +3532,8 @@ views:
                   position: relative !important;
                   border-radius: 4px !important;
                   border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                }
-
-
-                /* === EVENT BACKGROUND COLORS === */
-
-                /* Use the calendar's border color as background at full opacity
-                */ .day .event {
                   background-color: var(--border-color) !important;
                 }
-
 
                 .day .event .time {
                   grid-row: 1;
@@ -3509,7 +3544,6 @@ views:
                   color: black !important;
                 }
 
-
                 .day .event .title {
                   grid-row: 2;
                   grid-column: 1 / span 2;
@@ -3518,21 +3552,18 @@ views:
                   overflow: hidden;
                   text-overflow: ellipsis;
                   display: -webkit-box;
-                  -webkit-line-clamp: 3;   /* truncate to 3 lines */
+                  -webkit-line-clamp: 3;  
                   -webkit-box-orient: vertical;
                   white-space: normal;
                   color: black !important;
                   font-weight: bold !important;
                 }
 
-
                 .day .event .icon {
                   grid-row: 1 / 3 !important;
                   grid-column: 2 !important;
-
-                  justify-self: center !important;   /* center horizontally */
-                  align-self: center !important;     /* center vertically */
-
+                  justify-self: center !important;  
+                  align-self: center !important;    
                   transform: scale(0.75) !important;
                   color: white !important;
                   background-color: #404040 !important;
@@ -3544,14 +3575,10 @@ views:
                   justify-content: center !important;
                 }
 
-
                 .day > div > .event:first-child { margin-top: 0 !important; }
 
-
-                /* === CARD TITLE DIVIDER === */
-
-                .card-title { text-align: center !important; }
-
+                /* === CARD TITLE DIVIDER === */ .card-title { text-align:
+                center !important; }
 
                 .card-title::after {
                   content: "";
@@ -3563,12 +3590,8 @@ views:
                   margin: 12px 0 3px 0;
                 }
 
-
-                /* === TOP SPACING ABOVE DATE (V2) === */
-
-                .day > div:first-child { margin-top: 0 !important; padding: 6px
-                0 0 6px !important; }
-
+                /* === TOP SPACING ABOVE DATE (V2) === */ .day > div:first-child
+                { margin-top: 0 !important; padding: 6px 0 0 6px !important; }
 
                 .day .date {
                   margin: 0 !important;
@@ -3578,10 +3601,8 @@ views:
                   position: relative;
                 }
 
-
-                /* Add a simple horizontal line under the date */
-
-                .day .date::after {
+                /* Add a simple horizontal line under the date */ .day
+                .date::after {
                   content: "";
                   display: block;
                   width: 95%;
@@ -3641,37 +3662,40 @@ views:
                 state: 2 week
             card_mod:
               style: >
-                /* === HEADER STYLING === */
-
-                .header, .navigation {
+                /* === HEADER STYLING === */ .header {
                   display: flex !important;
                   flex-direction: column !important;
-                  align-items: center !important;
-                  text-align: center !important;
+                  align-items: stretch !important;
+                  text-align: left !important;
                 }
 
+                /* === HEADER NAVIGATION LAYOUT === */ .navigation {
+                  display: flex !important;
+                  flex-direction: row !important;       
+                  align-items: center !important;       
+                  gap: 20px !important;                 /* space between month and buttons */
+                  width: auto !important;
+                  margin-bottom: 10px !important;
+                }
 
                 .navigation .month {
-                  order: 1 !important;
                   font-size: 1.8em !important;
                   font-weight: bold !important;
-                  margin-bottom: 15px !important;
+                  text-align: left !important;
+                  order: 1 !important;                  
+                  width: 160px !important;             /* fixed width for month */
+                  white-space: nowrap !important;       /* prevent wrapping */
+                  overflow: hidden !important;
+                  text-overflow: ellipsis !important;
                 }
-
 
                 .navigation ul {
-                  order: 2 !important;
+                  display: flex !important;
+                  gap: 20px !important;                 /* space between prev/next buttons */
                   margin: 0 !important;
                   padding: 0 !important;
-                  display: flex !important;
-                  justify-content: center !important;
+                  order: 2 !important;                  
                 }
-
-
-                .navigation ul li {
-                  margin: 0 10px !important;
-                }
-
 
                 .navigation ul li ha-icon {
                   font-size: 24px !important;
@@ -3683,7 +3707,6 @@ views:
                   cursor: pointer !important;
                 }
 
-
                 .header::before, .header::after {
                   content: "";
                   display: block;
@@ -3692,22 +3715,16 @@ views:
                   background: var(--divider-color);
                 }
 
-
                 .header::before { margin: 1px 0 3px 0; order: 2 !important; }
-
                 .header::after  { margin: 3px 0 12px 0; order: 4 !important; }
 
-
-                /* === LEGEND STYLING === */
-
-                .legend {
+                /* === LEGEND STYLING === */ .legend {
                   margin-top: 0 !important;
                   padding-top: 0 !important;
                   border-top: none !important;
                   text-align: center !important;
                   order: 3 !important;
                 }
-
 
                 .legend ul {
                   display: flex !important;
@@ -3718,21 +3735,14 @@ views:
                   padding: 0 !important;
                 }
 
-
                 .legend ul li {
                   font-size: 14px !important;
                 }
 
-
                 .legend ul li ha-icon {
                   font-size: 16px !important;
                   margin-right: 5px !important;
-                }
-
-
-                /* === CSS GRID FOR DAYS === */
-
-                .container {
+                } /* === CSS GRID FOR DAYS === */ .container {
                   display: grid !important;
                   grid-template-columns: repeat(7, 1fr) !important;
                   grid-template-rows: auto !important;
@@ -3740,32 +3750,19 @@ views:
                   padding: 0 !important;
                 }
 
+                .container .header, .container .legend { grid-column: 1 / -1
+                !important; }
 
-                .container .header,
+                /* Reorder days so Sunday is first */ .day[data-weekday="1"] {
+                grid-column: 2 !important; } /* Mon */ .day[data-weekday="2"] {
+                grid-column: 3 !important; } /* Tue */ .day[data-weekday="3"] {
+                grid-column: 4 !important; } /* Wed */ .day[data-weekday="4"] {
+                grid-column: 5 !important; } /* Thu */ .day[data-weekday="5"] {
+                grid-column: 6 !important; } /* Fri */ .day[data-weekday="6"] {
+                grid-column: 7 !important; } /* Sat */ .day[data-weekday="7"] {
+                grid-column: 1 !important; } /* Sun */
 
-                .container .legend { grid-column: 1 / -1 !important; }
-
-
-                /* Reorder days so Sunday is first */
-
-                .day[data-weekday="1"] { grid-column: 2 !important; } /* Mon */
-
-                .day[data-weekday="2"] { grid-column: 3 !important; } /* Tue */
-
-                .day[data-weekday="3"] { grid-column: 4 !important; } /* Wed */
-
-                .day[data-weekday="4"] { grid-column: 5 !important; } /* Thu */
-
-                .day[data-weekday="5"] { grid-column: 6 !important; } /* Fri */
-
-                .day[data-weekday="6"] { grid-column: 7 !important; } /* Sat */
-
-                .day[data-weekday="7"] { grid-column: 1 !important; } /* Sun */
-
-
-                /* === DAY BLOCK STYLING === */
-
-                .day {
+                /* === DAY BLOCK STYLING === */ .day {
                   background-color: rgba(255, 255, 255, 0.05) !important;
                   border-radius: 5px !important;
                   display: flex !important;
@@ -3778,14 +3775,10 @@ views:
                   overflow: hidden !important;
                 }
 
-
                 .day.today { background-color: rgba(255, 255, 255, 0.15)
                 !important; }
 
-
-                .day > div,
-
-                .day > div > div {
+                .day > div, .day > div > div {
                   display: flex !important;
                   flex-direction: column !important;
                   justify-content: flex-start !important;
@@ -3795,10 +3788,7 @@ views:
                   background: transparent !important;
                 }
 
-
-                /* === EVENT GRID LAYOUT === */
-
-                .day .event {
+                /* === EVENT GRID LAYOUT === */ .day .event {
                   display: grid !important;
                   grid-template-columns: 1fr 40px !important;
                   grid-template-rows: auto auto !important;
@@ -3812,16 +3802,8 @@ views:
                   position: relative !important;
                   border-radius: 4px !important;
                   border: 1px solid rgba(255, 255, 255, 0.1) !important;
-                }
-
-
-                /* === EVENT BACKGROUND COLORS === */
-
-                /* Use the calendar's border color as background at full opacity
-                */ .day .event {
                   background-color: var(--border-color) !important;
                 }
-
 
                 .day .event .time {
                   grid-row: 1;
@@ -3832,7 +3814,6 @@ views:
                   color: black !important;
                 }
 
-
                 .day .event .title {
                   grid-row: 2;
                   grid-column: 1 / span 2;
@@ -3841,21 +3822,18 @@ views:
                   overflow: hidden;
                   text-overflow: ellipsis;
                   display: -webkit-box;
-                  -webkit-line-clamp: 3;   /* truncate to 3 lines */
+                  -webkit-line-clamp: 3;  
                   -webkit-box-orient: vertical;
                   white-space: normal;
                   color: black !important;
                   font-weight: bold !important;
                 }
 
-
                 .day .event .icon {
                   grid-row: 1 / 3 !important;
                   grid-column: 2 !important;
-
-                  justify-self: center !important;   /* center horizontally */
-                  align-self: center !important;     /* center vertically */
-
+                  justify-self: center !important;  
+                  align-self: center !important;    
                   transform: scale(0.75) !important;
                   color: white !important;
                   background-color: #404040 !important;
@@ -3867,14 +3845,10 @@ views:
                   justify-content: center !important;
                 }
 
-
                 .day > div > .event:first-child { margin-top: 0 !important; }
 
-
-                /* === CARD TITLE DIVIDER === */
-
-                .card-title { text-align: center !important; }
-
+                /* === CARD TITLE DIVIDER === */ .card-title { text-align:
+                center !important; }
 
                 .card-title::after {
                   content: "";
@@ -3886,12 +3860,8 @@ views:
                   margin: 12px 0 3px 0;
                 }
 
-
-                /* === TOP SPACING ABOVE DATE (V2) === */
-
-                .day > div:first-child { margin-top: 0 !important; padding: 6px
-                0 0 6px !important; }
-
+                /* === TOP SPACING ABOVE DATE (V2) === */ .day > div:first-child
+                { margin-top: 0 !important; padding: 6px 0 0 6px !important; }
 
                 .day .date {
                   margin: 0 !important;
@@ -3901,10 +3871,8 @@ views:
                   position: relative;
                 }
 
-
-                /* Add a simple horizontal line under the date */
-
-                .day .date::after {
+                /* Add a simple horizontal line under the date */ .day
+                .date::after {
                   content: "";
                   display: block;
                   width: 95%;
