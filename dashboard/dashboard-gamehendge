@@ -972,7 +972,7 @@ views:
                     }  
               - type: custom:mushroom-entity-card
                 entity: sensor.newdevice_thermocouple_adjusted_temperature_f
-                name: Wood Stove Temp
+                name: Woodstove Flue
                 icon: mdi:campfire
                 icon_color: red
                 view_layout:
@@ -1036,6 +1036,37 @@ views:
                       text-shadow: 1px 1px 1px rgba(0, 0, 0, 1); /* Improves visibility */
                       pointer-events: none; /* Allows slider interaction */
                       z-index: 2 !important; /* Moves text above slider fill */
+                    }
+              - type: custom:mushroom-title-card
+                title: >-
+                  {{
+                  states('sensor.newdevice_thermocouple_adjusted_temperature_f')
+                  | round(0) | int }} °F
+                view_layout:
+                  grid-area: g
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: transparent !important;
+                      box-shadow: none !important;
+                      border: 0px solid red !important;
+                      position: relative;
+                      transform: scale(0.80);
+                      width: 100px;
+                      transform-origin: top left;
+                      margin-top: -31px;
+                      margin-left: 75px;
+                      pointer-events: none;
+                      z-index: 10;
+                    }
+                    .title {
+                      text-align: center !important;
+                      font-size: 12px !important;
+                      font-weight: bold !important;
+                      color: rgba(215, 215, 215, 1) !important;
+                      text-shadow: 1px 1px 1px rgba(0, 0, 0, 1) !important;
+                      margin: 0 !important;
+                      padding: 8px 0 !important;
                     }
             grid_options:
               columns: 5
@@ -1204,45 +1235,185 @@ views:
                         margin-top: -25px;
                       }
                       
-              - type: custom:mushroom-entity-card
-                entity: lock.door_lock
-                name: Front Door
+              - type: custom:mushroom-legacy-template-card
+                primary: Front Door
+                secondary: >-
+                  {% set lock_state = states('lock.door_lock') %} {% set
+                  contact_state = states('binary_sensor.front_door_contact') %}
+                  {% set door_status = 'Open' if contact_state == 'on' else
+                  'Closed' %} {% set lock_status = 'Locked' if lock_state ==
+                  'locked' else 'Unlocked' %} {{ door_status }} & {{ lock_status
+                  }}
+                icon: >-
+                  {% set contact_state =
+                  states('binary_sensor.front_door_contact') %} {% if
+                  contact_state == 'on' %}
+                    mdi:door-open
+                  {% else %}
+                    mdi:door-closed
+                  {% endif %}
+                icon_color: >-
+                  {% set lock_state = states('lock.door_lock') %} {% set
+                  contact_state =
+                  states('binary_sensor.contact_sensor_gen2_frontdoor') %} {% if
+                  lock_state == 'locked' and contact_state == 'off' %}
+                    green
+                  {% elif lock_state == 'locked' and contact_state == 'on' %}
+                    orange
+                  {% else %}
+                    red
+                  {% endif %}
+                badge_icon: >-
+                  {% set lock_state = states('lock.door_lock') %} {% if
+                  lock_state == 'locked' %}
+                    mdi:lock
+                  {% else %}
+                    mdi:lock-open
+                  {% endif %}
+                badge_color: >-
+                  {% set lock_state = states('lock.door_lock') %} {% if
+                  lock_state == 'locked' %}
+                    green
+                  {% else %}
+                    red
+                  {% endif %}
+                tap_action:
+                  action: more-info
+                  entity: lock.door_lock
+                hold_action:
+                  action: toggle
+                double_tap_action:
+                  action: none
                 view_layout:
                   grid-area: a
                 card_mod:
                   style: |
                     ha-card {
-                        transform: scale(0.8);   /* 50% width, 100% height */
-                        transform-origin: top left; /* anchor the shrink */
+                        transform: scale(0.8);
+                        transform-origin: top left;
                         margin-top: -9px;
                         margin-right: -40px;
-                      }
-              - type: custom:mushroom-entity-card
-                entity: lock.door_lock
-                name: Ext. Garage
+                    }
+              - type: custom:mushroom-legacy-template-card
+                primary: Ext. Garage
+                secondary: >-
+                  {% set lock_state = states('lock.kwikset620_internal_garage')
+                  %} {% set contact_state =
+                  states('binary_sensor.garage_mandoor_external_contactsensor')
+                  %} {% set door_status = 'Open' if contact_state == 'on' else
+                  'Closed' %} {% set lock_status = 'Locked' if lock_state ==
+                  'locked' else 'Unlocked' %} {{ door_status }} & {{ lock_status
+                  }}
+                icon: >-
+                  {% set contact_state =
+                  states('binary_sensor.garage_mandoor_external_contactsensor')
+                  %} {% if contact_state == 'on' %}
+                    mdi:door-open
+                  {% else %}
+                    mdi:door-closed
+                  {% endif %}
+                badge_icon: >-
+                  {% set lock_state = states('lock.kwikset620_internal_garage')
+                  %} {% if lock_state == 'locked' %}
+                    mdi:lock
+                  {% else %}
+                    mdi:lock-open
+                  {% endif %}
+                badge_color: >-
+                  {% set lock_state = states('lock.kwikset620_internal_garage')
+                  %} {% if lock_state == 'locked' %}
+                    green
+                  {% else %}
+                    red
+                  {% endif %}
+                icon_color: >-
+                  {% set lock_state = states('lock.kwikset620_internal_garage')
+                  %} {% set contact_state =
+                  states('binary_sensor.garage_mandoor_external_contactsensor')
+                  %} {% if lock_state == 'locked' and contact_state == 'off' %}
+                    green
+                  {% elif lock_state == 'locked' and contact_state == 'on' %}
+                    orange
+                  {% else %}
+                    red
+                  {% endif %}
+                tap_action:
+                  action: more-info
+                hold_action:
+                  action: toggle
+                double_tap_action:
+                  action: none
+                entity: binary_sensor.garage_mandoor_external_contactsensor
                 view_layout:
                   grid-area: b
                 card_mod:
                   style: |
                     ha-card {
-                        transform: scale(0.8);   /* 50% width, 100% height */
-                        transform-origin: top left; /* anchor the shrink */
+                        transform: scale(0.8);
+                        transform-origin: top left;
                         margin-top: -9px;
                         margin-right: -40px;
-                      }
-              - type: custom:mushroom-entity-card
-                entity: lock.door_lock
-                name: Int. Garage
+                    }
+              - type: custom:mushroom-legacy-template-card
+                primary: Int. Garage
+                secondary: >-
+                  {% set lock_state = states('lock.kwikset620_internal_garage')
+                  %} {% set contact_state =
+                  states('binary_sensor.ring_contact_sensor_gen2_intrusion_2')
+                  %} {% set door_status = 'Open' if contact_state == 'on' else
+                  'Closed' %} {% set lock_status = 'Locked' if lock_state ==
+                  'locked' else 'Unlocked' %} {{ door_status }} & {{ lock_status
+                  }}
+                icon: >-
+                  {% set contact_state =
+                  states('binary_sensor.ring_contact_sensor_gen2_intrusion_2')
+                  %} {% if contact_state == 'on' %}
+                    mdi:door-open
+                  {% else %}
+                    mdi:door-closed
+                  {% endif %}
+                badge_icon: >-
+                  {% set lock_state = states('lock.kwikset620_internal_garage')
+                  %} {% if lock_state == 'locked' %}
+                    mdi:lock
+                  {% else %}
+                    mdi:lock-open
+                  {% endif %}
+                badge_color: >-
+                  {% set lock_state = states('lock.kwikset620_internal_garage')
+                  %} {% if lock_state == 'locked' %}
+                    green
+                  {% else %}
+                    red
+                  {% endif %}
+                icon_color: >-
+                  {% set lock_state = states('lock.kwikset620_internal_garage')
+                  %} {% set contact_state =
+                  states('binary_sensor.ring_contact_sensor_gen2_intrusion_2')
+                  %} {% if lock_state == 'locked' and contact_state == 'off' %}
+                    green
+                  {% elif lock_state == 'locked' and contact_state == 'on' %}
+                    orange
+                  {% else %}
+                    red
+                  {% endif %}
+                tap_action:
+                  action: more-info
+                entity: lock.kwikset620_internal_garage
+                hold_action:
+                  action: toggle
+                double_tap_action:
+                  action: none
                 view_layout:
                   grid-area: c
                 card_mod:
                   style: |
                     ha-card {
-                        transform: scale(0.8);   /* 50% width, 100% height */
-                        transform-origin: top left; /* anchor the shrink */
+                        transform: scale(0.8);
+                        transform-origin: top left;
                         margin-top: -9px;
                         margin-right: -40px;
-                      }  
+                    }
               - type: custom:mushroom-legacy-template-card
                 primary: West
                 secondary: >
