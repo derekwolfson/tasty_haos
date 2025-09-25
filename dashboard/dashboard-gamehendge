@@ -164,8 +164,6 @@ views:
                   navigation_path: '#airquality'
                 hold_action:
                   action: more-info
-                double_tap_action:
-                  action: none
                 entity: sensor.airnow_air_quality_index
                 view_layout:
                   grid-area: a2
@@ -518,6 +516,12 @@ views:
                     }
               - type: custom:mushroom-person-card
                 entity: person.derek_wolfson
+                hold_action:
+                  action: url
+                  url_path: '?disable_km'
+                double_tap_action:
+                  action: url
+                  url_path: '?enable_km'
                 view_layout:
                   grid-area: a1
                 card_mod:
