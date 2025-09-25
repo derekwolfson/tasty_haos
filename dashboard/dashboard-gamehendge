@@ -1406,6 +1406,22 @@ views:
                   {% else %}
                     red
                   {% endif %}
+                badge_icon: >
+                  {% if
+                  is_state('binary_sensor.ring_contact_sensor_gen2_garage_west',
+                  'off') %}
+                    mdi:lock
+                  {% else %}
+                    mdi:lock-open
+                  {% endif %}
+                badge_color: >
+                  {% if
+                  is_state('binary_sensor.ring_contact_sensor_gen2_garage_west',
+                  'off') %}
+                    green
+                  {% else %}
+                    red
+                  {% endif %}
                 tap_action:
                   action: none
                 hold_action:
@@ -1458,6 +1474,22 @@ views:
                   {% else %}
                     red
                   {% endif %}
+                badge_icon: >
+                  {% if
+                  is_state('binary_sensor.ring_contact_sensor_gen2_garage_east',
+                  'off') %}
+                    mdi:lock
+                  {% else %}
+                    mdi:lock-open
+                  {% endif %}
+                badge_color: >
+                  {% if
+                  is_state('binary_sensor.ring_contact_sensor_gen2_garage_east',
+                  'off') %}
+                    green
+                  {% else %}
+                    red
+                  {% endif %}
                 tap_action:
                   action: none
                 hold_action:
@@ -1485,25 +1517,74 @@ views:
                       100% { background: rgba(255, 0, 0, 0.15); }
                     }
               - type: custom:mushroom-legacy-template-card
-                entity: binary_sensor.ring_outdoor_contact_sensor_001_intrusion
                 primary: CNX 1
-                secondary: >
-                  {% if
-                  is_state('binary_sensor.ring_outdoor_contact_sensor_001_intrusion',
-                  'off') %}
-                    Closed
-                  {% else %}
+                secondary: >-
+                  {% set lock_state = states('binary_sensor.connex_1_lock') %} 
+                  {% set contact_state =
+                  states('binary_sensor.ring_outdoor_contact_sensor_001_intrusion')
+                  %}  {% if lock_state == 'off' and contact_state == 'off' %}
+                    Secure
+                  {% elif lock_state == 'on' and contact_state == 'off' %}
+                    Unlocked
+                  {% elif lock_state == 'on' and contact_state == 'on' %}
                     Open
-                  {% endif %}
-                icon: mdi:train-car-container
-                icon_color: >
-                  {% if
-                  is_state('binary_sensor.ring_outdoor_contact_sensor_001_intrusion',
-                  'off') %}
-                    green
                   {% else %}
-                    red
+                    Error
                   {% endif %}
+                icon: >-
+                  {% set contact_state =
+                  states('binary_sensor.ring_outdoor_contact_sensor_001_intrusion')
+                  %}  {% if contact_state == 'on' %}
+                    mdi:train-car-container
+                  {% else %}
+                    mdi:train-car-container
+                  {% endif %}
+                icon_color: >-
+                  {% set lock_state = states('binary_sensor.connex_1_lock') %} 
+                  {% set contact_state =
+                  states('binary_sensor.ring_outdoor_contact_sensor_001_intrusion')
+                  %}  {% if lock_state == 'off' and contact_state == 'off' %}
+                    green
+                  {% elif lock_state == 'on' and contact_state == 'off' %}
+                    yellow
+                  {% elif lock_state == 'on' and contact_state == 'on' %}
+                    white
+                  {% else %}
+                    purple
+                  {% endif %}
+                badge_icon: >-
+                  {% set lock_state = states('binary_sensor.connex_1_lock') %} 
+                  {% set contact_state =
+                  states('binary_sensor.ring_outdoor_contact_sensor_001_intrusion')
+                  %}  {% if lock_state == 'off' and contact_state == 'off' %}
+                    mdi:lock
+                  {% elif lock_state == 'off' and contact_state == 'on' %}
+                    mdi:lock
+                  {% elif lock_state == 'on' and contact_state == 'off' %}
+                    mdi:lock-open
+                  {% else %}
+                    mdi:lock-open
+                  {% endif %}
+                badge_color: >-
+                  {% set lock_state = states('binary_sensor.connex_1_lock') %} 
+                  {% set contact_state =
+                  states('binary_sensor.ring_outdoor_contact_sensor_001_intrusion')
+                  %}  {% if lock_state == 'off' and contact_state == 'off' %}
+                    green
+                  {% elif lock_state == 'on' and contact_state == 'off' %}
+                    red
+                  {% elif lock_state == 'on' and contact_state == 'on' %}
+                    red
+                  {% else %}
+                    purple
+                  {% endif %}
+                tap_action:
+                  action: more-info
+                hold_action:
+                  action: toggle
+                double_tap_action:
+                  action: none
+                entity: binary_sensor.ring_outdoor_contact_sensor_001_intrusion
                 view_layout:
                   grid-area: f
                 card_mod:
@@ -1514,7 +1595,9 @@ views:
                       margin-top: -15px;
                       margin-right: -30px;
                       margin-bottom: -30px;
-                      {% if is_state('binary_sensor.ring_outdoor_contact_sensor_001_intrusion', 'on') %}
+                      {% set lock_state = states('binary_sensor.connex_1_lock') %}
+                      {% set contact_state = states('binary_sensor.ring_outdoor_contact_sensor_001_intrusion') %}
+                      {% if contact_state == 'on' %}
                         animation: pulse-red 5s infinite;
                       {% endif %}
                     }
@@ -1523,32 +1606,83 @@ views:
                       50%  { background: rgba(255, 0, 0, 0.35); }
                       100% { background: rgba(255, 0, 0, 0.15); }
                     }
+                    mushroom-shape-icon {
+                      {% set lock_state = states('binary_sensor.connex_1_lock') %}
+                      {% if lock_state == 'on' %}
+                        --shape-color: rgba(244, 67, 54, 0.6) !important;
+                      {% else %} 
+                        --shape-color: transparent !important;
+                      {% endif %}
+                    }
               - type: custom:mushroom-legacy-template-card
-                entity: binary_sensor.ring_outdoor_contact_sensor_intrusion
                 primary: CNX 2
-                secondary: >
-                  {% if
-                  is_state('binary_sensor.ring_outdoor_contact_sensor_001_intrusion',
-                  'off') %}
-                    Closed
-                  {% else %}
+                secondary: >-
+                  {% set lock_state = states('binary_sensor.connex_2_lock') %} 
+                  {% set contact_state =
+                  states('binary_sensor.ring_outdoor_contact_sensor_intrusion')
+                  %}  {% if lock_state == 'off' and contact_state == 'off' %}
+                    Secure
+                  {% elif lock_state == 'on' and contact_state == 'off' %}
+                    Unlocked
+                  {% elif lock_state == 'on' and contact_state == 'on' %}
                     Open
-                  {% endif %}
-                icon: mdi:train-car-container
-                icon_color: >
-                  {% if
-                  is_state('binary_sensor.ring_outdoor_contact_sensor_intrusion',
-                  'off') %}
-                    green
                   {% else %}
+                    Error
+                  {% endif %}
+                icon: >-
+                  {% set contact_state =
+                  states('binary_sensor.ring_outdoor_contact_sensor_intrusion')
+                  %}  {% if contact_state == 'on' %}
+                    mdi:train-car-container
+                  {% else %}
+                    mdi:train-car-container
+                  {% endif %}
+                icon_color: >-
+                  {% set lock_state = states('binary_sensor.connex_2_lock') %} 
+                  {% set contact_state =
+                  states('binary_sensor.ring_outdoor_contact_sensor_intrusion')
+                  %}  {% if lock_state == 'off' and contact_state == 'off' %}
+                    green
+                  {% elif lock_state == 'on' and contact_state == 'off' %}
+                    yellow
+                  {% elif lock_state == 'on' and contact_state == 'on' %}
+                    white
+                  {% else %}
+                    purple
+                  {% endif %}
+                badge_icon: >-
+                  {% set lock_state = states('binary_sensor.connex_2_lock') %} 
+                  {% set contact_state =
+                  states('binary_sensor.ring_outdoor_contact_sensor_intrusion')
+                  %}  {% if lock_state == 'off' and contact_state == 'off' %}
+                    mdi:lock
+                  {% elif lock_state == 'off' and contact_state == 'on' %}
+                    mdi:lock
+                  {% elif lock_state == 'on' and contact_state == 'off' %}
+                    mdi:lock-open
+                  {% else %}
+                    mdi:lock-open
+                  {% endif %}
+                badge_color: >-
+                  {% set lock_state = states('binary_sensor.connex_2_lock') %} 
+                  {% set contact_state =
+                  states('binary_sensor.ring_outdoor_contact_sensor_intrusion')
+                  %}  {% if lock_state == 'off' and contact_state == 'off' %}
+                    green
+                  {% elif lock_state == 'on' and contact_state == 'off' %}
                     red
+                  {% elif lock_state == 'on' and contact_state == 'on' %}
+                    red
+                  {% else %}
+                    purple
                   {% endif %}
                 tap_action:
-                  action: none
-                hold_action:
                   action: more-info
+                hold_action:
+                  action: toggle
                 double_tap_action:
                   action: none
+                entity: binary_sensor.ring_outdoor_contact_sensor_intrusion
                 view_layout:
                   grid-area: g
                 card_mod:
@@ -1559,7 +1693,9 @@ views:
                       margin-top: -15px;
                       margin-right: -30px;
                       margin-bottom: -30px;
-                      {% if is_state('binary_sensor.ring_outdoor_contact_sensor_intrusion', 'on') %}
+                      {% set lock_state = states('binary_sensor.connex_2_lock') %}
+                      {% set contact_state = states('binary_sensor.ring_outdoor_contact_sensor_intrusion') %}
+                      {% if contact_state == 'on' %}
                         animation: pulse-red 5s infinite;
                       {% endif %}
                     }
@@ -1567,6 +1703,14 @@ views:
                       0%   { background: rgba(255, 0, 0, 0.15); }
                       50%  { background: rgba(255, 0, 0, 0.35); }
                       100% { background: rgba(255, 0, 0, 0.15); }
+                    }
+                    mushroom-shape-icon {
+                      {% set lock_state = states('binary_sensor.connex_2_lock') %}
+                      {% if lock_state == 'on' %}
+                        --shape-color: rgba(244, 67, 54, 0.6) !important;
+                      {% else %} 
+                        --shape-color: transparent !important;
+                      {% endif %}
                     }
             grid_options:
               columns: 12
