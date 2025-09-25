@@ -1,0 +1,176 @@
+alias: Woodstove Safety Notifications
+description: Notifications for woodstove overfire and creosote warnings
+triggers:
+  - trigger: state
+    entity_id:
+      - binary_sensor.woodstove_overfire
+    to: "on"
+    id: Overfire-On
+  - trigger: state
+    entity_id:
+      - binary_sensor.woodstove_overfire
+    from: "on"
+    to: "off"
+    for:
+      seconds: 10
+    id: Overfire-Off
+  - trigger: state
+    entity_id:
+      - binary_sensor.woodstove_creosote_warning
+    to: "on"
+    id: Creosote-On
+  - trigger: state
+    entity_id:
+      - binary_sensor.woodstove_creosote_warning
+    from: "on"
+    to: "off"
+    for:
+      seconds: 10
+    id: Creosote-Off
+  - trigger: state
+    entity_id:
+      - binary_sensor.woodstove_efficient_burn
+    from: "on"
+    to: "off"
+    id: EfficientBurn-Cold
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id:
+              - Overfire-On
+        sequence:
+          - action: notify.mobile_app_dwolfson_iphone
+            metadata: {}
+            data:
+              title: 🔥 WOODSTOVE OVERFIRE ALARM
+              data:
+                push:
+                  sound:
+                    name: siren
+                    critical: 1
+                    volume: 1
+              message: IMMEDIATE ATTENTION REQUIRED - OVERFIRE DETECTED
+          - action: notify.mobile_app_laurens_iphone
+            metadata: {}
+            data:
+              title: 🔥 WOODSTOVE OVERFIRE ALARM
+              data:
+                push:
+                  sound:
+                    name: siren
+                    critical: 1
+                    volume: 1
+              message: IMMEDIATE ATTENTION REQUIRED - OVERFIRE DETECTED
+            enabled: false
+      - conditions:
+          - condition: trigger
+            id:
+              - Creosote-On
+        sequence:
+          - action: notify.mobile_app_dwolfson_iphone
+            metadata: {}
+            data:
+              title: ⚠️ Woodstove Creosote Warning
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 0
+                    volume: 0.7
+              message: Low and Slow Ain't the Way to Go, Partner.
+          - action: notify.mobile_app_laurens_iphone
+            metadata: {}
+            data:
+              title: ⚠️ Woodstove Creosote Warning
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 0
+                    volume: 0.7
+              message: Low and Slow Ain't the Way to Go, Partner.
+            enabled: false
+      - conditions:
+          - condition: trigger
+            id:
+              - Overfire-Off
+          - condition: state
+            entity_id: binary_sensor.woodstove_overfire
+            state: "off"
+        sequence:
+          - action: notify.mobile_app_dwolfson_iphone
+            metadata: {}
+            data:
+              title: ✅ Woodstove Overfire Clear
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 0.8
+              message: Overfire condition resolved
+          - action: notify.mobile_app_laurens_iphone
+            metadata: {}
+            data:
+              title: ✅ Woodstove Overfire Clear
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 0.8
+              message: Overfire condition resolved
+            enabled: false
+      - conditions:
+          - condition: trigger
+            id:
+              - Creosote-Off
+          - condition: state
+            entity_id: binary_sensor.woodstove_creosote_warning
+            state: "off"
+        sequence:
+          - action: notify.mobile_app_dwolfson_iphone
+            metadata: {}
+            data:
+              title: ✅ Creosote Warning Clear
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 0
+                    volume: 0.5
+              message: Optimal Burning Temp Restored
+          - action: notify.mobile_app_laurens_iphone
+            metadata: {}
+            data:
+              title: ✅ Creosote Warning Clear
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 0
+                    volume: 0.5
+              message: Optimal Burning Temp Restored
+            enabled: false
+      - conditions:
+          - condition: trigger
+            id:
+              - EfficientBurn-Cold
+          - condition: state
+            entity_id: binary_sensor.woodstove_fire_active
+            state: "on"
+        sequence:
+          - action: notify.mobile_app_dwolfson_iphone
+            metadata: {}
+            data:
+              title: 🔥🔥 Woodstove Getting Cold
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 0
+                    volume: 0.7
+              message: Add a log, wake the wood, feel good
+mode: single
