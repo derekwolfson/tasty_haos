@@ -26,7 +26,7 @@ views:
                       transform-origin: top left; 
                       margin-bottom: 0px;
                       margin-top: -10px;
-                    }
+                    }  
               - type: custom:mushroom-legacy-template-card
                 primary: Smoke Alarm
                 secondary: >
@@ -58,6 +58,53 @@ views:
                     white
                   {% endif %}
                 entity: binary_sensor.smoke_alarms
+                badge_icon: >-
+                  {% set smoke = states('binary_sensor.smoke_alarms') %} {% set
+                  co = states('binary_sensor.carbon_monoxide_alarms') %}  {% if
+                  smoke == 'on' and co== 'on' %}
+
+                  mdi:alert
+
+                  {% elif smoke == 'on' %}
+
+                  mdi:alert
+
+                  {% elif co == 'on' %}
+
+                  mdi:alert
+
+                  {% else %}
+
+                  mdi:thumb-up
+
+                  {% endif %}
+                badge_color: >-
+                  {% set smoke = states('binary_sensor.smoke_alarms') %} {% set
+                  co = states('binary_sensor.carbon_monoxide_alarms') %}  {% if
+                  smoke == 'on' and co== 'on' %}
+
+                  red
+
+                  {% elif smoke == 'on' %}
+
+                  red
+
+                  {% elif co == 'on' %}
+
+                  red
+
+                  {% else %}
+
+                  green
+
+                  {% endif %}
+                tap_action:
+                  action: navigate
+                  navigation_path: '#smoke-alarm'
+                hold_action:
+                  action: more-info
+                double_tap_action:
+                  action: none
                 view_layout:
                   grid-area: a1
                 card_mod:
@@ -99,7 +146,7 @@ views:
                       {% if smoke == 'on' or co == 'on' %}
                         --shape-color: white !important;
                       {% else %} 
-                        --shape-color: blue !important;
+                        #--shape-color: blue !important;
                       {% endif %}
                       }
               - type: custom:mushroom-legacy-template-card
@@ -113,7 +160,8 @@ views:
                 icon: mdi:air-filter
                 icon_color: white
                 tap_action:
-                  action: more-info
+                  action: navigate
+                  navigation_path: '#airquality'
                 hold_action:
                   action: more-info
                 double_tap_action:
@@ -209,241 +257,24 @@ views:
                       {% endif %}
                     {% endif %}
               - type: custom:mushroom-legacy-template-card
-                primary: >-
-                  {% set forecast =
-                  states.sensor.weather_forecast_hourly.attributes.forecast %}
-                  {% if forecast %}
-                    {% set warnings = [] %}
-                    {% set now = now() %}
-                    {% for hour in forecast[:12] %}
-                      {% set hour_time = hour.datetime | as_datetime %}
-                      {% if hour_time > now %}
-                        {% if hour.precipitation and hour.precipitation > 0 %}
-                          {% if hour.condition in ['rainy', 'pouring', 'heavy-rain'] %}
-                            {% set warnings = warnings + ['Rain'] %}
-                          {% elif hour.condition in ['snowy', 'snowy-rainy', 'snow'] %}
-                            {% set warnings = warnings + ['Snow'] %}
-                          {% endif %}
-                        {% endif %}
-                        {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
-                          {% set warnings = warnings + ['Wind'] %}
-                        {% endif %}
-                        {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
-                          {% set warnings = warnings + ['Storms'] %}
-                        {% endif %}
-                        {% if hour.condition in ['fog', 'mist'] %}
-                          {% set warnings = warnings + ['Fog'] %}
-                        {% endif %}
-                      {% endif %}
-                    {% endfor %}
-                    {% set unique_warnings = warnings | unique | list %}
-                    {% if unique_warnings | length > 0 %}
-                      ⚠️ {{ unique_warnings | join(', ') }} Expected
-                    {% else %}
-                      ✅ Clear Conditions Ahead
-                    {% endif %}
-                  {% else %}
-                    Weather data unavailable
-                  {% endif %}
-                secondary: >-
-                  {% set forecast =
-                  states.sensor.weather_forecast_hourly.attributes.forecast %}
-                  {% if forecast %}
-                    {% set next_event_time = none %}
-                    {% set next_event_type = none %}
-                    {% set now = now() %}
-                    {% for hour in forecast[:12] %}
-                      {% set hour_time = hour.datetime | as_datetime %}
-                      {% if hour_time > now and next_event_time is none %}
-                        {% if (hour.precipitation and hour.precipitation > 0) or 
-                              (hour.wind_speed and (hour.wind_speed * 2.237) > 25) or 
-                              hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm', 'fog', 'mist'] %}
-                          {% set next_event_time = hour_time %}
-                          {% if hour.precipitation and hour.precipitation > 0 %}
-                            {% if hour.condition in ['rainy', 'pouring', 'heavy-rain'] %}
-                              {% set next_event_type = 'Rain' %}
-                            {% elif hour.condition in ['snowy', 'snowy-rainy', 'snow'] %}
-                              {% set next_event_type = 'Snow' %}
-                            {% endif %}
-                          {% elif hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
-                            {% set next_event_type = 'Wind' %}
-                          {% elif hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
-                            {% set next_event_type = 'Storms' %}
-                          {% elif hour.condition in ['fog', 'mist'] %}
-                            {% set next_event_type = 'Fog' %}
-                          {% endif %}
-                        {% endif %}
-                      {% endif %}
-                    {% endfor %}
-                    {% if next_event_time and next_event_type %}
-                      Next {{ next_event_type }}: {{ next_event_time.strftime('%I:%M %p') }}
-                    {% else %}
-                      Next 12 hours look good
-                    {% endif %}
-                  {% else %}
-                    Tap to see forecast
-                  {% endif %}
-                icon: >-
-                  {% set forecast =
-                  states.sensor.weather_forecast_hourly.attributes.forecast %}
-                  {% if forecast %}
-                    {% set warnings = [] %}
-                    {% set now = now() %}
-                    {% for hour in forecast[:12] %}
-                      {% set hour_time = hour.datetime | as_datetime %}
-                      {% if hour_time > now %}
-                        {% if hour.precipitation and hour.precipitation > 0 %}
-                          {% set warnings = warnings + ['precip'] %}
-                        {% endif %}
-                        {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
-                          {% set warnings = warnings + ['wind'] %}
-                        {% endif %}
-                        {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
-                          {% set warnings = warnings + ['storm'] %}
-                        {% endif %}
-                      {% endif %}
-                    {% endfor %}
-                    {% if 'storm' in warnings %}
-                      mdi:weather-lightning
-                    {% elif 'precip' in warnings %}
-                      mdi:weather-rainy
-                    {% elif 'wind' in warnings %}
-                      mdi:weather-windy
-                    {% else %}
-                      mdi:weather-sunny
-                    {% endif %}
-                  {% else %}
-                    mdi:weather-partly-cloudy
-                  {% endif %}
-                icon_color: >-
-                  {% set forecast =
-                  states.sensor.weather_forecast_hourly.attributes.forecast %}
-                  {% if forecast %}
-                    {% set warnings = [] %}
-                    {% set now = now() %}
-                    {% for hour in forecast[:12] %}
-                      {% set hour_time = hour.datetime | as_datetime %}
-                      {% if hour_time > now %}
-                        {% if hour.precipitation and hour.precipitation > 0 %}
-                          {% set warnings = warnings + ['precip'] %}
-                        {% endif %}
-                        {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
-                          {% set warnings = warnings + ['wind'] %}
-                        {% endif %}
-                        {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
-                          {% set warnings = warnings + ['storm'] %}
-                        {% endif %}
-                      {% endif %}
-                    {% endfor %}
-                    {% if 'storm' in warnings %}
-                      red
-                    {% elif 'precip' in warnings %}
-                      blue
-                    {% elif 'wind' in warnings %}
-                      orange
-                    {% else %}
-                      green
-                    {% endif %}
-                  {% else %}
-                    grey
-                  {% endif %}
+                icon: mdi:checkbox
+                icon_color: grey
                 tap_action:
-                  action: fire-dom-event
-                  browser_mod:
-                    service: browser_mod.popup
-                    data:
-                      title: 12-Hour Weather Forecast
-                      content:
-                        type: markdown
-                        content: >
-                          {% set forecast =
-                          states.sensor.weather_forecast_hourly.attributes.forecast
-                          %} {% if forecast %}
-                            {% set now = now() %}
-                            {% set content_lines = [] %}
-                            {% for hour in forecast[:12] %}
-                              {% set hour_time = hour.datetime | as_datetime %}
-                              {% if hour_time > now %}
-                                {% set time_str = hour_time.strftime('%I:%M %p') %}
-                                {% set temp = hour.temperature | round(0) if hour.temperature else 'N/A' %}
-                                {% set condition = hour.condition | title if hour.condition else 'Unknown' %}
-                                {% set precip = (hour.precipitation | round(2)) if hour.precipitation else 0 %}
-                                {% set wind_ms = hour.wind_speed if hour.wind_speed else 0 %}
-                                {% set wind_mph = (wind_ms * 2.237) | round(0) %}
-                                {% set humidity = (hour.humidity | round(0)) if hour.humidity else 'N/A' %}
-                                {% set precip_prob = (hour.precipitation_probability | round(0)) if hour.precipitation_probability else 0 %}
-                                
-                                {% set warning_icons = [] %}
-                                {% if precip > 0 %}
-                                  {% if hour.condition in ['snowy', 'snowy-rainy', 'snow'] %}
-                                    {% set warning_icons = warning_icons + ['❄️'] %}
-                                  {% else %}
-                                    {% set warning_icons = warning_icons + ['🌧️'] %}
-                                  {% endif %}
-                                {% endif %}
-                                {% if wind_mph > 25 %}
-                                  {% set warning_icons = warning_icons + ['💨'] %}
-                                {% endif %}
-                                {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
-                                  {% set warning_icons = warning_icons + ['⚡'] %}
-                                {% endif %}
-                                {% if hour.condition in ['fog', 'mist'] %}
-                                  {% set warning_icons = warning_icons + ['🌫️'] %}
-                                {% endif %}
-                                
-                                {% set warning_str = ' ' + (warning_icons | join(' ')) if warning_icons | length > 0 else '' %}
-                                
-                                {% set line = '**' + time_str + '**' + warning_str + '<br>' %}
-                                {% set line = line + '🌡️ ' + temp|string + '°F | ' + condition + '<br>' %}
-                                {% set line = line + '💧 ' + precip|string + 'mm (' + precip_prob|string + '%) | 💨 ' + wind_mph|string + ' mph | 💦 ' + humidity|string + '%<br><br>' %}
-                                {% set content_lines = content_lines + [line] %}
-                              {% endif %}
-                            {% endfor %}
-                            {{ content_lines | join('') }}
-                          {% else %}
-                            Weather forecast data is not available.
-                          {% endif %}
+                  action: none
+                hold_action:
+                  action: more-info
+                double_tap_action:
+                  action: none
+                view_layout:
+                  grid-area: a3
                 card_mod:
                   style: |
                     ha-card {
-                      transform: scale(0.8);   /* shrink card */
-                      transform-origin: top left; /* anchor the shrink */
+                      transform: scale(0.8);
+                      transform-origin: top left;
                       margin-top: -9px;
                       margin-right: -40px;
-
-                      {% set forecast = states.sensor.weather_forecast_hourly.attributes.forecast %}
-                      {% if forecast %}
-                        {% set warnings = [] %}
-                        {% set now = now() %}
-                        {% for hour in forecast[:12] %}
-                          {% set hour_time = hour.datetime | as_datetime %}
-                          {% if hour_time > now %}
-                            {% if hour.precipitation and hour.precipitation > 0 %}
-                              {% set warnings = warnings + ['precip'] %}
-                            {% endif %}
-                            {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
-                              {% set warnings = warnings + ['wind'] %}
-                            {% endif %}
-                            {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
-                              {% set warnings = warnings + ['storm'] %}
-                            {% endif %}
-                          {% endif %}
-                        {% endfor %}
-                        {% if 'storm' in warnings %}
-                          #border: 4px solid red !important;
-                        {% elif 'precip' in warnings %}
-                          #border: 4px solid blue !important;
-                        {% elif 'wind' in warnings %}
-                          #border: 4px solid orange !important;
-                        {% else %}
-                          #border: 4px solid green !important;
-                        {% endif %}
-                      {% else %}
-                        #border: 4px solid grey !important;
-                      {% endif %}
                     }
-                view_layout:
-                  grid-area: a3
               - type: custom:mushroom-legacy-template-card
                 primary: >
                   {% set cans_out = states('input_boolean.put_out_trash') %}   
@@ -566,132 +397,104 @@ views:
                         margin-bottom: -20px;
                     }
               - type: custom:mushroom-legacy-template-card
-                primary: >-
-                  {% set minutecast = states.sensor.weather_minutecast %} {% if
-                  minutecast and minutecast.state %}
-                    {% if minutecast.state == 'raining' %}
-                      Currently raining
-                    {% elif minutecast.state == 'incoming' %}
-                      Rain incoming
-                    {% elif minutecast.state == 'clear' %}
-                      No rain next hour
-                    {% else %}
-                      MinuteCast ready
-                    {% endif %}
-                  {% else %}
-                    MinuteCast unavailable
-                  {% endif %}
-                secondary: >-
-                  {% set minutecast = states.sensor.weather_minutecast %} {% if
-                  minutecast and minutecast.attributes.summary %}
-                    {{ minutecast.attributes.summary | title }}
-                  {% else %}
-                    Tap for details
-                  {% endif %}
-                icon: mdi:water
-                entity: sensor.weather_minutecast
-                icon_color: >-
-                  {% set minutecast = states.sensor.weather_minutecast %} {% if
-                  minutecast and minutecast.state %}
-                    {% if minutecast.state == 'raining' %}
-                      blue
-                    {% elif minutecast.state == 'incoming' %}
-                      orange
-                    {% elif minutecast.state == 'clear' %}
-                      white
-                    {% else %}
-                      gray
-                    {% endif %}
-                  {% else %}
-                    gray
-                  {% endif %}
+                icon: mdi:checkbox
+                icon_color: grey
+                tap_action:
+                  action: none
+                hold_action:
+                  action: more-info
+                double_tap_action:
+                  action: none
                 view_layout:
                   grid-area: b3
                 card_mod:
                   style: |
                     ha-card {
-                      transform: scale(0.8);
-                      transform-origin: top left;
-                      margin-top: -15px;
-                      margin-right: -40px;
-                      margin-bottom: -20px;
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -40px;
+                        margin-bottom: -20px;
                     }
-
-                    {% set mc_state = states('sensor.weather_minutecast') %}
-                    {% if mc_state == 'incoming' %}
-                    ha-card {
-                      animation: flash-bg 7s infinite;
-                    }
-                    @keyframes flash-bg {
-                      0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
-                      50% { background-color: rgba(0, 153, 255, 0.1); }
-                    }
-                    {% elif mc_state == 'raining' %}
-                    ha-card {
-                      background-color: rgba(0, 153, 255, 0.7) !important;
-                    }
-                    {% endif %}
             layout:
               grid-template-columns: 33% 33% 33%
               grid-template-rows: auto auto auto
               grid-template-areas: |
                 "1 1 1"  "a1 a2 a3" "b1 b2 b3"
-          - type: custom:mushroom-chips-card
-            card_mod:
-              style: |
-                .chip-container {
-                --chip-spacing: 25px;
-                }
-            chips:
-              - type: entity
-                entity: sensor.day_of_week
-                tap_action:
-                  action: none
-                hold_action:
-                  action: none
-                double_tap_action:
-                  action: none
-                icon: mdi:calendar-today-outline
-                icon_color: accent
+          - type: vertical-stack
+            cards:
+              - type: custom:mushroom-chips-card
                 card_mod:
                   style: |
-                    ha-card {
-                      zoom: 1.25 !important;
+                    .chip-container {
+                    --chip-spacing: 10px;
                     }
-              - type: entity
-                entity: sensor.full_date
-                icon_color: accent
-                tap_action:
-                  action: navigate
-                  navigation_path: /dashboard-planner/calendars/
-                hold_action:
-                  action: none
-                double_tap_action:
-                  action: none
-                name: Full Date
-                use_entity_picture: false
-                icon: mdi:calendar-month-outline
+                chips:
+                  - type: entity
+                    entity: sensor.day_of_week
+                    tap_action:
+                      action: none
+                    hold_action:
+                      action: none
+                    double_tap_action:
+                      action: none
+                    icon: mdi:calendar-today-outline
+                    icon_color: accent
+                    card_mod:
+                      style: |
+                        ha-card {
+                          zoom: 1.25 !important;
+                        }
+                  - type: entity
+                    entity: sensor.full_date
+                    icon_color: accent
+                    tap_action:
+                      action: navigate
+                      navigation_path: /dashboard-planner/calendars/
+                    hold_action:
+                      action: none
+                    double_tap_action:
+                      action: none
+                    name: Full Date
+                    use_entity_picture: false
+                    icon: mdi:calendar-month-outline
+                    card_mod:
+                      style: |
+                        ha-card {
+                          zoom: 1.25 !important;
+                        }   
+                  - type: entity
+                    entity: sensor.time_am_pm
+                    tap_action:
+                      action: none
+                    hold_action:
+                      action: none
+                    double_tap_action:
+                      action: none
+                    icon: mdi:clock-outline
+                    icon_color: accent
+                    card_mod:
+                      style: |
+                        ha-card {
+                          zoom: 1.25 !important;
+                        }
+                alignment: center
+                grid_options:
+                  columns: 12
+                  rows: 1
+              - clock_style: analog
+                clock_size: small
+                show_seconds: true
+                no_background: true
+                border: true
+                ticks: hour
+                type: clock
                 card_mod:
                   style: |
                     ha-card {
-                      zoom: 1.25 !important;
-                    }   
-              - type: entity
-                entity: sensor.time_am_pm
-                tap_action:
-                  action: none
-                hold_action:
-                  action: none
-                double_tap_action:
-                  action: none
-                icon: mdi:clock-outline
-                icon_color: accent
-                card_mod:
-                  style: |
-                    ha-card {
-                      zoom: 1.25 !important;
+                      transform: scale(0.6);
+                      transform-origin: top;
                     }
-            alignment: center
             grid_options:
               columns: 12
               rows: 2
@@ -729,14 +532,39 @@ views:
                       margin-right: -40px;
                     }
               - type: custom:mushroom-legacy-template-card
-                icon: mdi:checkbox
-                icon_color: grey
+                icon: >
+                  {% set replace_batteries =
+                  states('input_boolean.replace_batteries')%} {% if
+                  replace_batteries == 'on' %}
+                    mdi:battery-alert-variant
+                  {% else %}
+                    mdi:battery-check
+                  {% endif %}
+                icon_color: >
+                  {% set replace_batteries =
+                  states('input_boolean.replace_batteries')%} {% if
+                  replace_batteries == 'on' %}
+                    red
+                  {% else %}
+                    blue
+                  {% endif %}
                 tap_action:
-                  action: none
+                  action: navigate
+                  navigation_path: '#batteries'
                 hold_action:
                   action: more-info
                 double_tap_action:
                   action: none
+                entity: input_boolean.replace_batteries
+                secondary: >
+                  {% set replace_batteries =
+                  states('input_boolean.replace_batteries')%}
+                   {% if replace_batteries == 'on' %}
+                     Replace Batteries
+                   {% else %}
+                     Batteries OK
+                   {% endif %}
+                primary: Batteries
                 view_layout:
                   grid-area: a2
                 card_mod:
@@ -960,6 +788,8 @@ views:
               - type: custom:mushroom-entity-card
                 entity: sensor.nest_thermostat_humidity
                 name: Indoor Humidity
+                icon_color: cyan
+                fill_container: false
                 view_layout:
                   grid-area: d
                 card_mod:
@@ -970,21 +800,88 @@ views:
                       transform-origin: top left;
                       margin-top: -16px;      
                     }  
-              - type: custom:mushroom-entity-card
-                entity: sensor.newdevice_thermocouple_adjusted_temperature_f
-                name: Woodstove Flue
+              - type: custom:mushroom-legacy-template-card
+                primary: Woodstove Flue
+                secondary: >-
+                  {{
+                  states('sensor.woodstove_thermocouple_woodstove_flue_temp_adjusted_f')
+                  | float(0) | int }}°F
                 icon: mdi:campfire
-                icon_color: red
+                icon_color: |-
+                  {% if is_state('binary_sensor.woodstove_fire_active', 'on') %}
+                    orange
+                  {% else %}
+                    disabled
+                  {% endif %}
                 view_layout:
                   grid-area: f
                 card_mod:
-                  style: |
+                  style: >
                     ha-card {
                       transform: scale(0.80);
                       width: 200px;
                       transform-origin: top left;
                       margin-top: -16px;       
-                    }  
+                    }
+
+                    {% if is_state('binary_sensor.woodstove_efficient_burn',
+                    'on') %}
+
+                    ha-state-icon {
+                      animation: fire 1.5s infinite;
+                      transform-origin: 50% 85%;
+                    }
+
+                    @keyframes fire {
+                      0% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-red)); opacity: {{range(7, 10) | random / 10}}; }
+                      5% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-deep-orange)); opacity: {{range(7, 10) | random / 10}}; }
+                      10% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-red)); opacity: {{range(7, 10) | random / 10}}; }
+                      15% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-deep-orange)); opacity: {{range(7, 10) | random / 10}}; }
+                      20% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-deep-orange)); opacity: {{range(7, 10) | random / 10}}; }
+                      25% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-red)); opacity: {{range(7, 10) | random / 10}}; }
+                      30% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-red)); opacity: {{range(7, 10) | random / 10}}; }
+                      35% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-deep-orange)); opacity: {{range(7, 10) | random / 10}}; }
+                      40% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-red)); opacity: {{range(7, 10) | random / 10}}; }
+                      45% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-deep-orange)); opacity: {{range(7, 10) | random / 10}}; }
+                      50% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-deep-orange)); opacity: {{range(7, 10) | random / 10}}; }
+                      55% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-red)); opacity: {{range(7, 10) | random / 10}}; }
+                      60% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-deep-orange)); opacity: {{range(7, 10) | random / 10}}; }
+                      65% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-red)); opacity: {{range(7, 10) | random / 10}}; }
+                      70% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-deep-orange)); opacity: {{range(7, 10) | random / 10}}; }
+                      75% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-deep-orange)); opacity: {{range(7, 10) | random / 10}}; }
+                      80% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-red)); opacity: {{range(7, 10) | random / 10}}; }
+                      85% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-red)); opacity: {{range(7, 10) | random / 10}}; }
+                      90% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-deep-orange)); opacity: {{range(7, 10) | random / 10}}; }
+                      95% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-red)); opacity: {{range(7, 10) | random / 10}}; }
+                      100% { transform: rotate({{range(-20, 20) | random / 10}}deg) scaleY({{range(9, 12) | random / 10}}); color: rgb(var(--rgb-deep-orange)); opacity: {{range(7, 10) | random / 10}}; }
+                    }
+
+                    {% endif %}
+
+                    {% if is_state('binary_sensor.woodstove_overfire', 'on') %}
+
+                    ha-card {
+                      animation: flash-red-fast 2s infinite;
+                    }
+
+                    @keyframes flash-red-fast {
+                      0%, 10%, 90%, 100% { background-color: rgba(244, 67, 54, 0.8); }
+                      50% { background-color: rgba(244, 67, 54, 0.2); }
+                    }
+
+                    {% elif is_state('binary_sensor.woodstove_creosote_warning',
+                    'on') %}
+
+                    ha-card {
+                      animation: flash-yellow 7s infinite;
+                    }
+
+                    @keyframes flash-yellow {
+                      0%, 10%, 90%, 100% { background-color: rgba(255, 193, 7, 0.7); }
+                      50% { background-color: rgba(255, 193, 7, 0.1); }
+                    }
+
+                    {% endif %}
               - type: custom:mushroom-light-card
                 entity: light.dimmable_smart_plug
                 use_light_color: false
@@ -1040,10 +937,8 @@ views:
               - type: custom:mushroom-title-card
                 title: >-
                   {{
-                  states('sensor.newdevice_thermocouple_adjusted_temperature_f')
+                  states('sensor.woodstove_thermocouple_woodstove_fan_temp_adjusted_f')
                   | round(0) | int }} °F
-                view_layout:
-                  grid-area: g
                 card_mod:
                   style: |
                     ha-card {
@@ -1068,6 +963,8 @@ views:
                       margin: 0 !important;
                       padding: 8px 0 !important;
                     }
+                view_layout:
+                  grid-area: g
             grid_options:
               columns: 5
               rows: 5
@@ -1246,7 +1143,7 @@ views:
                   }}
                 icon: >-
                   {% set contact_state =
-                  states('binary_sensor.front_door_contact') %} {% if
+                  states('binary_sensor.contact_sensor_gen2_frontdoor') %} {% if
                   contact_state == 'on' %}
                     mdi:door-open
                   {% else %}
@@ -1260,30 +1157,44 @@ views:
                     green
                   {% elif lock_state == 'locked' and contact_state == 'on' %}
                     orange
+                  {% elif lock_state == 'unlocked' and contact_state == 'off' %}
+                    green
                   {% else %}
                     red
                   {% endif %}
                 badge_icon: >-
-                  {% set lock_state = states('lock.door_lock') %} {% if
-                  lock_state == 'locked' %}
+                  {% set lock_state = states('lock.door_lock') %} {% set
+                  contact_state =
+                  states('binary_sensor.contact_sensor_gen2_frontdoor') %} {% if
+                  lock_state == 'locked' and contact_state == 'off' %}
                     mdi:lock
+                  {% elif lock_state == 'locked' and contact_state == 'on' %}
+                    mdi:lock
+                  {% elif lock_state == 'unlocked' and contact_state == 'off' %}
+                    mdi:lock-open
                   {% else %}
                     mdi:lock-open
                   {% endif %}
                 badge_color: >-
-                  {% set lock_state = states('lock.door_lock') %} {% if
-                  lock_state == 'locked' %}
+                  {% set lock_state = states('lock.door_lock') %} {% set
+                  contact_state =
+                  states('binary_sensor.contact_sensor_gen2_frontdoor') %} {% if
+                  lock_state == 'locked' and contact_state == 'off' %}
                     green
+                  {% elif lock_state == 'locked' and contact_state == 'on' %}
+                    orange
+                  {% elif lock_state == 'unlocked' and contact_state == 'off' %}
+                    red
                   {% else %}
                     red
                   {% endif %}
                 tap_action:
                   action: more-info
-                  entity: lock.door_lock
                 hold_action:
                   action: toggle
                 double_tap_action:
                   action: none
+                entity: lock.door_lock
                 view_layout:
                   grid-area: a
                 card_mod:
@@ -1293,6 +1204,15 @@ views:
                         transform-origin: top left;
                         margin-top: -9px;
                         margin-right: -40px;
+                    }
+                    mushroom-shape-icon {
+                      {% set lock_state = states('lock.kwikset620_internal_garage') %}
+                      {% if lock_state == 'unlocked' %}
+                        #--shape-color: rgba(244, 67, 54, 0.6) !important;
+                        --shape-color: transparent !important;
+                      {% else %} 
+                        #--shape-color: transparent !important;
+                      {% endif %}
                     }
               - type: custom:mushroom-legacy-template-card
                 primary: Ext. Garage
@@ -1312,20 +1232,6 @@ views:
                   {% else %}
                     mdi:door-closed
                   {% endif %}
-                badge_icon: >-
-                  {% set lock_state = states('lock.kwikset620_internal_garage')
-                  %} {% if lock_state == 'locked' %}
-                    mdi:lock
-                  {% else %}
-                    mdi:lock-open
-                  {% endif %}
-                badge_color: >-
-                  {% set lock_state = states('lock.kwikset620_internal_garage')
-                  %} {% if lock_state == 'locked' %}
-                    green
-                  {% else %}
-                    red
-                  {% endif %}
                 icon_color: >-
                   {% set lock_state = states('lock.kwikset620_internal_garage')
                   %} {% set contact_state =
@@ -1334,6 +1240,34 @@ views:
                     green
                   {% elif lock_state == 'locked' and contact_state == 'on' %}
                     orange
+                  {% elif lock_state == 'unlocked' and contact_state == 'off' %}
+                    green
+                  {% else %}
+                    red
+                  {% endif %}
+                badge_icon: >-
+                  {% set lock_state = states('lock.kwikset620_internal_garage')
+                  %} {% set contact_state =
+                  states('binary_sensor.garage_mandoor_external_contactsensor')
+                  %} {% if lock_state == 'locked' and contact_state == 'off' %}
+                    mdi:lock
+                  {% elif lock_state == 'locked' and contact_state == 'on' %}
+                    mdi:lock
+                  {% elif lock_state == 'unlocked' and contact_state == 'off' %}
+                    mdi:lock-open
+                  {% else %}
+                    mdi:lock-open
+                  {% endif %}
+                badge_color: >-
+                  {% set lock_state = states('lock.kwikset620_internal_garage')
+                  %} {% set contact_state =
+                  states('binary_sensor.garage_mandoor_external_contactsensor')
+                  %} {% if lock_state == 'locked' and contact_state == 'off' %}
+                    green
+                  {% elif lock_state == 'locked' and contact_state == 'on' %}
+                    orange
+                  {% elif lock_state == 'unlocked' and contact_state == 'off' %}
+                    red
                   {% else %}
                     red
                   {% endif %}
@@ -1354,6 +1288,15 @@ views:
                         margin-top: -9px;
                         margin-right: -40px;
                     }
+                    mushroom-shape-icon {
+                      {% set lock_state = states('lock.kwikset620_internal_garage') %}
+                      {% if lock_state == 'unlocked' %}
+                        #--shape-color: rgba(244, 67, 54, 0.6) !important;
+                        --shape-color: transparent !important;
+                      {% else %} 
+                        #--shape-color: transparent !important;
+                      {% endif %}
+                    }
               - type: custom:mushroom-legacy-template-card
                 primary: Int. Garage
                 secondary: >-
@@ -1372,20 +1315,6 @@ views:
                   {% else %}
                     mdi:door-closed
                   {% endif %}
-                badge_icon: >-
-                  {% set lock_state = states('lock.kwikset620_internal_garage')
-                  %} {% if lock_state == 'locked' %}
-                    mdi:lock
-                  {% else %}
-                    mdi:lock-open
-                  {% endif %}
-                badge_color: >-
-                  {% set lock_state = states('lock.kwikset620_internal_garage')
-                  %} {% if lock_state == 'locked' %}
-                    green
-                  {% else %}
-                    red
-                  {% endif %}
                 icon_color: >-
                   {% set lock_state = states('lock.kwikset620_internal_garage')
                   %} {% set contact_state =
@@ -1394,6 +1323,34 @@ views:
                     green
                   {% elif lock_state == 'locked' and contact_state == 'on' %}
                     orange
+                  {% elif lock_state == 'unlocked' and contact_state == 'off' %}
+                    green
+                  {% else %}
+                    red
+                  {% endif %}
+                badge_icon: >-
+                  {% set lock_state = states('lock.kwikset620_internal_garage')
+                  %} {% set contact_state =
+                  states('binary_sensor.ring_contact_sensor_gen2_intrusion_2')
+                  %} {% if lock_state == 'locked' and contact_state == 'off' %}
+                    mdi:lock
+                  {% elif lock_state == 'locked' and contact_state == 'on' %}
+                    mdi:lock
+                  {% elif lock_state == 'unlocked' and contact_state == 'off' %}
+                    mdi:lock-open
+                  {% else %}
+                    mdi:lock-open
+                  {% endif %}
+                badge_color: >-
+                  {% set lock_state = states('lock.kwikset620_internal_garage')
+                  %} {% set contact_state =
+                  states('binary_sensor.ring_contact_sensor_gen2_intrusion_2')
+                  %} {% if lock_state == 'locked' and contact_state == 'off' %}
+                    green
+                  {% elif lock_state == 'locked' and contact_state == 'on' %}
+                    orange
+                  {% elif lock_state == 'unlocked' and contact_state == 'off' %}
+                    red
                   {% else %}
                     red
                   {% endif %}
@@ -1413,6 +1370,15 @@ views:
                         transform-origin: top left;
                         margin-top: -9px;
                         margin-right: -40px;
+                    }
+                    mushroom-shape-icon {
+                      {% set lock_state = states('lock.kwikset620_internal_garage') %}
+                      {% if lock_state == 'unlocked' %}
+                        #--shape-color: rgba(244, 67, 54, 0.6) !important;
+                        --shape-color: transparent !important;
+                      {% else %} 
+                        #--shape-color: transparent !important;
+                      {% endif %}
                     }
               - type: custom:mushroom-legacy-template-card
                 primary: West
@@ -1631,66 +1597,245 @@ views:
             show_precipitation_probability: false
             icons: true
             name: ' '
-          - type: custom:mushroom-template-card
-            primary: >-
-              {% set minutecast = states.sensor.weather_minutecast %} {% if
-              minutecast and minutecast.state %}
-                {% if minutecast.state == 'raining' %}
-                  Currently raining
-                {% elif minutecast.state == 'incoming' %}
-                  Rain incoming
-                {% elif minutecast.state == 'clear' %}
-                  No rain next hour
-                {% else %}
-                  MinuteCast ready
-                {% endif %}
-              {% else %}
-                MinuteCast unavailable
-              {% endif %}
-            secondary: >-
-              {% set minutecast = states.sensor.weather_minutecast %} {% if
-              minutecast and minutecast.attributes.summary %}
-                {{ minutecast.attributes.summary | title }}
-              {% else %}
-                Tap for details
-              {% endif %}
-            icon: mdi:water
-            color: >-
-              {% set minutecast = states.sensor.weather_minutecast %} {% if
-              minutecast %}
-                {% if minutecast.state == 'raining' %}
-                  blue
-                {% elif minutecast.state == 'incoming' %}
-                  orange
-                {% else %}
-                  green
-                {% endif %}
-              {% else %}
-                grey
-              {% endif %}
-            features_position: bottom
-            entity: sensor.weather_minutecast
-            card_mod:
-              style: |
-                ha-card {
-                  {% set minutecast = states.sensor.weather_minutecast %}
-                  {% if minutecast %}
+          - type: horizontal-stack
+            cards:
+              - type: custom:mushroom-template-card
+                primary: >-
+                  {% set minutecast = states.sensor.weather_minutecast %} {% if
+                  minutecast and minutecast.state %}
                     {% if minutecast.state == 'raining' %}
-                      background-color: rgba(33, 150, 243, 0.3) !important;
+                      Currently raining
                     {% elif minutecast.state == 'incoming' %}
-                      background-color: rgba(33, 150, 243, 0.3) !important;
-                      animation: pulse 7s infinite !important;
+                      Rain incoming
+                    {% elif minutecast.state == 'clear' %}
+                      No rain next hour
+                    {% else %}
+                      MinuteCast ready
                     {% endif %}
+                  {% else %}
+                    MinuteCast unavailable
                   {% endif %}
-                }
+                secondary: >-
+                  {% set minutecast = states.sensor.weather_minutecast %} {% if
+                  minutecast and minutecast.attributes.summary %}
+                    {{ minutecast.attributes.summary | title }}
+                  {% else %}
+                    Tap for details
+                  {% endif %}
+                icon: mdi:water
+                color: >-
+                  {% set minutecast = states.sensor.weather_minutecast %} {% if
+                  minutecast %}
+                    {% if minutecast.state == 'raining' %}
+                      blue
+                    {% elif minutecast.state == 'incoming' %}
+                      orange
+                    {% else %}
+                      green
+                    {% endif %}
+                  {% else %}
+                    grey
+                  {% endif %}
+                features_position: bottom
+                entity: sensor.weather_minutecast
+                card_mod:
+                  style: |
+                    ha-card {
+                      {% set minutecast = states.sensor.weather_minutecast %}
+                      {% if minutecast %}
+                        {% if minutecast.state == 'raining' %}
+                          background-color: rgba(33, 150, 243, 0.3) !important;
+                        {% elif minutecast.state == 'incoming' %}
+                          background-color: rgba(33, 150, 243, 0.3) !important;
+                          animation: pulse 7s infinite !important;
+                        {% endif %}
+                      {% endif %}
+                    }
 
-                @keyframes pulse {
-                  0% { background-color: rgba(33, 150, 243, 0.1) !important; }
-                  50% { background-color: rgba(33, 150, 243, 0.5) !important; }
-                  100% { background-color: rgba(33, 150, 243, 0.1) !important; }
-                }
-            grid_options:
-              columns: full
+                    @keyframes pulse {
+                      0% { background-color: rgba(33, 150, 243, 0.1) !important; }
+                      50% { background-color: rgba(33, 150, 243, 0.5) !important; }
+                      100% { background-color: rgba(33, 150, 243, 0.1) !important; }
+                    }
+                grid_options:
+                  columns: full
+              - type: custom:mushroom-legacy-template-card
+                primary: >-
+                  {% set forecast =
+                  states.sensor.weather_forecast_hourly.attributes.forecast %}
+                  {% if forecast %}
+                    {% set warnings = [] %}
+                    {% set now = now() %}
+                    {% for hour in forecast[:12] %}
+                      {% set hour_time = hour.datetime | as_datetime %}
+                      {% if hour_time > now %}
+                        {% if hour.precipitation and hour.precipitation > 0 %}
+                          {% if hour.condition in ['rainy', 'pouring', 'heavy-rain'] %}
+                            {% set warnings = warnings + ['Rain'] %}
+                          {% elif hour.condition in ['snowy', 'snowy-rainy', 'snow'] %}
+                            {% set warnings = warnings + ['Snow'] %}
+                          {% endif %}
+                        {% endif %}
+                        {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                          {% set warnings = warnings + ['Wind'] %}
+                        {% endif %}
+                        {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                          {% set warnings = warnings + ['Storms'] %}
+                        {% endif %}
+                        {% if hour.condition in ['fog', 'mist'] %}
+                          {% set warnings = warnings + ['Fog'] %}
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                    {% set unique_warnings = warnings | unique | list %}
+                    {% if unique_warnings | length > 0 %}
+                      ⚠️ {{ unique_warnings | join(', ') }} Expected
+                    {% else %}
+                      Clear Conditions
+                    {% endif %}
+                  {% else %}
+                    Weather data unavailable
+                  {% endif %}
+                secondary: >-
+                  {% set forecast =
+                  states.sensor.weather_forecast_hourly.attributes.forecast %}
+                  {% if forecast %}
+                    {% set next_event_time = none %}
+                    {% set next_event_type = none %}
+                    {% set now = now() %}
+                    {% for hour in forecast[:12] %}
+                      {% set hour_time = hour.datetime | as_datetime %}
+                      {% if hour_time > now and next_event_time is none %}
+                        {% if (hour.precipitation and hour.precipitation > 0) or 
+                              (hour.wind_speed and (hour.wind_speed * 2.237) > 25) or 
+                              hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm', 'fog', 'mist'] %}
+                          {% set next_event_time = hour_time %}
+                          {% if hour.precipitation and hour.precipitation > 0 %}
+                            {% if hour.condition in ['rainy', 'pouring', 'heavy-rain'] %}
+                              {% set next_event_type = 'Rain' %}
+                            {% elif hour.condition in ['snowy', 'snowy-rainy', 'snow'] %}
+                              {% set next_event_type = 'Snow' %}
+                            {% endif %}
+                          {% elif hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                            {% set next_event_type = 'Wind' %}
+                          {% elif hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                            {% set next_event_type = 'Storms' %}
+                          {% elif hour.condition in ['fog', 'mist'] %}
+                            {% set next_event_type = 'Fog' %}
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                    {% if next_event_time and next_event_type %}
+                      Next {{ next_event_type }}: {{ next_event_time.strftime('%I:%M %p') }}
+                    {% else %}
+                      Next 12 hours look good
+                    {% endif %}
+                  {% else %}
+                    Tap to see forecast
+                  {% endif %}
+                icon: >-
+                  {% set forecast =
+                  states.sensor.weather_forecast_hourly.attributes.forecast %}
+                  {% if forecast %}
+                    {% set warnings = [] %}
+                    {% set now = now() %}
+                    {% for hour in forecast[:12] %}
+                      {% set hour_time = hour.datetime | as_datetime %}
+                      {% if hour_time > now %}
+                        {% if hour.precipitation and hour.precipitation > 0 %}
+                          {% set warnings = warnings + ['precip'] %}
+                        {% endif %}
+                        {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                          {% set warnings = warnings + ['wind'] %}
+                        {% endif %}
+                        {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                          {% set warnings = warnings + ['storm'] %}
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                    {% if 'storm' in warnings %}
+                      mdi:weather-lightning
+                    {% elif 'precip' in warnings %}
+                      mdi:weather-rainy
+                    {% elif 'wind' in warnings %}
+                      mdi:weather-windy
+                    {% else %}
+                      mdi:weather-sunny
+                    {% endif %}
+                  {% else %}
+                    mdi:weather-partly-cloudy
+                  {% endif %}
+                icon_color: >-
+                  {% set forecast =
+                  states.sensor.weather_forecast_hourly.attributes.forecast %}
+                  {% if forecast %}
+                    {% set warnings = [] %}
+                    {% set now = now() %}
+                    {% for hour in forecast[:12] %}
+                      {% set hour_time = hour.datetime | as_datetime %}
+                      {% if hour_time > now %}
+                        {% if hour.precipitation and hour.precipitation > 0 %}
+                          {% set warnings = warnings + ['precip'] %}
+                        {% endif %}
+                        {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                          {% set warnings = warnings + ['wind'] %}
+                        {% endif %}
+                        {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                          {% set warnings = warnings + ['storm'] %}
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                    {% if 'storm' in warnings %}
+                      red
+                    {% elif 'precip' in warnings %}
+                      blue
+                    {% elif 'wind' in warnings %}
+                      orange
+                    {% else %}
+                      green
+                    {% endif %}
+                  {% else %}
+                    grey
+                  {% endif %}
+                tap_action:
+                  action: ''
+                view_layout:
+                  grid-area: a3
+                card_mod:
+                  style: |
+                    ha-card {    
+                      {% set forecast = states.sensor.weather_forecast_hourly.attributes.forecast %}
+                      {% if forecast %}
+                        {% set warnings = [] %}
+                        {% set now = now() %}
+                        {% for hour in forecast[:12] %}
+                          {% set hour_time = hour.datetime | as_datetime %}
+                          {% if hour_time > now %}
+                            {% if hour.precipitation and hour.precipitation > 0 %}
+                              {% set warnings = warnings + ['precip'] %}
+                            {% endif %}
+                            {% if hour.wind_speed and (hour.wind_speed * 2.237) > 25 %}
+                              {% set warnings = warnings + ['wind'] %}
+                            {% endif %}
+                            {% if hour.condition in ['lightning', 'lightning-rainy', 'thunderstorm'] %}
+                              {% set warnings = warnings + ['storm'] %}
+                            {% endif %}
+                          {% endif %}
+                        {% endfor %}
+                        {% if 'storm' in warnings %}
+                          #border: 4px solid red !important;
+                        {% elif 'precip' in warnings %}
+                          #border: 4px solid blue !important;
+                        {% elif 'wind' in warnings %}
+                          #border: 4px solid orange !important;
+                        {% else %}
+                          #border: 4px solid green !important;
+                        {% endif %}
+                      {% else %}
+                        #border: 4px solid grey !important;
+                      {% endif %}
+                    }
           - type: custom:clock-weather-card
             entity: weather.openweathermap
             title: null
@@ -1934,7 +2079,7 @@ views:
               - camera_entity: camera.floodlight_poe_upper_driveway_fluent
               - camera_entity: camera.floodlight_poe_lower_driveway_fluent
             dimensions:
-              height: 200px
+              height: 165px
             live:
               display:
                 mode: single
@@ -1953,6 +2098,14 @@ views:
               - type: heading
                 heading_style: subtitle
                 heading: Kia EV9
+                icon: mdi:car-estate
+                tap_action:
+                  action: navigate
+                  navigation_path: '#kia-ev9'
+                view_layout:
+                  grid-area: 1
+                  grid-column-start: 1
+                  grid-column-end: 3
                 card_mod:
                   style: |
                     ha-card {
@@ -1960,178 +2113,6 @@ views:
                       margin-bottom: 0px;
                       margin-top: -10px;
                     }
-                tap_action:
-                  action: fire-dom-event
-                  browser_mod:
-                    service: browser_mod.popup
-                    data:
-                      title: Kia EV9 Climate Control
-                      content:
-                        type: vertical-stack
-                        cards:
-                          - type: custom:mushroom-legacy-template-card
-                            entity: timer.ev9_climate_timer
-                            primary: >
-                              {% set mode =
-                              states('input_select.ev9_remote_climate_mode') %}
-
-                              {% set timer_state =
-                              states('timer.ev9_climate_timer') %}
-
-                              {% if mode == 'heating' and timer_state ==
-                              'active' %}
-                                Heating ({{ states('sensor.ev9_climate_timer_status') }} Remaining)
-                              {% elif mode == 'heating' and timer_state !=
-                              'active' %}
-                                Heating Initializing
-                              {% else %}
-                                Request Remote Heating
-                              {% endif %}
-                            icon: mdi:fire
-                            icon_color: >
-                              {% if
-                              states('input_select.ev9_remote_climate_mode') ==
-                              'heating' %}
-                                white
-                              {% else %}
-                                grey
-                              {% endif %}
-                            tap_action:
-                              action: call-service
-                              service: script.ev9_climate_start_heat
-                            fill_container: true
-                            grid_options:
-                              columns: full
-                            card_mod:
-                              style: >
-                                {% set mode =
-                                states('input_select.ev9_remote_climate_mode')
-                                %}
-
-                                {% set timer_state =
-                                states('timer.ev9_climate_timer') %}
-
-                                /* Background */
-
-                                {% if mode == 'heating' and timer_state !=
-                                'active' %}
-                                  ha-card { animation: flash-bg 7s infinite; }
-                                {% elif mode == 'heating' and timer_state ==
-                                'active' %}
-                                  ha-card { background-color: rgba(255,69,0,0.7); } /* solid red */
-                                {% else %}
-
-                                {% endif %}
-
-                                /* Background keyframes */
-
-                                @keyframes flash-bg {
-                                  0%, 10%, 90%, 100% { background-color: rgba(255,69,0,0.7); }
-                                  50% { background-color: rgba(255,69,0,0.7); }
-                                }
-
-                                /* Icon fire using ha-state-icon */
-
-                                {% if mode == 'heating' %}
-                                  ha-state-icon {
-                                      animation: bounce 1.5s ease-in-out infinite
-                                  }
-                                {% else %}
-                                  ha-state-icon {
-                                      animation: none;
-                                  }
-                                {% endif %}
-
-                                /* Spin keyframes */
-
-                                @keyframes bounce {
-                                    0%, 20%, 50%, 80%, 100% {transform: translateY(0); } 
-                                    40% { transform: translateY(-1.2px) rotate(5deg); } 
-                                    60% { transform: translateY(-1.1px) rotate(-4deg); } 
-                                  }
-                          - type: custom:mushroom-legacy-template-card
-                            entity: timer.ev9_climate_timer
-                            primary: >
-                              {% set mode =
-                              states('input_select.bluelink_remote_climate_mode')
-                              %}
-
-                              {% set timer_state =
-                              states('timer.ev9_climate_timer') %}
-
-                              {% if mode == 'cooling' and timer_state ==
-                              'active' %}
-                                Cooling ({{ states('sensor.ev9_climate_timer_status') }} Remaining)
-                              {% elif mode == 'cooling' and timer_state !=
-                              'active' %}
-                                Cooling Initializing
-                              {% else %}
-                                Request Remote Cooling
-                              {% endif %}
-                            icon: mdi:snowflake
-                            icon_color: >
-                              {% if
-                              states('input_select.ev9_remote_climate_mode') ==
-                              'cooling' %}
-                                white
-                              {% else %}
-                                grey
-                              {% endif %}
-                            tap_action:
-                              action: call-service
-                              service: script.ev9_climate_start_cool
-                            fill_container: true
-                            grid_options:
-                              columns: full
-                            card_mod:
-                              style: >
-                                {% set mode =
-                                states('input_select.ev9_remote_climate_mode')
-                                %}
-
-                                {% set timer_state =
-                                states('timer.ev9_climate_timer') %}
-
-                                /* Background */
-
-                                {% if mode == 'cooling' and timer_state !=
-                                'active' %}
-                                  ha-card { animation: flash-bg 7s infinite; }
-                                {% elif mode == 'cooling' and timer_state ==
-                                'active' %}
-                                  ha-card { background-color: #1E90FF; }
-                                {% else %}
-
-                                {% endif %}
-
-                                /* Background keyframes */
-
-                                @keyframes flash-bg {
-                                      0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
-                                      50% { background-color: rgba(0, 153, 255, 0.1); }
-                                }
-
-                                /* Icon spin using mushroom-shape-icon$ */
-                                 {% if mode == 'cooling' and timer_state == 'active' %}
-                                  ha-state-icon {
-                                      animation: spin 5s linear infinite;
-                                    }
-                                {% else %}
-                                  ha-state-icon {
-                                      animation: none;
-                                    }
-                                {% endif %}
-
-                                /* Spin keyframes */
-
-                                @keyframes spin {
-                                  0% { transform: rotate(0deg); }
-                                  100% { transform: rotate(360deg); }
-                icon: mdi:car-estate
-                view_layout:
-                  grid-area: 1
-                  grid-column-start: 1
-                  grid-column-end: 3
               - type: custom:mushroom-legacy-template-card
                 entity: sensor.ev9_ev_battery_level
                 primary: Battery
@@ -2633,6 +2614,518 @@ views:
                 "1 1 1"  "a1 a2 a3" "b1 b2 b3"
           - type: custom:layout-card
             layout_type: custom:grid-layout
+            cards:
+              - type: heading
+                heading_style: subtitle
+                heading: Hyundai Ioniq 5
+                icon: mdi:car-sports
+                tap_action:
+                  action: navigate
+                  navigation_path: '#hyundai-ioniq5'
+                view_layout:
+                  grid-area: 1
+                  grid-column-start: 1
+                  grid-column-end: 3
+                card_mod:
+                  style: |
+                    ha-card {
+                      transform-origin: top left; 
+                      margin-bottom: 0px;
+                      margin-top: -10px;
+                    }
+              - type: custom:mushroom-legacy-template-card
+                view_layout:
+                  grid-area: a1
+                entity: sensor.2025_ioniq_5_ev_battery_level
+                primary: Battery
+                icon: mdi:car-battery
+                icon_color: >
+                  {% set stage = states('sensor.ioniq_5_battery_level_stage') |
+                  int(0) %} 
+                    {% if stage <= 2 %} red 
+                    {% elif stage == 3 %} yellow 
+                    {% elif stage >= 4 %} green 
+                    {% else %} grey 
+                  {% endif %}
+                layout: horizontal
+                fill_container: false
+                multiline_secondary: false
+                secondary: >-
+                  {% set battery_state =
+                  states('sensor.2025_ioniq_5_ev_battery_level') %} {% if
+                  battery_state in ['unavailable', 'unknown', 'None', 'none'] %}
+                    NaN
+                  {% else %}
+                    {{ battery_state }}%
+                  {% endif %}
+                card_mod:
+                  style: >
+                    {% set stage = states('sensor.ioniq_5_battery_level_stage')
+                    | int(0) %}
+
+                    ha-card {
+                      transform: scale(0.8);   /* 50% width, 100% height */
+                      transform-origin: top left; /* anchor the shrink */
+                      margin-top: -9px;
+                      margin-right: -40px;
+                    }
+
+                    }
+
+                    {% if stage == 1 %}
+
+                    ha-card {
+                      animation: blink-bg 1.5s infinite;
+                    }
+
+                    @keyframes blink-bg {
+                      0%, 100% { background-color: red; }
+                      50% { background-color: transparent; }
+                    }
+
+                    ha-state-icon {
+                      background-color: yellow;
+                      border-radius: 50%;
+                      padding: 6px;
+                      color: red !important;   /* force the icon color */
+                     }
+                    {% endif %}
+
+                    {% if stage == 3 %}
+
+                    ha-card {
+                      animation: blink-opacity 1.5s infinite;
+                    }
+
+                    @keyframes blink-opacity {
+                      50% { opacity: 0.2; }
+                    }
+
+                    {% endif %}
+              - type: custom:mushroom-legacy-template-card
+                view_layout:
+                  grid-area: a2
+                entity: binary_sensor.2025_ioniq_5_ev_battery_plug
+                primary: EVSE
+                secondary: >-
+                  {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_plug',
+                  'on') %}
+                    Plugged in
+                  {% else %}
+                    Unplugged
+                  {% endif %}
+                icon: mdi:ev-station
+                icon_color: >
+                  {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_plug',
+                  'on') %} blue {% else %} grey {% endif %}
+                card_mod:
+                  style: |
+                    ha-card {
+                      transform: scale(0.8);   /* 50% width, 100% height */
+                      transform-origin: top left; /* anchor the shrink */
+                      margin-top: -9px;
+                      margin-right: -40px;      
+                    }
+              - type: custom:mushroom-legacy-template-card
+                view_layout:
+                  grid-area: a3
+                entity: binary_sensor.2025_ioniq_5_ev_battery_charge
+                secondary: >
+                  {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_charge',
+                  'on') %}
+                    {{ (states('sensor.2025_ioniq_5_ev_charging_power')) | round(1) }} kW
+                  {% else %}
+                    Idle
+                  {% endif %}
+                primary: >-
+                  {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_charge',
+                  'on') %}
+                    {% set mins = states('sensor.2025_ioniq_5_estimated_charge_duration') | int(0) %}
+                    {% set h = (mins // 60) %}
+                    {% set m = (mins % 60) %}
+                    {{ h }}h {{ m }}m 
+                  {% else %} Charging {% endif %}
+                icon: mdi:battery-charging
+                icon_color: >
+                  {% if is_state('binary_sensor.2025_ioniq_5_ev_battery_charge',
+                  'on') %} white {% else %} grey {% endif %}
+                tap_action: more-info
+                card_mod:
+                  style: >
+                    ha-card {
+                      transform: scale(0.8);   /* 50% width, 100% height */
+                      transform-origin: top left; /* anchor the shrink */
+                      margin-top: -9px;
+                      margin-right: -40px;    
+                    }
+
+                    {% if
+                    is_state('binary_sensor.2025_ioniq_5_ev_battery_charge',
+                    'on') %}
+
+                    ha-card {
+                      animation: flash-bg 7s infinite;
+                    }
+
+                    @keyframes flash-bg {
+                      0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
+                      50% { background-color: rgba(0, 153, 255, 0.1); }
+                    }
+
+                    {% endif %}
+              - type: custom:mushroom-legacy-template-card
+                view_layout:
+                  grid-area: b1
+                entity: lock.2025_ioniq_5_door_lock
+                primary: Doors
+                secondary: |-
+                  {% if is_state('lock.2025_ioniq_5_door_lock', 'locked') %}
+                    Locked
+                  {% else %}
+                    Unlocked
+                  {% endif %}
+                icon: mdi:lock
+                icon_color: >-
+                  {% if is_state('lock.2025_ioniq_5_door_lock', 'locked') %}
+                  green {% else %} red {% endif %}
+                multiline_secondary: false
+                fill_container: false
+                card_mod:
+                  style: |
+                    ha-card {
+                      transform: scale(0.8);   /* 50% width, 100% height */
+                      transform-origin: top left; /* anchor the shrink */
+                      margin-top: -15px;
+                      margin-right: -40px;
+                      margin-bottom: -30px;
+                    }
+              - type: custom:mushroom-legacy-template-card
+                view_layout:
+                  grid-area: b2
+                entity: device_tracker.2025_ioniq_5_location
+                primary: Location
+                secondary: >
+                  {% if states('device_tracker.2025_ioniq_5_location') in
+                  ['unknown', 'unavailable', 'none'] %}
+                    ---
+                  {% elif is_state('device_tracker.2025_ioniq_5_location',
+                  'home') %}
+                    Home
+                  {% elif is_state('binary_sensor.2025_ioniq_5_engine', 'on') %}
+                    Driving
+                  {% else %}
+                    Away
+                  {% endif %}
+                icon: mdi:map-marker
+                icon_color: >
+                  {% if is_state('device_tracker.2025_ioniq_5_location', 'home')
+                  %}
+                    green
+                  {% elif is_state('binary_sensor.2025_ioniq_5_engine', 'on') %}
+                    orange
+                  {% else %}
+                    primary
+                  {% endif %}
+                tap_action: more-info
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -40px;
+                        margin-bottom: -20px;
+                    }
+              - type: custom:mushroom-legacy-template-card
+                view_layout:
+                  grid-area: b3
+                entity: timer.2025_ioniq_5_bluelink_climate_timer
+                primary: >
+                  {% set mode =
+                  states('input_select.bluelink_remote_climate_mode') %} {% set
+                  timer_state =
+                  states('timer.2025_ioniq_5_bluelink_climate_timer') %} {% if
+                  mode == 'heating' and timer_state == 'active' %}
+                    Heat {{ states('sensor.bluelink_climate_timer_status_v2') }}
+                  {% elif mode == 'cooling' and timer_state == 'active' %}
+                    Cool {{ states('sensor.bluelink_climate_timer_status_v2') }}
+                  {% elif mode == 'heating' and timer_state != 'active' %}
+                    Initializing...
+                  {% elif mode == 'cooling' and timer_state != 'active' %}
+                    Initializing...
+                  {% else %}
+                    Climate
+                  {% endif %}
+                icon: >
+                  {% set mode =
+                  states('input_select.bluelink_remote_climate_mode') %} {% if
+                  mode == 'heating' %}
+                    mdi:fire
+                  {% elif mode == 'cooling' %}
+                    mdi:snowflake
+                  {% else %}
+                    mdi:thermostat
+                  {% endif %}
+                icon_color: >
+                  {% set mode =
+                  states('input_select.bluelink_remote_climate_mode') %} {% set
+                  timer_state =
+                  states('timer.2025_ioniq_5_bluelink_climate_timer') %} {% if
+                  mode == 'heating' and timer_state == 'active' %}
+                    white
+                  {% elif mode == 'cooling' and timer_state == 'active' %}
+                    white
+                  {% elif mode == 'heating' and timer_state != 'active' %}
+                    orange
+                  {% elif mode == 'cooling' and timer_state != 'active' %}
+                    blue
+                  {% else %}
+                    grey
+                  {% endif %}
+                card_mod:
+                  style: >
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -15px;
+                        margin-right: -40px;
+                        margin-bottom: -20px;
+                    }
+
+                    {% set mode =
+                    states('input_select.bluelink_remote_climate_mode') %} {%
+                    set timer_state =
+                    states('timer.2025_ioniq_5_bluelink_climate_timer') %}
+
+                    {% if mode == 'heating' and timer_state != 'active' %}
+                      ha-card {
+                        animation: flash-bg-heat 7s infinite;
+                      }
+                      @keyframes flash-bg-heat {
+                        0%, 10%, 90%, 100% { background-color: rgba(255, 69, 0, 0.7); }
+                        50% { background-color: rgba(255, 69, 0, 0.1); }
+                      }
+                    {% elif mode == 'cooling' and timer_state != 'active' %}
+                      ha-card {
+                        animation: flash-bg-cool 7s infinite;
+                      }
+                      @keyframes flash-bg-cool {
+                        0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
+                        50% { background-color: rgba(0, 153, 255, 0.1); }
+                      }
+                    {% elif mode == 'heating' and timer_state == 'active' %}
+                      ha-card {
+                        background-color: rgba(255, 69, 0, 0.7);
+                      }
+                    {% elif mode == 'cooling' and timer_state == 'active' %}
+                      ha-card {
+                        background-color: rgba(0, 153, 255, 0.7);
+                      }
+                    {% endif %}
+
+
+                    {% if mode == 'cooling' and timer_state == 'active' %}
+                      ha-state-icon {
+                        animation: spin 5s linear infinite;
+                      }
+                    {% else %}
+                      ha-state-icon {
+                        animation: none;
+                      }
+                    {% endif %}
+
+
+                    /* Spin keyframes */
+
+                    @keyframes spin {
+                      0% { transform: rotate(0deg); }
+                      100% { transform: rotate(360deg); }
+                    }
+                tap_action:
+                  action: fire-dom-event
+                  browser_mod:
+                    service: browser_mod.popup
+                    data:
+                      title: Ioniq 5 Climate Control
+                      content:
+                        type: vertical-stack
+                        cards:
+                          - type: custom:mushroom-legacy-template-card
+                            entity: timer.2025_ioniq_5_bluelink_climate_timer
+                            primary: >
+                              {% set mode =
+                              states('input_select.bluelink_remote_climate_mode')
+                              %}
+
+                              {% set timer_state =
+                              states('timer.2025_ioniq_5_bluelink_climate_timer')
+                              %}
+
+                              {% if mode == 'heating' and timer_state ==
+                              'active' %}
+                                Heating ({{ states('sensor.bluelink_climate_timer_status_v2') }} Remaining)
+                              {% elif mode == 'heating' and timer_state !=
+                              'active' %}
+                                Heating Initializing
+                              {% else %}
+                                Request Remote Heating
+                              {% endif %}
+                            icon: mdi:fire
+                            icon_color: >
+                              {% if
+                              states('input_select.bluelink_remote_climate_mode')
+                              == 'heating' %}
+                                white
+                              {% else %}
+                                grey
+                              {% endif %}
+                            tap_action:
+                              action: call-service
+                              service: script.ioniq5_climate_start_heat
+                            fill_container: true
+                            grid_options:
+                              columns: full
+                            card_mod:
+                              style: >
+                                {% set mode =
+                                states('input_select.bluelink_remote_climate_mode')
+                                %}
+
+                                {% set timer_state =
+                                states('timer.2025_ioniq_5_bluelink_climate_timer')
+                                %}
+
+                                /* Background */
+
+                                {% if mode == 'heating' and timer_state !=
+                                'active' %}
+                                  ha-card { animation: flash-bg 7s infinite; }
+                                {% elif mode == 'heating' and timer_state ==
+                                'active' %}
+                                  ha-card { background-color: rgba(255,69,0,0.7); } /* solid red */
+                                {% else %}
+
+                                {% endif %}
+
+                                /* Background keyframes */
+
+                                @keyframes flash-bg {
+                                  0%, 10%, 90%, 100% { background-color: rgba(255,69,0,0.7); }
+                                  50% { background-color: rgba(255,69,0,0.7); }
+                                }
+
+                                /* Icon fire using ha-state-icon */
+
+                                {% if mode == 'heating' %}
+                                  ha-state-icon {
+                                      animation: bounce 1.5s ease-in-out infinite
+                                  }
+                                {% else %}
+                                  ha-state-icon {
+                                      animation: none;
+                                  }
+                                {% endif %}
+
+                                /* Spin keyframes */
+
+                                @keyframes bounce {
+                                    0%, 20%, 50%, 80%, 100% {transform: translateY(0); } 
+                                    40% { transform: translateY(-1.2px) rotate(5deg); } 
+                                    60% { transform: translateY(-1.1px) rotate(-4deg); } 
+                                  }
+                          - type: custom:mushroom-legacy-template-card
+                            entity: timer.2025_ioniq_5_bluelink_climate_timer
+                            primary: >
+                              {% set mode =
+                              states('input_select.bluelink_remote_climate_mode')
+                              %}
+
+                              {% set timer_state =
+                              states('timer.2025_ioniq_5_bluelink_climate_timer')
+                              %}
+
+                              {% if mode == 'cooling' and timer_state ==
+                              'active' %}
+                                Cooling ({{ states('sensor.bluelink_climate_timer_status_v2') }} Remaining)
+                              {% elif mode == 'cooling' and timer_state !=
+                              'active' %}
+                                Cooling Initializing
+                              {% else %}
+                                Request Remote Cooling
+                              {% endif %}
+                            icon: mdi:snowflake
+                            icon_color: >
+                              {% if
+                              states('input_select.bluelink_remote_climate_mode')
+                              == 'cooling' %}
+                                white
+                              {% else %}
+                                grey
+                              {% endif %}
+                            tap_action:
+                              action: call-service
+                              service: script.ioniq5_climate_start_cool
+                            fill_container: true
+                            grid_options:
+                              columns: full
+                            card_mod:
+                              style: >
+                                {% set mode =
+                                states('input_select.bluelink_remote_climate_mode')
+                                %}
+
+                                {% set timer_state =
+                                states('timer.2025_ioniq_5_bluelink_climate_timer')
+                                %}
+
+                                /* Background */
+
+                                {% if mode == 'cooling' and timer_state !=
+                                'active' %}
+                                  ha-card { animation: flash-bg 7s infinite; }
+                                {% elif mode == 'cooling' and timer_state ==
+                                'active' %}
+                                  ha-card { background-color: #1E90FF; }
+                                {% else %}
+
+                                {% endif %}
+
+                                /* Background keyframes */
+
+                                @keyframes flash-bg {
+                                      0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
+                                      50% { background-color: rgba(0, 153, 255, 0.1); }
+                                }
+
+                                /* Icon spin using mushroom-shape-icon$ */
+                                 {% if mode == 'cooling' and timer_state == 'active' %}
+                                  ha-state-icon {
+                                      animation: spin 5s linear infinite;
+                                    }
+                                {% else %}
+                                  ha-state-icon {
+                                      animation: none;
+                                    }
+                                {% endif %}
+
+                                /* Spin keyframes */
+
+                                @keyframes spin {
+                                  0% { transform: rotate(0deg); }
+                                  100% { transform: rotate(360deg); }
+            layout:
+              grid-template-columns: 33% 33% 33%
+              grid-template-rows: auto auto auto
+              grid-template-areas: |
+                "1 1 1"  "a1 a2 a3" "b1 b2 b3"
+            visibility:
+              - condition: user
+                users:
+                  - 5f537710fd6b4bd4a643b454e4129e40
+                  - 74ac0a991d504a3384ab26ac625ecbc9
+                  - dcc1fd6982334d65b3bcafa1f7ad8ebe
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
             layout:
               grid-template-columns: repeat(16)
               grid-template-rows: auto auto auto
@@ -3104,7 +3597,585 @@ views:
                 name: ''
             grid_options:
               columns: full
+          - type: vertical-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: pop-up
+                hash: '#batteries'
+                button_type: state
+                name: Battery Replacement Status
+                icon: mdi:battery
+                entity: input_boolean.replace_batteries
+                show_last_changed: true
+                show_last_updated: false
+                show_attribute: false
+              - type: custom:auto-entities
+                card:
+                  type: entities
+                filter:
+                  include:
+                    - options: {}
+                      name: '*Battery level*'
+                      sort:
+                        method: friendly_name
+                  exclude:
+                    - options: {}
+                      name: '*Idle*'
+                    - options: {}
+                      entity_id: sensor.lenovo_p12_battery_level
+                sort:
+                  method: state
+                  reverse: false
+                  numeric: true
+                show_empty: true
+            grid_options:
+              columns: full
+          - type: vertical-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: pop-up
+                hash: '#airquality'
+                button_type: name
+                name: Air Quality
+                icon: mdi:air-filter
+                card_layout: large
+                bg_color: ''
+              - type: entities
+                entities:
+                  - entity: sensor.airnow_air_quality_index
+                  - entity: sensor.airnow_ozone
+                  - entity: sensor.airnow_pm2_5
+                  - entity: sensor.airnow_pm10
+                  - entity: sensor.airnow_reporting_station
+              - type: markdown
+                content: >-
+                  <small><small>
+
+
+                  | Daily AQI Color | Levels of Concern              | Values of
+                  Index |
+                  Description                                                                
+                  |
+
+                  |-----------------|--------------------------------|-----------------|-----------------------------------------------------------------------------|
+
+                  | **Green**  | Good                           | 0 –
+                  50          | Air quality is satisfactory, and air pollution
+                  poses little or no risk.     |
+
+                  | **Yellow** | Moderate                       | 51 –
+                  100        | Air quality is acceptable. However, there may be
+                  a risk for some people, particularly those who are unusually
+                  sensitive to air pollution. |
+
+                  | **Orange** | Unhealthy for Sensitive Groups | 101 –
+                  150       | Members of sensitive groups may experience health
+                  effects. The general public is less likely to be affected. |
+
+                  | **Red**    | Unhealthy                      | 151 –
+                  200       | Some members of the general public may experience
+                  health effects; members of sensitive groups may experience
+                  more serious health effects. |
+
+                  | **Purple** | Very Unhealthy                 | 201 –
+                  300       | Health alert: The risk of health effects is
+                  increased for everyone.         |
+
+                  | **Maroon** | Hazardous                      |
+                  301+            | Health warning of emergency conditions:
+                  everyone is more likely to be affected. |
+
+
+                  </small></small>
+
+                  Data provided by EPA AirNow.
+            grid_options:
+              columns: full
+          - type: vertical-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: pop-up
+                hash: '#kia-ev9'
+                button_type: name
+                name: Kia EV9
+                icon: mdi:car-estate
+                sub_button:
+                  - entity: sensor.ev9_last_updated_at
+                    name: Last Updated
+                    show_state: false
+                    show_last_changed: true
+                    show_name: true
+                    show_last_updated: false
+                    show_attribute: false
+                    show_background: true
+                    state_background: true
+                    tap_action:
+                      action: perform-action
+                      perform_action: kia_uvo.update
+                      target: {}
+                      data:
+                        device_id: e49b59ec76276227e659e302509b1fcf
+                  - entity: sensor.ev9_last_updated_at
+                    name: ''
+                    show_icon: false
+                    show_last_changed: false
+                    show_state: true
+                    state_background: false
+                    show_background: false
+                    tap_action:
+                      action: none
+                card_layout: large-2-rows
+                show_header: true
+              - type: custom:bubble-card
+                card_type: button
+                button_type: state
+                entity: sensor.ev9_last_updated_at
+                name: Last Update
+                show_state: true
+                sub_button: []
+                button_action: {}
+                tap_action:
+                  action: perform-action
+                  perform_action: kia_uvo.update
+                  target: {}
+                  data:
+                    device_id: e49b59ec76276227e659e302509b1fcf
+                show_last_updated: true
+                show_last_changed: false
+                show_attribute: false
+                attribute: device_class
+                force_icon: false
+              - type: vertical-stack
+                cards:
+                  - type: custom:mushroom-legacy-template-card
+                    entity: timer.ev9_climate_timer
+                    primary: >
+                      {% set mode =
+                      states('input_select.ev9_remote_climate_mode') %}
+
+                      {% set timer_state = states('timer.ev9_climate_timer') %}
+
+                      {% if mode == 'heating' and timer_state == 'active' %}
+                        Heating ({{ states('sensor.ev9_climate_timer_status_v2') }} Remaining)
+                      {% elif mode == 'heating' and timer_state != 'active' %}
+                        Heating Initializing
+                      {% else %}
+                        Request Remote Heating
+                      {% endif %}
+                    icon: mdi:fire
+                    icon_color: >
+                      {% if states('input_select.ev9_remote_climate_mode') ==
+                      'heating' %}
+                        white
+                      {% else %}
+                        grey
+                      {% endif %}
+                    tap_action:
+                      action: call-service
+                      service: script.ev9_climate_start_heat
+                    fill_container: true
+                    grid_options:
+                      columns: full
+                    card_mod:
+                      style: >
+                        {% set mode =
+                        states('input_select.ev9_remote_climate_mode') %}
+
+                        {% set timer_state = states('timer.ev9_climate_timer')
+                        %}
+
+                        /* Background */
+
+                        {% if mode == 'heating' and timer_state != 'active' %}
+                          ha-card { animation: flash-bg 7s infinite; }
+                        {% elif mode == 'heating' and timer_state == 'active' %}
+                          ha-card { background-color: rgba(255,69,0,0.7); } /* solid red */
+                        {% else %}
+
+                        {% endif %}
+
+                        /* Background keyframes */
+
+                        @keyframes flash-bg {
+                          0%, 10%, 90%, 100% { background-color: rgba(255,69,0,0.7); }
+                          50% { background-color: rgba(255,69,0,0.7); }
+                        }
+
+                        /* Icon fire using ha-state-icon */
+
+                        {% if mode == 'heating' %}
+                          ha-state-icon {
+                              animation: bounce 1.5s ease-in-out infinite
+                          }
+                        {% else %}
+                          ha-state-icon {
+                              animation: none;
+                          }
+                        {% endif %}
+
+                        /* Spin keyframes */
+
+                        @keyframes bounce {
+                            0%, 20%, 50%, 80%, 100% {transform: translateY(0); } 
+                            40% { transform: translateY(-1.2px) rotate(5deg); } 
+                            60% { transform: translateY(-1.1px) rotate(-4deg); } 
+                          }
+                  - type: custom:mushroom-legacy-template-card
+                    entity: timer.ev9_climate_timer
+                    primary: >
+                      {% set mode =
+                      states('input_select.bluelink_remote_climate_mode') %}
+
+                      {% set timer_state = states('timer.ev9_climate_timer') %}
+
+                      {% if mode == 'cooling' and timer_state == 'active' %}
+                        Cooling ({{ states('sensor.ev9_climate_timer_status_v2') }} Remaining)
+                      {% elif mode == 'cooling' and timer_state != 'active' %}
+                        Cooling Initializing
+                      {% else %}
+                        Request Remote Cooling
+                      {% endif %}
+                    icon: mdi:snowflake
+                    icon_color: >
+                      {% if states('input_select.ev9_remote_climate_mode') ==
+                      'cooling' %}
+                        white
+                      {% else %}
+                        grey
+                      {% endif %}
+                    tap_action:
+                      action: call-service
+                      service: script.ev9_climate_start_cool
+                    fill_container: true
+                    grid_options:
+                      columns: full
+                    card_mod:
+                      style: >
+                        {% set mode =
+                        states('input_select.ev9_remote_climate_mode') %}
+
+                        {% set timer_state = states('timer.ev9_climate_timer')
+                        %}
+
+                        /* Background */
+
+                        {% if mode == 'cooling' and timer_state != 'active' %}
+                          ha-card { animation: flash-bg 7s infinite; }
+                        {% elif mode == 'cooling' and timer_state == 'active' %}
+                          ha-card { background-color: #1E90FF; }
+                        {% else %}
+
+                        {% endif %}
+
+                        /* Background keyframes */
+
+                        @keyframes flash-bg {
+                              0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
+                              50% { background-color: rgba(0, 153, 255, 0.1); }
+                        }
+
+                        /* Icon spin using mushroom-shape-icon$ */
+                         {% if mode == 'cooling' and timer_state == 'active' %}
+                          ha-state-icon {
+                              animation: spin 5s linear infinite;
+                            }
+                        {% else %}
+                          ha-state-icon {
+                              animation: none;
+                            }
+                        {% endif %}
+
+                        /* Spin keyframes */
+
+                        @keyframes spin {
+                          0% { transform: rotate(0deg); }
+                          100% { transform: rotate(360deg); }
+              - type: custom:mushroom-number-card
+                entity: number.ev9_ac_charging_limit
+                display_mode: slider
+                tap_action:
+                  action: more-info
+              - type: custom:mushroom-number-card
+                entity: number.ev9_dc_charging_limit
+                display_mode: slider
+                tap_action:
+                  action: more-info
+                fill_container: false
+            grid_options:
+              columns: 18
+              rows: auto
+          - type: vertical-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: pop-up
+                hash: '#hyundai-ioniq5'
+                button_type: name
+                name: Hyundai Ioniq 5
+                icon: mdi:car-sports
+              - type: custom:bubble-card
+                card_type: button
+                button_type: state
+                entity: sensor.2025_ioniq_5_last_updated_at
+                name: Last Update
+                show_state: true
+                sub_button: []
+                button_action: {}
+                tap_action:
+                  action: call-service
+                  target: {}
+                  data:
+                    device_id: 073972b597481f72f09fc106c9c5c2e5
+                  service: kia_uvo.update
+                show_attribute: false
+                show_last_updated: true
+                show_last_changed: false
+              - type: vertical-stack
+                cards:
+                  - type: custom:mushroom-legacy-template-card
+                    entity: timer.2025_ioniq_5_bluelink_climate_timer
+                    primary: >
+                      {% set mode =
+                      states('input_select.bluelink_remote_climate_mode') %}
+
+                      {% set timer_state =
+                      states('timer.2025_ioniq_5_bluelink_climate_timer') %}
+
+                      {% if mode == 'heating' and timer_state == 'active' %}
+                        Heating ({{ states('sensor.bluelink_climate_timer_status_v2') }} Remaining)
+                      {% elif mode == 'heating' and timer_state != 'active' %}
+                        Heating Initializing
+                      {% else %}
+                        Request Remote Heating
+                      {% endif %}
+                    icon: mdi:fire
+                    icon_color: >
+                      {% if states('input_select.bluelink_remote_climate_mode')
+                      == 'heating' %}
+                        white
+                      {% else %}
+                        grey
+                      {% endif %}
+                    tap_action:
+                      action: call-service
+                      service: script.ioniq5_climate_start_heat
+                    fill_container: true
+                    grid_options:
+                      columns: full
+                    card_mod:
+                      style: >
+                        {% set mode =
+                        states('input_select.bluelink_remote_climate_mode') %}
+
+                        {% set timer_state =
+                        states('timer.2025_ioniq_5_bluelink_climate_timer') %}
+
+                        /* Background */
+
+                        {% if mode == 'heating' and timer_state != 'active' %}
+                          ha-card { animation: flash-bg 7s infinite; }
+                        {% elif mode == 'heating' and timer_state == 'active' %}
+                          ha-card { background-color: rgba(255,69,0,0.7); } /* solid red */
+                        {% else %}
+
+                        {% endif %}
+
+                        /* Background keyframes */
+
+                        @keyframes flash-bg {
+                          0%, 10%, 90%, 100% { background-color: rgba(255,69,0,0.7); }
+                          50% { background-color: rgba(255,69,0,0.7); }
+                        }
+
+                        /* Icon fire using ha-state-icon */
+
+                        {% if mode == 'heating' %}
+                          ha-state-icon {
+                              animation: bounce 1.5s ease-in-out infinite
+                          }
+                        {% else %}
+                          ha-state-icon {
+                              animation: none;
+                          }
+                        {% endif %}
+
+                        /* Spin keyframes */
+
+                        @keyframes bounce {
+                            0%, 20%, 50%, 80%, 100% {transform: translateY(0); } 
+                            40% { transform: translateY(-1.2px) rotate(5deg); } 
+                            60% { transform: translateY(-1.1px) rotate(-4deg); } 
+                          }
+                  - type: custom:mushroom-legacy-template-card
+                    entity: timer.2025_ioniq_5_bluelink_climate_timer
+                    primary: >
+                      {% set mode =
+                      states('input_select.bluelink_remote_climate_mode') %}
+
+                      {% set timer_state =
+                      states('timer.2025_ioniq_5_bluelink_climate_timer') %}
+
+                      {% if mode == 'cooling' and timer_state == 'active' %}
+                        Cooling ({{ states('sensor.bluelink_climate_timer_status_v2') }} Remaining)
+                      {% elif mode == 'cooling' and timer_state != 'active' %}
+                        Cooling Initializing
+                      {% else %}
+                        Request Remote Cooling
+                      {% endif %}
+                    icon: mdi:snowflake
+                    icon_color: >
+                      {% if states('input_select.bluelink_remote_climate_mode')
+                      == 'cooling' %}
+                        white
+                      {% else %}
+                        grey
+                      {% endif %}
+                    tap_action:
+                      action: call-service
+                      service: script.ioniq5_climate_start_cool
+                    fill_container: true
+                    grid_options:
+                      columns: full
+                    card_mod:
+                      style: >
+                        {% set mode =
+                        states('input_select.bluelink_remote_climate_mode') %}
+
+                        {% set timer_state =
+                        states('timer.2025_ioniq_5_bluelink_climate_timer') %}
+
+                        /* Background */
+
+                        {% if mode == 'cooling' and timer_state != 'active' %}
+                          ha-card { animation: flash-bg 7s infinite; }
+                        {% elif mode == 'cooling' and timer_state == 'active' %}
+                          ha-card { background-color: #1E90FF; }
+                        {% else %}
+
+                        {% endif %}
+
+                        /* Background keyframes */
+
+                        @keyframes flash-bg {
+                              0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
+                              50% { background-color: rgba(0, 153, 255, 0.1); }
+                        }
+
+                        /* Icon spin using mushroom-shape-icon$ */
+                         {% if mode == 'cooling' and timer_state == 'active' %}
+                          ha-state-icon {
+                              animation: spin 5s linear infinite;
+                            }
+                        {% else %}
+                          ha-state-icon {
+                              animation: none;
+                            }
+                        {% endif %}
+
+                        /* Spin keyframes */
+
+                        @keyframes spin {
+                          0% { transform: rotate(0deg); }
+                          100% { transform: rotate(360deg); }
+              - type: custom:mushroom-number-card
+                entity: number.2025_ioniq_5_ac_charging_limit
+                name: AC Charging Limit
+                tap_action:
+                  action: more-info
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+              - type: custom:mushroom-number-card
+                entity: number.2025_ioniq_5_dc_charging_limit
+                name: DC Charging Limit
+                tap_action:
+                  action: more-info
+                hold_action:
+                  action: none
+                double_tap_action:
+                  action: none
+            grid_options:
+              columns: 18
+              rows: auto
+          - type: vertical-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: pop-up
+                hash: '#smoke-alarm'
+                button_type: name
+                name: Smoke & CO Alarm Detail
+                icon: mdi:smoke-detector-alert
+              - type: custom:bubble-card
+                card_type: button
+                event_action:
+                  tap_action:
+                    action: more-info
+                  double_tap_action:
+                    action: none
+                  hold_action:
+                    action: none
+                button_type: state
+                entity: binary_sensor.smoke_alarms
+                name: Alarm - Smoke
+                icon: mdi:smoke-detector
+                show_last_updated: false
+                show_last_changed: true
+              - type: custom:bubble-card
+                card_type: button
+                event_action:
+                  tap_action:
+                    action: more-info
+                  double_tap_action:
+                    action: none
+                  hold_action:
+                    action: none
+                button_type: state
+                entity: binary_sensor.carbon_monoxide_alarms
+                name: Alarm - Carbon Monoxide
+                icon: mdi:smoke-detector
+                show_last_changed: true
+                show_last_updated: false
+              - type: custom:auto-entities
+                card:
+                  type: entities
+                  title: Battery Levels
+                  state_color: true
+                  show_header_toggle: true
+                filter:
+                  include:
+                    - options: {}
+                      device_model: ZCOMBO
+                      name: '*Battery*'
+                  exclude: []
+              - type: custom:auto-entities
+                card:
+                  type: entities
+                  title: Smoke Detection
+                  state_color: true
+                  show_header_toggle: true
+                filter:
+                  include:
+                    - options: {}
+                      device_model: ZCOMBO
+                      name: '*Smoke Detected*'
+                  exclude: []
+              - type: custom:auto-entities
+                card:
+                  type: entities
+                  title: Carbon Monoxide Detection
+                  state_color: true
+                  show_header_toggle: true
+                filter:
+                  include:
+                    - options: {}
+                      device_model: ZCOMBO
+                      name: '*CO Detected*'
+                  exclude: []
+            grid_options:
+              columns: full
         column_span: 3
+      - type: grid
+        cards: []
     subview: false
     cards: []
   - type: sections
@@ -4052,6 +5123,26 @@ views:
                   margin-top: 4px;
                 }
         column_span: 4
+    cards: []
+  - type: sections
+    max_columns: 4
+    title: Google Calendar
+    path: google-calendar
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: New section
+          - type: iframe
+            url: >-
+              https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FLos_Angeles&showPrint=0&src=OTllNWNiNGJhNTJmNDkwNWFkNTdkZjIzZjMyOWI3ZDgzM2QyZDU4MmIzM2UwNWY4ZjIxNDk3N2UzMDM2YjgwNEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y2M5NTQ2MjExODRhZGRhYzg5ZGNhMjg4MjMzYTYwOTNhYzEzYTJmOTI4ZTc4NjdkYWUwOWYyYTc0NjBhYjI5MUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=NzcyMWUwYTdlMzg2NGUwNGFjY2Q5ZjljMGViNWM4ZWViZWFlZGE1OTViNjZiODcyZjE1NzEwNDNlMzA3NDUxNEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=ZW4udXNhI2hvbGlkYXlAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&color=%237cb342&color=%23009688&color=%23a79b8e&color=%230b8043
+            aspect_ratio: 100%
+            title: Google Calendar
+            grid_options:
+              columns: full
+              rows: 8
+        column_span: 4
+    subview: true
     cards: []
   - title: Home-Backup
     sections:
@@ -6269,26 +7360,6 @@ views:
     path: home-backup
     cards: []
     subview: true
-  - type: sections
-    max_columns: 4
-    title: Google Calendar
-    path: google-calendar
-    sections:
-      - type: grid
-        cards:
-          - type: heading
-            heading: New section
-          - type: iframe
-            url: >-
-              https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FLos_Angeles&showPrint=0&src=OTllNWNiNGJhNTJmNDkwNWFkNTdkZjIzZjMyOWI3ZDgzM2QyZDU4MmIzM2UwNWY4ZjIxNDk3N2UzMDM2YjgwNEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=Y2M5NTQ2MjExODRhZGRhYzg5ZGNhMjg4MjMzYTYwOTNhYzEzYTJmOTI4ZTc4NjdkYWUwOWYyYTc0NjBhYjI5MUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=NzcyMWUwYTdlMzg2NGUwNGFjY2Q5ZjljMGViNWM4ZWViZWFlZGE1OTViNjZiODcyZjE1NzEwNDNlMzA3NDUxNEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=ZW4udXNhI2hvbGlkYXlAZ3JvdXAudi5jYWxlbmRhci5nb29nbGUuY29t&color=%237cb342&color=%23009688&color=%23a79b8e&color=%230b8043
-            aspect_ratio: 100%
-            title: Google Calendar
-            grid_options:
-              columns: full
-              rows: 8
-        column_span: 4
-    subview: true
-    cards: []
   - type: panel
     title: Modify Calendar
     path: modify-calendar
@@ -6957,6 +8028,153 @@ views:
                   50% { background-color: rgba(33, 150, 243, 0.5) !important; }
                   100% { background-color: rgba(33, 150, 243, 0.1) !important; }
                 }
+      - type: grid
+        cards:
+          - type: heading
+            heading: New section
+          - type: vertical-stack
+            cards:
+              - type: custom:mushroom-legacy-template-card
+                entity: timer.ev9_climate_timer
+                primary: >
+                  {% set mode = states('input_select.ev9_remote_climate_mode')
+                  %}
+
+                  {% set timer_state = states('timer.ev9_climate_timer') %}
+
+                  {% if mode == 'heating' and timer_state == 'active' %}
+                    Heating ({{ states('sensor.ev9_climate_timer_status') }} Remaining)
+                  {% elif mode == 'heating' and timer_state != 'active' %}
+                    Heating Initializing
+                  {% else %}
+                    Request Remote Heating
+                  {% endif %}
+                icon: mdi:fire
+                icon_color: >
+                  {% if states('input_select.ev9_remote_climate_mode') ==
+                  'heating' %}
+                    white
+                  {% else %}
+                    grey
+                  {% endif %}
+                tap_action:
+                  action: call-service
+                  service: script.ev9_climate_start_heat
+                fill_container: true
+                grid_options:
+                  columns: full
+                card_mod:
+                  style: >
+                    {% set mode = states('input_select.ev9_remote_climate_mode')
+                    %}
+
+                    {% set timer_state = states('timer.ev9_climate_timer') %}
+
+                    /* Background */
+
+                    {% if mode == 'heating' and timer_state != 'active' %}
+                      ha-card { animation: flash-bg 7s infinite; }
+                    {% elif mode == 'heating' and timer_state == 'active' %}
+                      ha-card { background-color: rgba(255,69,0,0.7); } /* solid red */
+                    {% else %}
+
+                    {% endif %}
+
+                    /* Background keyframes */
+
+                    @keyframes flash-bg {
+                      0%, 10%, 90%, 100% { background-color: rgba(255,69,0,0.7); }
+                      50% { background-color: rgba(255,69,0,0.7); }
+                    }
+
+                    /* Icon fire using ha-state-icon */
+
+                    {% if mode == 'heating' %}
+                      ha-state-icon {
+                          animation: bounce 1.5s ease-in-out infinite
+                      }
+                    {% else %}
+                      ha-state-icon {
+                          animation: none;
+                      }
+                    {% endif %}
+
+                    /* Spin keyframes */
+
+                    @keyframes bounce {
+                        0%, 20%, 50%, 80%, 100% {transform: translateY(0); } 
+                        40% { transform: translateY(-1.2px) rotate(5deg); } 
+                        60% { transform: translateY(-1.1px) rotate(-4deg); } 
+                      }
+              - type: custom:mushroom-legacy-template-card
+                entity: timer.ev9_climate_timer
+                primary: >
+                  {% set mode =
+                  states('input_select.bluelink_remote_climate_mode') %}
+
+                  {% set timer_state = states('timer.ev9_climate_timer') %}
+
+                  {% if mode == 'cooling' and timer_state == 'active' %}
+                    Cooling ({{ states('sensor.ev9_climate_timer_status') }} Remaining)
+                  {% elif mode == 'cooling' and timer_state != 'active' %}
+                    Cooling Initializing
+                  {% else %}
+                    Request Remote Cooling
+                  {% endif %}
+                icon: mdi:snowflake
+                icon_color: >
+                  {% if states('input_select.ev9_remote_climate_mode') ==
+                  'cooling' %}
+                    white
+                  {% else %}
+                    grey
+                  {% endif %}
+                tap_action:
+                  action: call-service
+                  service: script.ev9_climate_start_cool
+                fill_container: true
+                grid_options:
+                  columns: full
+                card_mod:
+                  style: >
+                    {% set mode = states('input_select.ev9_remote_climate_mode')
+                    %}
+
+                    {% set timer_state = states('timer.ev9_climate_timer') %}
+
+                    /* Background */
+
+                    {% if mode == 'cooling' and timer_state != 'active' %}
+                      ha-card { animation: flash-bg 7s infinite; }
+                    {% elif mode == 'cooling' and timer_state == 'active' %}
+                      ha-card { background-color: #1E90FF; }
+                    {% else %}
+
+                    {% endif %}
+
+                    /* Background keyframes */
+
+                    @keyframes flash-bg {
+                          0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
+                          50% { background-color: rgba(0, 153, 255, 0.1); }
+                    }
+
+                    /* Icon spin using mushroom-shape-icon$ */
+                     {% if mode == 'cooling' and timer_state == 'active' %}
+                      ha-state-icon {
+                          animation: spin 5s linear infinite;
+                        }
+                    {% else %}
+                      ha-state-icon {
+                          animation: none;
+                        }
+                    {% endif %}
+
+                    /* Spin keyframes */
+
+                    @keyframes spin {
+                      0% { transform: rotate(0deg); }
+                      100% { transform: rotate(360deg); }
     subview: true
     cards: []
 type: vertical-stack
