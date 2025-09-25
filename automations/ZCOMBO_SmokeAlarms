@@ -1,0 +1,207 @@
+alias: Smoke/CO Critical Notifications
+description: ""
+triggers:
+  - trigger: state
+    entity_id:
+      - binary_sensor.carbon_monoxide_alarms
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+    id: CO-Alarm
+    to: null
+    from: null
+  - trigger: state
+    entity_id:
+      - binary_sensor.smoke_alarms
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+    id: Smoke-Alarm
+    from: null
+    to: null
+conditions: []
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id:
+              - CO-Alarm
+          - condition: or
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.smoke_alarms
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.carbon_monoxide_alarms
+                state: "on"
+        sequence:
+          - action: notify.mobile_app_dwolfson_iphone
+            metadata: {}
+            data:
+              title: CARBON MONOXIDE ALARM
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+              message: GET OUT OF THE HOUSE
+          - action: notify.mobile_app_laurens_iphone
+            metadata: {}
+            data:
+              title: CARBON MONOXIDE ALARM
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+              message: GET OUT OF THE HOUSE
+            enabled: false
+          - action: script.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: script.transition_to_scene_commons_cleaning
+      - conditions:
+          - condition: trigger
+            id:
+              - Smoke-Alarm
+          - condition: or
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.smoke_alarms
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.carbon_monoxide_alarms
+                state: "on"
+        sequence:
+          - action: notify.mobile_app_dwolfson_iphone
+            metadata: {}
+            data:
+              title: SMOKE ALARM
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+              message: GET OUT OF THE HOUSE
+          - action: notify.mobile_app_laurens_iphone
+            metadata: {}
+            data:
+              title: SMOKE ALARM
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+              message: GET OUT OF THE HOUSE
+            enabled: false
+          - action: script.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: script.transition_to_scene_commons_cleaning
+      - conditions:
+          - condition: trigger
+            id:
+              - CO-Alarm
+          - condition: and
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.smoke_alarms
+                state: "off"
+                for:
+                  hours: 0
+                  minutes: 0
+                  seconds: 0
+              - condition: state
+                entity_id: binary_sensor.carbon_monoxide_alarms
+                state: "off"
+                for:
+                  hours: 0
+                  minutes: 0
+                  seconds: 0
+        sequence:
+          - action: notify.mobile_app_dwolfson_iphone
+            metadata: {}
+            data:
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+              message: ALL CLEAR
+              title: SMOKE & CO CLEAR
+          - action: notify.mobile_app_laurens_iphone
+            metadata: {}
+            data:
+              title: CARBON MONOXIDE ALARM
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+              message: GET OUT OF THE HOUSE
+            enabled: false
+          - action: script.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: script.transition_to_scene_commons_cleaning
+      - conditions:
+          - condition: trigger
+            id:
+              - Smoke-Alarm
+          - condition: and
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.smoke_alarms
+                state: "off"
+                for:
+                  hours: 0
+                  minutes: 0
+                  seconds: 0
+              - condition: state
+                entity_id: binary_sensor.carbon_monoxide_alarms
+                state: "off"
+                for:
+                  hours: 0
+                  minutes: 0
+                  seconds: 0
+        sequence:
+          - action: notify.mobile_app_dwolfson_iphone
+            metadata: {}
+            data:
+              title: SMOKE & CO CLEAR
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+              message: ALL CLEAR
+          - action: notify.mobile_app_laurens_iphone
+            metadata: {}
+            data:
+              title: SMOKE ALARM
+              data:
+                push:
+                  sound:
+                    name: default
+                    critical: 1
+                    volume: 1
+              message: GET OUT OF THE HOUSE
+            enabled: false
+          - action: script.turn_on
+            metadata: {}
+            data: {}
+            target:
+              entity_id: script.transition_to_scene_commons_cleaning
+mode: single
