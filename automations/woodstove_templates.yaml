@@ -1,0 +1,65 @@
+# Woodstove Sensors
+- binary_sensor:
+  - name: "Woodstove Fire Active"
+    state: >-
+      {% set flue_temp = states('sensor.woodstove_thermocouple_woodstove_flue_temp_adjusted_f') | float(0) %}
+      {% set ambient_temp = states('sensor.nest_thermostat_temperature') | float(70) %}
+      {{ flue_temp > (ambient_temp + 30) }}
+    delay_on: "00:10:00"  # 10 minutes
+    delay_off: "00:05:00"  # 5 minutes to avoid flickering when adding logs
+
+  - name: "Woodstove Creosote Warning"
+    device_class: problem
+    state: >-
+      {% set fire_active = is_state('binary_sensor.woodstove_fire_active', 'on') %}
+      {% if not fire_active %}
+        off
+      {% else %}
+        {% set flue_temp = states('sensor.woodstove_thermocouple_woodstove_flue_temp_adjusted_f') | float(0) %}
+        {{ flue_temp < 250 }}
+      {% endif %}
+    delay_on: "00:02:00"
+    delay_off: >-
+      {% set fire_active = is_state('binary_sensor.woodstove_fire_active', 'on') %}
+      {% if fire_active %}
+        00:01:00   # fire is on → wait 2 minutes before off
+      {% else %}
+        00:00:00   # fire went out → off immediately
+      {% endif %}
+      
+  - name: "Woodstove Overfire"
+    device_class: problem
+    state: >-
+      {% set fire_active = is_state('binary_sensor.woodstove_fire_active', 'on') %}
+      {% if not fire_active %}
+        off
+      {% else %}
+        {% set flue_temp = states('sensor.woodstove_thermocouple_woodstove_flue_temp_adjusted_f') | float(0) %}
+        {{ flue_temp > 800 }}
+      {% endif %}
+    delay_on: "00:01:00"  # 1 minute - overfire needs quick response
+    delay_off: >-
+      {% set fire_active = is_state('binary_sensor.woodstove_fire_active', 'on') %}
+      {% if fire_active %}
+        00:02:00   # fire is on → wait 2 minutes before off
+      {% else %}
+        00:00:00   # fire went out → off immediately
+      {% endif %}
+    
+  - name: "Woodstove Efficient Burn"
+    state: >-
+      {% set fire_active = is_state('binary_sensor.woodstove_fire_active', 'on') %}
+      {% if not fire_active %}
+        unavailable
+      {% else %}
+        {% set flue_temp = states('sensor.woodstove_thermocouple_woodstove_flue_temp_adjusted_f') | float(0) %}
+        {{ flue_temp >= 300 and flue_temp <= 600 }}
+      {% endif %}
+    delay_on: "00:03:00"  # 3 minutes to establish efficient burn
+    delay_off: >-
+      {% set fire_active = is_state('binary_sensor.woodstove_fire_active', 'on') %}
+      {% if fire_active %}
+        00:00:30   # fire is on → 30s
+      {% else %}
+        00:00:00   # fire went out → off immediately
+      {% endif %}
