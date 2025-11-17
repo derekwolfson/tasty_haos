@@ -1,6 +1,6 @@
 kiosk_mode:
   hide_header: false
-  hide_sidebar: true
+  hide_sidebar: '[[[ is_state("input_boolean.hide_sidebar_planner", "on") ]]]'
 views:
   - type: sections
     max_columns: 3
@@ -817,6 +817,9 @@ views:
                   {% else %}
                     disabled
                   {% endif %}
+                tap_action:
+                  action: navigate
+                  navigation_path: '#woodstove'
                 view_layout:
                   grid-area: f
                 card_mod:
@@ -1587,9 +1590,10 @@ views:
                     purple
                   {% endif %}
                 tap_action:
-                  action: more-info
+                  action: navigate
+                  navigation_path: '#connex-1'
                 hold_action:
-                  action: toggle
+                  action: none
                 double_tap_action:
                   action: none
                 entity: binary_sensor.ring_outdoor_contact_sensor_001_intrusion
@@ -1685,9 +1689,10 @@ views:
                     purple
                   {% endif %}
                 tap_action:
-                  action: more-info
+                  action: navigate
+                  navigation_path: '#connex-2'
                 hold_action:
-                  action: toggle
+                  action: none
                 double_tap_action:
                   action: none
                 entity: binary_sensor.ring_outdoor_contact_sensor_intrusion
@@ -3334,10 +3339,12 @@ views:
                 primary: Daytime
                 icon: mdi:white-balance-sunny
                 tap_action:
-                  action: call-service
-                  service: script.toggle
-                  service_data:
-                    entity_id: script.transition_to_scene_commons_dinner_party
+                  action: perform-action
+                  perform_action: script.toggle
+                  data: {}
+                  target:
+                    entity_id:
+                      - script.transition_to_scene_commons_daytime_v2
                 icon_color: >
                   {% if is_state('input_select.transition_sceneselector',
                   'Daytime') %}
@@ -4371,16 +4378,45 @@ views:
                 entity: script.icloud_find_my_iphone_derek
                 tap_action:
                   action: perform-action
-                  perform_action: script.icloud_find_my_iphone_derek
                   target: {}
+                  perform_action: script.icloud_find_my_iphone_derek
                 button_action:
                   tap_action:
                     action: perform-action
-                    perform_action: script.icloud_find_my_iphone_derek
                     target: {}
+                    perform_action: script.icloud_find_my_iphone_derek
                 card_layout: large
                 name: Find My iPhone
                 icon: mdi:cellphone-wireless
+                show_last_changed: false
+                show_state: false
+                show_last_updated: false
+                show_attribute: false
+                force_icon: false
+                show_name: true
+              - type: custom:bubble-card
+                card_type: button
+                button_type: switch
+                entity: input_boolean.hide_sidebar_planner
+                button_action:
+                  hold_action:
+                    action: url
+                    url_path: https://haos.icmw.cloud/
+                card_layout: large
+                name: Hide Sidebar?
+                icon: mdi:monitor-dashboard
+                show_state: true
+                show_last_updated: true
+                show_last_changed: true
+                show_attribute: false
+                sub_button:
+                  - tap_action:
+                      action: navigate
+                      navigation_path: /lovelace
+                    name: Return to Lovelace
+                    icon: mdi:keyboard-return
+                    show_state: false
+                    show_name: true
             grid_options:
               columns: full
           - type: vertical-stack
@@ -4492,6 +4528,171 @@ views:
                   speed: ''
                 title: OpenWeatherMap
                 current_temp_size: '26'
+            grid_options:
+              columns: full
+          - type: vertical-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: pop-up
+                hash: '#connex-1'
+                button_type: name
+                name: 'Connex #1'
+                icon: mdi:train-car-container
+              - type: custom:bubble-card
+                card_type: button
+                button_type: switch
+                entity: binary_sensor.ring_outdoor_contact_sensor_001_intrusion
+                show_state: true
+                show_last_updated: true
+                show_attribute: true
+                show_last_changed: true
+                button_action:
+                  tap_action:
+                    action: more-info
+                  double_tap_action:
+                    action: none
+                name: 'Door Status (Connex #1)'
+                sub_button: []
+                card_layout: large-sub-buttons-grid
+                rows: '1'
+              - type: custom:bubble-card
+                card_type: button
+                button_type: state
+                entity: binary_sensor.connex_1_lock
+                show_state: true
+                show_last_updated: true
+                show_attribute: false
+                show_last_changed: true
+                button_action:
+                  tap_action:
+                    action: more-info
+                  double_tap_action:
+                    action: none
+                name: 'Lock Status (Connex #1)'
+              - type: custom:bubble-card
+                card_type: separator
+                button_type: name
+                name: Entity Health
+              - type: custom:mushroom-entity-card
+                entity: sensor.ring_outdoor_contact_sensor_connex1_last_seen
+                fill_container: false
+              - type: custom:mushroom-entity-card
+                entity: sensor.contact_sensor_gen2_connex_01_lock_last_seen
+                fill_container: false
+          - type: vertical-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: pop-up
+                hash: '#connex-2'
+                button_type: name
+                name: 'Connex #2'
+                icon: mdi:train-car-container
+              - type: custom:bubble-card
+                card_type: button
+                button_type: switch
+                entity: binary_sensor.ring_outdoor_contact_sensor_intrusion
+                show_state: true
+                show_last_updated: true
+                show_attribute: true
+                show_last_changed: true
+                button_action:
+                  tap_action:
+                    action: more-info
+                  double_tap_action:
+                    action: none
+                name: 'Door Status (Connex #2)'
+                sub_button: []
+                card_layout: large-sub-buttons-grid
+                rows: '1'
+              - type: custom:bubble-card
+                card_type: button
+                button_type: state
+                entity: binary_sensor.connex_2_lock
+                show_state: true
+                show_last_updated: true
+                show_attribute: false
+                show_last_changed: true
+                button_action:
+                  tap_action:
+                    action: more-info
+                  double_tap_action:
+                    action: none
+                name: 'Lock Status (Connex #2)'
+              - type: custom:bubble-card
+                card_type: separator
+                button_type: name
+                name: Entity Health
+              - type: custom:mushroom-entity-card
+                entity: sensor.ring_contact_sensor_gen2_connex_2_padlock_last_seen
+                fill_container: false
+              - type: custom:mushroom-entity-card
+                entity: sensor.ring_outdoor_contact_sensor_connex2_door_last_seen
+                fill_container: false
+          - type: vertical-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: pop-up
+                hash: '#woodstove'
+                button_type: name
+                name: Woodstove Activity
+                icon: mdi:campfire
+                show_last_updated: false
+                show_last_changed: true
+                show_attribute: false
+                show_name: true
+                show_state: true
+                button_action: {}
+                show_icon: true
+              - type: custom:bubble-card
+                card_type: button
+                hash: '#woodstove'
+                button_type: state
+                name: Fire Status
+                icon: mdi:campfire
+                entity: binary_sensor.woodstove_fire_active
+                show_last_updated: false
+                show_last_changed: true
+                show_attribute: false
+                show_name: true
+                show_state: true
+                button_action: {}
+              - type: custom:bubble-card
+                card_type: button
+                button_type: slider
+                entity: light.dimmable_smart_plug
+                show_last_changed: true
+                show_state: true
+                show_attribute: true
+                min_value: 0
+                max_value: 100
+                allow_light_slider_to_0: true
+                light_transition: false
+              - type: custom:apexcharts-card
+                header:
+                  show: true
+                  title: Woodstove Temperatures
+                  show_states: true
+                  colorize_states: true
+                series:
+                  - entity: >-
+                      sensor.woodstove_thermocouple_woodstove_flue_temp_adjusted_f
+                  - entity: >-
+                      sensor.woodstove_thermocouple_woodstove_fan_temp_adjusted_f
+                apex_config:
+                  stroke:
+                    width: 1
+              - type: custom:bubble-card
+                card_type: button
+                button_type: state
+                entity: binary_sensor.woodstove_creosote_warning
+              - type: custom:bubble-card
+                card_type: button
+                button_type: state
+                entity: binary_sensor.woodstove_overfire
+              - type: custom:bubble-card
+                card_type: button
+                button_type: state
+                entity: binary_sensor.woodstove_efficient_burn
         column_span: 3
       - type: grid
         cards: []
