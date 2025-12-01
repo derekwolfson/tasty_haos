@@ -32,7 +32,7 @@ wifi:
 canbus:
   - platform: esp32_can
     id: valence_can
-    tx_pin: GPIO4 # had to swap to get to work
+    tx_pin: GPIO4
     rx_pin: GPIO5
     can_id: 1
     bit_rate: 500kbps
@@ -55,6 +55,22 @@ canbus:
               const char* mode_str[] = {"Standby", "Charge", "Drive", "Unknown"};
               id(bms_mode_text).publish_state(mode_str[x[1] & 0x3]);
               
+              // Decode charge stage (only in charge mode)
+              if ((x[1] & 0x3) == 1) {
+                uint8_t charge_stage = (x[1] >> 2) & 0x3;
+                const char* stage_str[] = {"Main Charge", "Equalizing", "Floating", "N/A"};
+                id(charge_stage_text).publish_state(stage_str[charge_stage]);
+                
+                // Inter-module balancing enabled
+                bool inter_bal = (x[1] >> 4) & 0x1;
+                id(inter_module_balancing).publish_state(inter_bal);
+              }
+              
+              // Temperature warnings/alarms (byte 1 bits 5-7)
+              id(low_temp_warning).publish_state((x[1] >> 5) & 0x1);
+              id(low_temp_alarm).publish_state((x[1] >> 6) & 0x1);
+              id(low_temp_shutdown).publish_state((x[1] >> 7) & 0x1);
+              
               // Check for any errors or alarms
               bool has_errors = (x[2] != 0 || x[3] != 0 || x[4] != 0 || x[7] != 0);
               id(bms_error_flag).publish_state(has_errors);
@@ -63,42 +79,94 @@ canbus:
       - can_id: 0xC1
         then:
           - lambda: |-
-              // Current is signed byte at position 1
-              int8_t current = (int8_t)x[1];
+              // Battery voltage (byte 0)
+              id(battery_voltage).publish_state(x[0]);
+              
+              // Current is signed 16-bit at bytes 1-2 (LSB first)
+              int16_t current = (int16_t)(x[1] | (x[2] << 8));
               id(battery_current).publish_state(current);
               
-              // Max discharge current (in drive mode)
-              if (((int)id(bms_mode).state & 0x2) != 0) {
-                int16_t max_discharge = (x[3] | (x[4] << 8)) / 10;
-                id(max_discharge_current).publish_state(max_discharge);
-              }
+              // Max discharge current (bytes 3-4, LSB first)
+              uint16_t max_discharge = x[3] | (x[4] << 8);
+              id(max_discharge_current).publish_state(max_discharge);
+              
+              // Max regenerative current (bytes 5 and 7, LSB first)
+              uint16_t max_regen = x[5] | (x[7] << 8);
+              id(max_regen_current).publish_state(max_regen);
+              
+              // Contactor states and requests (byte 6)
+              id(contactor_opening_request).publish_state(x[6] & 0x1);
+              id(discharge_contactor_state).publish_state((x[6] >> 1) & 0x1);
+              
+              // Insulation measurement state (bits 2-3)
+              uint8_t insulation_state = (x[6] >> 2) & 0x3;
+              const char* insul_str[] = {"Correct", "In Progress", "Fault", "Invalid"};
+              id(insulation_state_text).publish_state(insul_str[insulation_state]);
+              
+              id(charge_contactor_state).publish_state((x[6] >> 4) & 0x1);
+              id(charge_precharge_failure).publish_state((x[6] >> 5) & 0x1);
       
       # 0xC2 - Charge status
       - can_id: 0xC2
         then:
           - lambda: |-
+              id(charge_current_setpoint).publish_state(x[0]);
+              
+              // Charge voltage setpoint (bytes 1-2, LSB first)
+              uint16_t charge_voltage = x[1] | (x[2] << 8);
+              id(charge_voltage_setpoint).publish_state(charge_voltage);
+              
+              // End of charge flag (byte 3, bit 2)
               bool charge_complete = (x[3] & 0x4) >> 2;
               id(charge_complete_flag).publish_state(charge_complete);
+              
+              // Inter balance request number (byte 4)
+              id(inter_balance_request_num).publish_state(x[4]);
       
       # 0xC4 - Min/max cell voltages and temperatures
       - can_id: 0xC4
         then:
           - lambda: |-
+              // Temperatures with -40°C offset
               id(max_cell_temp).publish_state(x[0] - 40);
               id(min_cell_temp).publish_state(x[1] - 40);
               id(max_pcb_temp).publish_state(x[3] - 40);
               
-              // Cell voltages in mV (little endian)
-              float max_cell_v = ((x[4] | (x[5] << 8))) / 1000.0;
-              float min_cell_v = ((x[6] | (x[7] << 8))) / 1000.0;
+              // Cell voltages in mV (big endian - MSB first)
+              float max_cell_v = ((x[4] << 8) | x[5]) / 1000.0;
+              float min_cell_v = ((x[6] << 8) | x[7]) / 1000.0;
               id(max_cell_voltage).publish_state(max_cell_v);
               id(min_cell_voltage).publish_state(min_cell_v);
+      
+      # 0x180 - Hardware/Firmware revision
+      - can_id: 0x180
+        then:
+          - lambda: |-
+              char version[20];
+              sprintf(version, "MC:%d.%d CR:%d.%d BL:%d.%d", 
+                      x[0]/16, x[0]%16, x[1]/16, x[1]%16, x[2]/16, x[2]%16);
+              id(firmware_version).publish_state(version);
+              
+              const char* type_str[] = {"LV", "HV", "Unknown", "SHV"};
+              id(bms_type).publish_state(type_str[x[3]]);
+              
+              char hw_rev[10];
+              sprintf(hw_rev, "%d.%d", x[4]/16, x[4]%16);
+              id(hardware_revision).publish_state(hw_rev);
+              
+              char customer[4];
+              customer[0] = x[5];
+              customer[1] = x[6];
+              customer[2] = x[7];
+              customer[3] = '\0';
+              id(customer_code).publish_state(customer);
       
       # 0x350 - Module 1 cells 1-3
       - can_id: 0x350
         then:
           - lambda: |-
               if (x.size() >= 8) {
+                // Byte 0 = BMS#, Byte 1 = cell block group (0=1-3, 1=7-9)
                 float c1 = ((x[2] << 8) | x[3]) / 1000.0;
                 float c2 = ((x[4] << 8) | x[5]) / 1000.0;
                 float c3 = ((x[6] << 8) | x[7]) / 1000.0;
@@ -120,6 +188,94 @@ canbus:
                                  id(module1_cell3).state + id(module1_cell4).state;
                 id(module1_voltage).publish_state(module_v);
               }
+      
+      # 0x56A - Module exists flags
+      - can_id: 0x56A
+        then:
+          - lambda: |-
+              if (x.size() >= 8) {
+                // Count how many modules exist
+                int module_count = 0;
+                for (int i = 1; i < 8; i++) {
+                  for (int bit = 0; bit < 8; bit++) {
+                    if (x[i] & (1 << bit)) {
+                      module_count++;
+                    }
+                  }
+                }
+                id(total_modules_present).publish_state(module_count);
+              }
+      
+      # 0x66A - Insulation resistance
+      - can_id: 0x66A
+        then:
+          - lambda: |-
+              if (x.size() >= 4) {
+                // 32-bit value in kOhm
+                uint32_t resistance = (x[0] << 24) | (x[1] << 16) | (x[2] << 8) | x[3];
+                id(insulation_resistance).publish_state(resistance);
+              }
+      
+      # 0x66B - Insulation voltages
+      - can_id: 0x66B
+        then:
+          - lambda: |-
+              if (x.size() >= 8) {
+                uint16_t v1 = (x[0] << 8) | x[1];
+                uint16_t v2 = (x[2] << 8) | x[3];
+                uint16_t v3 = (x[4] << 8) | x[5];
+                uint16_t v4 = (x[6] << 8) | x[7];
+                
+                id(v_chassis_neg_first).publish_state(v1);
+                id(v_pos_chassis_first).publish_state(v2);
+                id(v_chassis_neg_next).publish_state(v3);
+                id(v_pos_chassis_next).publish_state(v4);
+              }
+      
+      # 0x06A - Module SOC (modules 1-7)
+      - can_id: 0x06A
+        then:
+          - lambda: |-
+              if (x.size() >= 8) {
+                // Byte 0 = BMS#, bytes 1-7 = modules 1-7 SOC
+                id(module1_soc).publish_state(x[1] * 100.0 / 255.0);
+                id(module2_soc).publish_state(x[2] * 100.0 / 255.0);
+                id(module3_soc).publish_state(x[3] * 100.0 / 255.0);
+              }
+      
+      # 0x16A - Module inter-balance flags
+      - can_id: 0x16A
+        then:
+          - lambda: |-
+              if (x.size() >= 8) {
+                // Count modules currently balancing
+                int balancing_count = 0;
+                for (int i = 1; i < 8; i++) {
+                  for (int bit = 0; bit < 8; bit++) {
+                    if (x[i] & (1 << bit)) {
+                      balancing_count++;
+                    }
+                  }
+                }
+                id(modules_inter_balancing).publish_state(balancing_count);
+              }
+      
+      # 0x16C - Module sanity error flags
+      - can_id: 0x16C
+        then:
+          - lambda: |-
+              if (x.size() >= 8) {
+                // Count modules with sanity errors
+                int error_count = 0;
+                for (int i = 1; i < 8; i++) {
+                  for (int bit = 0; bit < 8; bit++) {
+                    if (x[i] & (1 << bit)) {
+                      error_count++;
+                    }
+                  }
+                }
+                id(modules_with_sanity_errors).publish_state(error_count);
+              }
 
 # Sensors
 sensor:
@@ -130,6 +286,14 @@ sensor:
     unit_of_measurement: "%"
     accuracy_decimals: 0
     device_class: battery
+    state_class: measurement
+  
+  - platform: template
+    id: battery_voltage
+    name: "Battery Voltage"
+    unit_of_measurement: "V"
+    accuracy_decimals: 0
+    device_class: voltage
     state_class: measurement
   
   - platform: template
@@ -146,6 +310,33 @@ sensor:
     unit_of_measurement: "A"
     accuracy_decimals: 0
     device_class: current
+  
+  - platform: template
+    id: max_regen_current
+    name: "Max Regen Current"
+    unit_of_measurement: "A"
+    accuracy_decimals: 0
+    device_class: current
+  
+  # Charge parameters
+  - platform: template
+    id: charge_current_setpoint
+    name: "Charge Current Setpoint"
+    unit_of_measurement: "A"
+    accuracy_decimals: 0
+    device_class: current
+  
+  - platform: template
+    id: charge_voltage_setpoint
+    name: "Charge Voltage Setpoint"
+    unit_of_measurement: "V"
+    accuracy_decimals: 0
+    device_class: voltage
+  
+  - platform: template
+    id: inter_balance_request_num
+    name: "Inter Balance Request Number"
+    accuracy_decimals: 0
   
   # Temperature sensors
   - platform: template
@@ -230,6 +421,31 @@ sensor:
     device_class: voltage
     state_class: measurement
   
+  # Module SOC sensors
+  - platform: template
+    id: module1_soc
+    name: "Module 1 SOC"
+    unit_of_measurement: "%"
+    accuracy_decimals: 1
+    device_class: battery
+    state_class: measurement
+  
+  - platform: template
+    id: module2_soc
+    name: "Module 2 SOC"
+    unit_of_measurement: "%"
+    accuracy_decimals: 1
+    device_class: battery
+    state_class: measurement
+  
+  - platform: template
+    id: module3_soc
+    name: "Module 3 SOC"
+    unit_of_measurement: "%"
+    accuracy_decimals: 1
+    device_class: battery
+    state_class: measurement
+  
   # Status counters
   - platform: template
     id: modules_communicating
@@ -242,6 +458,60 @@ sensor:
     name: "Modules Balancing"
     accuracy_decimals: 0
     state_class: measurement
+  
+  - platform: template
+    id: total_modules_present
+    name: "Total Modules Present"
+    accuracy_decimals: 0
+    state_class: measurement
+  
+  - platform: template
+    id: modules_inter_balancing
+    name: "Modules Inter-Balancing"
+    accuracy_decimals: 0
+    state_class: measurement
+  
+  - platform: template
+    id: modules_with_sanity_errors
+    name: "Modules with Sanity Errors"
+    accuracy_decimals: 0
+    state_class: measurement
+  
+  # Insulation monitoring
+  - platform: template
+    id: insulation_resistance
+    name: "Insulation Resistance"
+    unit_of_measurement: "kΩ"
+    accuracy_decimals: 0
+    state_class: measurement
+  
+  - platform: template
+    id: v_chassis_neg_first
+    name: "V Chassis-Neg First"
+    unit_of_measurement: "V"
+    accuracy_decimals: 0
+    device_class: voltage
+  
+  - platform: template
+    id: v_pos_chassis_first
+    name: "V Pos-Chassis First"
+    unit_of_measurement: "V"
+    accuracy_decimals: 0
+    device_class: voltage
+  
+  - platform: template
+    id: v_chassis_neg_next
+    name: "V Chassis-Neg Next"
+    unit_of_measurement: "V"
+    accuracy_decimals: 0
+    device_class: voltage
+  
+  - platform: template
+    id: v_pos_chassis_next
+    name: "V Pos-Chassis Next"
+    unit_of_measurement: "V"
+    accuracy_decimals: 0
+    device_class: voltage
   
   # Alarm/error codes (numeric)
   - platform: template
@@ -285,6 +555,44 @@ binary_sensor:
     id: charge_complete_flag
     name: "Charge Complete"
     device_class: battery_charging
+  
+  - platform: template
+    id: inter_module_balancing
+    name: "Inter-Module Balancing"
+  
+  - platform: template
+    id: low_temp_warning
+    name: "Low Temperature Warning"
+    device_class: cold
+  
+  - platform: template
+    id: low_temp_alarm
+    name: "Low Temperature Alarm"
+    device_class: problem
+  
+  - platform: template
+    id: low_temp_shutdown
+    name: "Low Temperature Shutdown"
+    device_class: problem
+  
+  - platform: template
+    id: contactor_opening_request
+    name: "Contactor Opening Request"
+  
+  - platform: template
+    id: discharge_contactor_state
+    name: "Discharge Contactor Closed"
+    device_class: power
+  
+  - platform: template
+    id: charge_contactor_state
+    name: "Charge Contactor Closed"
+    device_class: power
+  
+  - platform: template
+    id: charge_precharge_failure
+    name: "Charge Precharge Failure"
+    device_class: problem
 
 # Text sensors
 text_sensor:
@@ -292,12 +600,36 @@ text_sensor:
     id: bms_mode_text
     name: "BMS Mode"
   
+  - platform: template
+    id: charge_stage_text
+    name: "Charge Stage"
+  
+  - platform: template
+    id: insulation_state_text
+    name: "Insulation State"
+  
+  - platform: template
+    id: firmware_version
+    name: "Firmware Version"
+  
+  - platform: template
+    id: hardware_revision
+    name: "Hardware Revision"
+  
+  - platform: template
+    id: bms_type
+    name: "BMS Type"
+  
+  - platform: template
+    id: customer_code
+    name: "Customer Code"
+  
   # Detailed error reporting
   - platform: template
     id: error_details
     name: "BMS Error Details"
     lambda: |-
-      // Check if we have valid data (not garbage INT_MAX values)
+      // Check if we have valid data
       if (!id(voltage_alarms).has_state() || 
           !id(internal_errors).has_state() || 
           !id(current_alarms).has_state() || 
