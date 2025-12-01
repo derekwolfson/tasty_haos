@@ -116,9 +116,13 @@ canbus:
               id(battery_voltage).publish_state(x[0]);
               
               // Current is signed 16-bit at bytes 1-2 (LSB first)
-              int16_t current = (int16_t)(x[1] | (x[2] << 8));
-              id(battery_current).publish_state(current);
+              int16_t current16 = (x[1] | (x[2] << 8));
+              id(battery_current_16).publish_state(current16);
               
+              // Current is signed byte at position 1
+              int8_t current8 = (int8_t)x[1];
+              id(battery_current_8).publish_state(current8);
+
               // Max discharge current (bytes 3-4, LSB first)
               uint16_t max_discharge = x[3] | (x[4] << 8);
               id(max_discharge_current).publish_state(max_discharge);
@@ -165,9 +169,9 @@ canbus:
               id(min_cell_temp).publish_state(x[1] - 40);
               id(max_pcb_temp).publish_state(x[3] - 40);
               
-              // Cell voltages in mV (big endian - MSB first)
-              float max_cell_v = ((x[4] << 8) | x[5]) / 1000.0;
-              float min_cell_v = ((x[6] << 8) | x[7]) / 1000.0;
+              // Cell voltages in mV (big endian - LSB first)
+              float max_cell_v = ((x[4] | (x[5] << 8))) / 1000.0;
+              float min_cell_v = ((x[6] | (x[7] << 8))) / 1000.0;
               id(max_cell_voltage).publish_state(max_cell_v);
               id(min_cell_voltage).publish_state(min_cell_v);
       
@@ -226,7 +230,7 @@ canbus:
       - can_id: 0x56A
         then:
           - lambda: |-
-              if (x.size() >= 8) {
+              if (x.size() >= 0) {
                 // Count how many modules exist
                 int module_count = 0;
                 for (int i = 1; i < 8; i++) {
@@ -253,7 +257,7 @@ canbus:
       - can_id: 0x66B
         then:
           - lambda: |-
-              if (x.size() >= 8) {
+              if (x.size() >= 0) {
                 uint16_t v1 = (x[0] << 8) | x[1];
                 uint16_t v2 = (x[2] << 8) | x[3];
                 uint16_t v3 = (x[4] << 8) | x[5];
@@ -269,18 +273,36 @@ canbus:
       - can_id: 0x06A
         then:
           - lambda: |-
+              if (x.size() >= 0) {
+                // Byte 0 = BMS#, bytes 1-7 = modules 1-7 SOC
+                  id(module01_soc).publish_state(x[1] * 100  / 255.0);
+                //id(module02_soc).publish_state(x[2] * 100 / 255.0); # module doesn't exist in 1s1p
+                //id(module03_soc).publish_state(x[3] * 100 / 255.0); # module doesn't exist in 1s1p
+                //id(module04_soc).publish_state(x[4] * 100 / 255.0); # module doesn't exist in 1s1p
+                //id(module05_soc).publish_state(x[5] * 100 / 255.0); # module doesn't exist in 1s1p
+                //id(module06_soc).publish_state(x[6] * 100 / 255.0); # module doesn't exist in 1s1p
+                //id(module07_soc).publish_state(x[7] * 100 / 255.0); # module doesn't exist in 1s1p
+              }
+      # 0x06A - Module SOC (modules 8-15)
+      - can_id: 0x06B # increments by letter for each 7 modules.
+        then:
+          - lambda: |-
               if (x.size() >= 8) {
                 // Byte 0 = BMS#, bytes 1-7 = modules 1-7 SOC
-                id(module1_soc).publish_state(x[1] * 100.0 / 255.0);
-                id(module2_soc).publish_state(x[2] * 100.0 / 255.0);
-                id(module3_soc).publish_state(x[3] * 100.0 / 255.0);
+                //id(module8_soc).publish_state(x[1] * 100  / 255.0);
+                //id(module9_soc).publish_state(x[2] * 100 / 255.0); # module doesn't exist in 1s1p
+                //id(module10_soc).publish_state(x[3] * 100 / 255.0); # module doesn't exist in 1s1p
+                //id(module11_soc).publish_state(x[4] * 100 / 255.0); # module doesn't exist in 1s1p
+                //id(module12_soc).publish_state(x[5] * 100 / 255.0); # module doesn't exist in 1s1p
+                //id(module13_soc).publish_state(x[6] * 100 / 255.0); # module doesn't exist in 1s1p
+                //id(module14_soc).publish_state(x[7] * 100 / 255.0); # module doesn't exist in 1s1p
               }
       
       # 0x16A - Module inter-balance flags
       - can_id: 0x16A
         then:
           - lambda: |-
-              if (x.size() >= 8) {
+              if (x.size() >= 0) {
                 // Count modules currently balancing
                 int balancing_count = 0;
                 for (int i = 1; i < 8; i++) {
@@ -297,7 +319,7 @@ canbus:
       - can_id: 0x16C
         then:
           - lambda: |-
-              if (x.size() >= 8) {
+              if (x.size() >= 0) {
                 // Count modules with sanity errors
                 int error_count = 0;
                 for (int i = 1; i < 8; i++) {
@@ -325,18 +347,26 @@ sensor:
     id: battery_voltage
     name: "Battery Voltage"
     unit_of_measurement: "V"
-    accuracy_decimals: 0
+    accuracy_decimals: 3
     device_class: voltage
     state_class: measurement
   
   - platform: template
-    id: battery_current
-    name: "Battery Current"
+    id: battery_current_16 
+    name: "Battery Current (16BIT)"
     unit_of_measurement: "A"
     accuracy_decimals: 0
     device_class: current
     state_class: measurement
-  
+
+  - platform: template
+    id: battery_current_8
+    name: "Battery Current (8BIT)"
+    unit_of_measurement: "A"
+    accuracy_decimals: 0
+    device_class: current
+    state_class: measurement
+
   - platform: template
     id: max_discharge_current
     name: "Max Discharge Current"
@@ -456,24 +486,8 @@ sensor:
   
   # Module SOC sensors
   - platform: template
-    id: module1_soc
+    id: module01_soc
     name: "Module 1 SOC"
-    unit_of_measurement: "%"
-    accuracy_decimals: 1
-    device_class: battery
-    state_class: measurement
-  
-  - platform: template
-    id: module2_soc
-    name: "Module 2 SOC"
-    unit_of_measurement: "%"
-    accuracy_decimals: 1
-    device_class: battery
-    state_class: measurement
-  
-  - platform: template
-    id: module3_soc
-    name: "Module 3 SOC"
     unit_of_measurement: "%"
     accuracy_decimals: 1
     device_class: battery
