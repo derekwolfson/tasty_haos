@@ -74,6 +74,39 @@ canbus:
               // Check for any errors or alarms
               bool has_errors = (x[2] != 0 || x[3] != 0 || x[4] != 0 || x[7] != 0);
               id(bms_error_flag).publish_state(has_errors);
+              
+              // Decode individual error flags from byte 2 (voltage_alarms)
+              id(module_lost).publish_state(x[2] & 0x01);
+              id(over_temp_warning).publish_state(x[2] & 0x02);
+              id(over_temp_alarm).publish_state(x[2] & 0x04);
+              id(low_capacity).publish_state(x[2] & 0x08);
+              id(critically_discharged_alarm).publish_state(x[2] & 0x10);
+              id(over_voltage_alarm).publish_state(x[2] & 0x20);
+              id(over_temp_shutdown).publish_state(x[2] & 0x80);
+              
+              // Decode individual error flags from byte 3 (internal_errors)
+              id(too_many_modules).publish_state(x[3] & 0x02);
+              id(temp_sensor_failure).publish_state(x[3] & 0x04);
+              id(voltage_sensor_failure).publish_state(x[3] & 0x08);
+              id(current_sensor_failure).publish_state(x[3] & 0x10);
+              id(soc_mismatch).publish_state(x[3] & 0x20);
+              id(critically_discharged_warning).publish_state(x[3] & 0x40);
+              id(over_voltage_warning).publish_state(x[3] & 0x80);
+              
+              // Decode individual error flags from byte 4 (current_alarms)
+              id(over_current_warning).publish_state(x[4] & 0x01);
+              id(over_current_alarm).publish_state(x[4] & 0x02);
+              id(over_current_shutdown).publish_state(x[4] & 0x04);
+              id(pcba_over_temp_warning).publish_state(x[4] & 0x08);
+              id(pcba_over_temp_alarm).publish_state(x[4] & 0x10);
+              id(pcba_over_temp_shutdown).publish_state(x[4] & 0x20);
+              
+              // Decode individual error flags from byte 7 (shutdown_reason)
+              id(over_voltage_shutdown).publish_state(x[7] & 0x04);
+              id(critically_discharged_shutdown).publish_state(x[7] & 0x08);
+              id(vmu_timeout).publish_state(x[7] & 0x10);
+              id(discharge_precharge_failure).publish_state(x[7] & 0x20);
+              id(sanity_error).publish_state(x[7] & 0x40);
       
       # 0xC1 - Current and charge/discharge limits
       - can_id: 0xC1
@@ -546,6 +579,7 @@ sensor:
 
 # Binary sensors (flags)
 binary_sensor:
+  # General status
   - platform: template
     id: bms_error_flag
     name: "BMS Has Errors"
@@ -593,6 +627,135 @@ binary_sensor:
     id: charge_precharge_failure
     name: "Charge Precharge Failure"
     device_class: problem
+  
+  # Voltage and Temperature Alarms (byte 2)
+  - platform: template
+    id: module_lost
+    name: "Module Communication Lost"
+    device_class: problem
+  
+  - platform: template
+    id: over_temp_warning
+    name: "Over Temperature Warning"
+    device_class: heat
+  
+  - platform: template
+    id: over_temp_alarm
+    name: "Over Temperature Alarm"
+    device_class: problem
+  
+  - platform: template
+    id: low_capacity
+    name: "Low Battery Capacity"
+    device_class: battery
+  
+  - platform: template
+    id: critically_discharged_alarm
+    name: "Critically Discharged Alarm"
+    device_class: problem
+  
+  - platform: template
+    id: over_voltage_alarm
+    name: "Over Voltage Alarm"
+    device_class: problem
+  
+  - platform: template
+    id: over_temp_shutdown
+    name: "Over Temperature Shutdown"
+    device_class: problem
+  
+  # Internal Errors (byte 3)
+  - platform: template
+    id: too_many_modules
+    name: "Too Many Modules"
+    device_class: problem
+  
+  - platform: template
+    id: temp_sensor_failure
+    name: "Temperature Sensor Failure"
+    device_class: problem
+  
+  - platform: template
+    id: voltage_sensor_failure
+    name: "Voltage Sensor Failure"
+    device_class: problem
+  
+  - platform: template
+    id: current_sensor_failure
+    name: "Current Sensor Failure"
+    device_class: problem
+  
+  - platform: template
+    id: soc_mismatch
+    name: "SOC Mismatch Between Modules"
+    device_class: problem
+  
+  - platform: template
+    id: critically_discharged_warning
+    name: "Critically Discharged Warning"
+    device_class: battery
+  
+  - platform: template
+    id: over_voltage_warning
+    name: "Over Voltage Warning"
+    device_class: problem
+  
+  # Current and PCB Alarms (byte 4)
+  - platform: template
+    id: over_current_warning
+    name: "Over Current Warning"
+    device_class: problem
+  
+  - platform: template
+    id: over_current_alarm
+    name: "Over Current Alarm"
+    device_class: problem
+  
+  - platform: template
+    id: over_current_shutdown
+    name: "Over Current Shutdown"
+    device_class: problem
+  
+  - platform: template
+    id: pcba_over_temp_warning
+    name: "PCB Over Temperature Warning"
+    device_class: heat
+  
+  - platform: template
+    id: pcba_over_temp_alarm
+    name: "PCB Over Temperature Alarm"
+    device_class: problem
+  
+  - platform: template
+    id: pcba_over_temp_shutdown
+    name: "PCB Over Temperature Shutdown"
+    device_class: problem
+  
+  # Shutdown Reasons (byte 7)
+  - platform: template
+    id: over_voltage_shutdown
+    name: "Over Voltage Shutdown"
+    device_class: problem
+  
+  - platform: template
+    id: critically_discharged_shutdown
+    name: "Critically Discharged Shutdown"
+    device_class: problem
+  
+  - platform: template
+    id: vmu_timeout
+    name: "VMU Communication Timeout"
+    device_class: problem
+  
+  - platform: template
+    id: discharge_precharge_failure
+    name: "Discharge Pre-charge Failure"
+    device_class: problem
+  
+  - platform: template
+    id: sanity_error
+    name: "Sanity Error"
+    device_class: problem
 
 # Text sensors
 text_sensor:
@@ -624,7 +787,7 @@ text_sensor:
     id: customer_code
     name: "Customer Code"
   
-  # Detailed error reporting
+  # Detailed error reporting with decoded messages
   - platform: template
     id: error_details
     name: "BMS Error Details"
@@ -642,20 +805,50 @@ text_sensor:
       }
       
       std::string errors = "";
-      if (id(voltage_alarms).state != 0) {
-        errors += "Voltage/Temp Alarms: " + to_string((int)id(voltage_alarms).state) + " ";
-      }
-      if (id(internal_errors).state != 0) {
-        errors += "Internal Errors: " + to_string((int)id(internal_errors).state) + " ";
-      }
-      if (id(current_alarms).state != 0) {
-        errors += "Current/PCB Alarms: " + to_string((int)id(current_alarms).state) + " ";
-      }
-      if (id(shutdown_reason).state != 0) {
-        errors += "Shutdown: " + to_string((int)id(shutdown_reason).state);
-      }
+      uint8_t volt_alarms = (uint8_t)id(voltage_alarms).state;
+      uint8_t int_errors = (uint8_t)id(internal_errors).state;
+      uint8_t curr_alarms = (uint8_t)id(current_alarms).state;
+      uint8_t shutdown = (uint8_t)id(shutdown_reason).state;
+      
+      // Decode byte 2 (voltage_alarms) - voltage and temperature issues
+      if (volt_alarms & 0x01) errors += "Module Lost; ";
+      if (volt_alarms & 0x02) errors += "Over Temp Warning; ";
+      if (volt_alarms & 0x04) errors += "Over Temp Alarm; ";
+      if (volt_alarms & 0x08) errors += "Low Capacity; ";
+      if (volt_alarms & 0x10) errors += "Critically Discharged Alarm; ";
+      if (volt_alarms & 0x20) errors += "Over Voltage Alarm; ";
+      if (volt_alarms & 0x80) errors += "Over Temp Shutdown; ";
+      
+      // Decode byte 3 (internal_errors) - sensor and system issues
+      if (int_errors & 0x02) errors += "Too Many Modules; ";
+      if (int_errors & 0x04) errors += "Temp Sensor Failure; ";
+      if (int_errors & 0x08) errors += "Volt Sensor Failure; ";
+      if (int_errors & 0x10) errors += "Current Sensor Failure; ";
+      if (int_errors & 0x20) errors += "SOC Mismatch; ";
+      if (int_errors & 0x40) errors += "Critically Discharged Warning; ";
+      if (int_errors & 0x80) errors += "Over Volt Warning; ";
+      
+      // Decode byte 4 (current_alarms) - current and PCB issues
+      if (curr_alarms & 0x01) errors += "Over Current Warning; ";
+      if (curr_alarms & 0x02) errors += "Over Current Alarm; ";
+      if (curr_alarms & 0x04) errors += "Over Current Shutdown; ";
+      if (curr_alarms & 0x08) errors += "PCBA Over Temp Warning; ";
+      if (curr_alarms & 0x10) errors += "PCBA Over Temp Alarm; ";
+      if (curr_alarms & 0x20) errors += "PCBA Over Temp Shutdown; ";
+      
+      // Decode byte 7 (shutdown_reason) - critical shutdowns
+      if (shutdown & 0x04) errors += "Over Volt Shutdown; ";
+      if (shutdown & 0x08) errors += "Critically Discharged Shutdown; ";
+      if (shutdown & 0x10) errors += "VMU Timeout; ";
+      if (shutdown & 0x20) errors += "Discharge Pre-charge Failure; ";
+      if (shutdown & 0x40) errors += "Sanity Error; ";
+      
       if (errors.empty()) {
         return {"No errors"};
+      }
+      // Remove trailing semicolon and space
+      if (errors.length() > 2) {
+        errors = errors.substr(0, errors.length() - 2);
       }
       return {errors};
     update_interval: 5s
