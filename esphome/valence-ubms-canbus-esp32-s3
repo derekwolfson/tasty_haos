@@ -1,23 +1,24 @@
 esphome:
-  name: nhl
-  friendly_name: nhl
+  name: valence-u-bms
+  friendly_name: Valence U-BMS
 
 esp32:
-  board: esp32dev
+  board: esp32-s3-devkitc-1
   framework:
     type: esp-idf
 
+# Enable logging
 logger:
   level: DEBUG
 
 # Enable Home Assistant API
 api:
   encryption:
-    key: !secret nhl_api_key
+    key: !secret ws_key
 
 ota:
   - platform: esphome
-    password: !secret nhl_ota_key
+    password: !secret ws_ota_key
 
 wifi:
   ssid: !secret wifi_ssid
@@ -25,8 +26,9 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: !secret nhl_fb_hotspot_ssid
-    password: !secret nhl_fb_hotspot_password
+    ssid: !secret ws_fb_ssid
+    password: !secret ws_fb_password
+
 
 # CAN Bus Configuration
 canbus:
