@@ -34,8 +34,8 @@ wifi:
 canbus:
   - platform: esp32_can
     id: valence_can
-    tx_pin: GPIO4
-    rx_pin: GPIO5
+    tx_pin: GPIO15
+    rx_pin: GPIO16
     can_id: 1
     bit_rate: 500kbps
     
