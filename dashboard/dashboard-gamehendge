@@ -666,7 +666,7 @@ views:
       - type: grid
         cards:
           - type: thermostat
-            entity: climate.nest_thermostat
+            entity: climate.node_39
             show_current_as_primary: true
             grid_options:
               columns: 7
@@ -674,9 +674,6 @@ views:
             features:
               - style: icons
                 type: climate-fan-modes
-                fan_modes:
-                  - 'on'
-                  - 'off'
             name: ' '
             card_mod:
               style: |
@@ -790,7 +787,7 @@ views:
                       margin-top: -16px;    
                     }    
               - type: custom:mushroom-entity-card
-                entity: sensor.nest_thermostat_humidity
+                entity: sensor.node_39_humidity
                 name: Indoor Humidity
                 icon_color: cyan
                 fill_container: false
@@ -998,12 +995,10 @@ views:
                       }
                       
               - type: custom:mushroom-entity-card
-                entity: sensor.nest_temperature_sensor_bedroom_temperature
+                entity: sensor.zse44_01_air_temperature
                 name: Primary Bed
                 icon: mdi:thermometer-lines
                 icon_color: deep-orange
-                view_layout:
-                  grid-area: a
                 card_mod:
                   style: |
                     ha-card {
@@ -1012,13 +1007,28 @@ views:
                         margin-top: -9px;
                         margin-right: -40px;
                       }
+                view_layout:
+                  grid-area: a
               - type: custom:mushroom-entity-card
-                entity: sensor.nest_thermostat_temperature
+                entity: sensor.zse44_03_air_temperature
+                name: Kids Bed/Nest
+                icon: mdi:thermometer-lines
+                icon_color: deep-orange
+                card_mod:
+                  style: |
+                    ha-card {
+                        transform: scale(0.8);   /* 50% width, 100% height */
+                        transform-origin: top left; /* anchor the shrink */
+                        margin-top: -9px;
+                        margin-right: -40px;
+                      }
+                view_layout:
+                  grid-area: b
+              - type: custom:mushroom-entity-card
+                entity: sensor.zse44_10_air_temperature
                 name: Office
                 icon: mdi:thermometer-lines
                 icon_color: deep-orange
-                view_layout:
-                  grid-area: c
                 card_mod:
                   style: |
                     ha-card {
@@ -1027,28 +1037,13 @@ views:
                         margin-top: -9px;
                         margin-right: -40px;
                       }  
+                view_layout:
+                  grid-area: c
               - type: custom:mushroom-entity-card
-                entity: sensor.nest_thermostat_temperature
-                name: Kids Bed
+                entity: sensor.zse44_02_air_temperature
+                name: Pri.Bath
                 icon: mdi:thermometer-lines
                 icon_color: deep-orange
-                view_layout:
-                  grid-area: b
-                card_mod:
-                  style: |
-                    ha-card {
-                        transform: scale(0.8);   /* 50% width, 100% height */
-                        transform-origin: top left; /* anchor the shrink */
-                        margin-top: -9px;
-                        margin-right: -40px;
-                      }
-              - type: custom:mushroom-entity-card
-                entity: sensor.nest_thermostat_temperature
-                name: Garage
-                icon: mdi:thermometer-lines
-                icon_color: deep-orange
-                view_layout:
-                  grid-area: d
                 card_mod:
                   style: |
                     ha-card {
@@ -1058,13 +1053,13 @@ views:
                         margin-right: -30px;
                         margin-bottom: -30px;            
                       }
+                view_layout:
+                  grid-area: d
               - type: custom:mushroom-entity-card
-                entity: sensor.nest_thermostat_temperature
-                name: Fridge 1
+                entity: sensor.zse44_05_air_temperature_2
                 icon: mdi:thermometer-lines
                 icon_color: deep-orange
-                view_layout:
-                  grid-area: e
+                name: K.Bath
                 card_mod:
                   style: |
                     ha-card {
@@ -1080,13 +1075,13 @@ views:
                         text-overflow: unset !important;
                         display: block !important;
                       }
+                view_layout:
+                  grid-area: e
               - type: custom:mushroom-entity-card
-                entity: sensor.nest_thermostat_temperature
-                name: Fridge 2
+                entity: sensor.zse44_08_air_temperature
+                name: Play
                 icon: mdi:thermometer-lines
                 icon_color: deep-orange
-                view_layout:
-                  grid-area: f
                 card_mod:
                   style: |
                     ha-card {
@@ -1096,14 +1091,14 @@ views:
                         margin-right: -30px;
                         margin-bottom: -30px;
                       }      
+                view_layout:
+                  grid-area: f
               - type: custom:mushroom-entity-card
-                entity: sensor.nest_thermostat_temperature
+                entity: sensor.zse44_05_air_temperature
                 name: Bath
                 icon: mdi:thermometer-lines
                 icon_color: deep-orange
                 fill_container: false
-                view_layout:
-                  grid-area: g
                 card_mod:
                   style: |
                     ha-card {
@@ -1113,6 +1108,8 @@ views:
                         margin-right: -30px;   
                         margin-bottom: -30px;
                       }      
+                view_layout:
+                  grid-area: g
             grid_options:
               columns: 12
               rows: 2
@@ -1205,7 +1202,7 @@ views:
                   action: toggle
                 double_tap_action:
                   action: none
-                entity: lock.door_lock
+                entity: lock.home_connect_620_connected_smart_lock
                 view_layout:
                   grid-area: a
                 card_mod:
@@ -2488,7 +2485,7 @@ views:
                       margin-bottom: -30px;
                     }
               - type: custom:mushroom-legacy-template-card
-                entity: device_tracker.2025_ioniq_5_location
+                entity: device_tracker.ev9_location
                 primary: Location
                 secondary: >
                   {% if states('device_tracker.ev9_location') in ['unknown',
@@ -4417,6 +4414,35 @@ views:
                     icon: mdi:keyboard-return
                     show_state: false
                     show_name: true
+              - type: custom:bubble-card
+                button_type: switch
+                button_action:
+                  hold_action:
+                    action: url
+                    url_path: https://haos.icmw.cloud/
+                card_layout: large
+                name: ''
+                icon: mdi:monitor-dashboard
+                show_state: true
+                show_last_updated: true
+                show_last_changed: true
+                show_attribute: false
+                sub_button:
+                  - tap_action:
+                      action: navigate
+                      navigation_path: /lovelace
+                    name: Return to Lovelace
+                    icon: mdi:keyboard-return
+                    show_state: false
+                    show_name: true
+                card_type: button
+                entity: input_boolean.disco_mode_active
+                tap_action:
+                  action: toggle
+              - type: entity
+                entity: input_boolean.disco_mode_active
+                name:
+                  type: entity
             grid_options:
               columns: full
           - type: vertical-stack
@@ -4693,6 +4719,15 @@ views:
                 card_type: button
                 button_type: state
                 entity: binary_sensor.woodstove_efficient_burn
+              - type: custom:bubble-card
+                card_type: button
+                button_type: state
+                entity: input_boolean.overnight_woodstove_fan
+                button_action:
+                  tap_action:
+                    action: toggle
+                tap_action:
+                  action: toggle
         column_span: 3
       - type: grid
         cards: []
