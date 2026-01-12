@@ -258,7 +258,8 @@ views:
                 icon: mdi:checkbox
                 icon_color: grey
                 tap_action:
-                  action: none
+                  action: navigate
+                  navigation_path: '#mass-pu'
                 hold_action:
                   action: more-info
                 double_tap_action:
@@ -2564,172 +2565,7 @@ views:
                     grey
                   {% endif %}
                 tap_action:
-                  action: fire-dom-event
-                  browser_mod:
-                    service: browser_mod.popup
-                    data:
-                      title: Kia EV9 Climate Control
-                      content:
-                        type: vertical-stack
-                        cards:
-                          - type: custom:mushroom-legacy-template-card
-                            entity: timer.ev9_climate_timer
-                            primary: >
-                              {% set mode =
-                              states('input_select.ev9_remote_climate_mode') %}
-
-                              {% set timer_state =
-                              states('timer.ev9_climate_timer') %}
-
-                              {% if mode == 'heating' and timer_state ==
-                              'active' %}
-                                Heating ({{ states('sensor.ev9_climate_timer_status') }} Remaining)
-                              {% elif mode == 'heating' and timer_state !=
-                              'active' %}
-                                Heating Initializing
-                              {% else %}
-                                Request Remote Heating
-                              {% endif %}
-                            icon: mdi:fire
-                            icon_color: >
-                              {% if
-                              states('input_select.ev9_remote_climate_mode') ==
-                              'heating' %}
-                                white
-                              {% else %}
-                                grey
-                              {% endif %}
-                            tap_action:
-                              action: call-service
-                              service: script.ev9_climate_start_heat
-                            fill_container: true
-                            grid_options:
-                              columns: full
-                            card_mod:
-                              style: >
-                                {% set mode =
-                                states('input_select.ev9_remote_climate_mode')
-                                %}
-
-                                {% set timer_state =
-                                states('timer.ev9_climate_timer') %}
-
-                                /* Background */
-
-                                {% if mode == 'heating' and timer_state !=
-                                'active' %}
-                                  ha-card { animation: flash-bg 7s infinite; }
-                                {% elif mode == 'heating' and timer_state ==
-                                'active' %}
-                                  ha-card { background-color: rgba(255,69,0,0.7); } /* solid red */
-                                {% else %}
-
-                                {% endif %}
-
-                                /* Background keyframes */
-
-                                @keyframes flash-bg {
-                                  0%, 10%, 90%, 100% { background-color: rgba(255,69,0,0.7); }
-                                  50% { background-color: rgba(255,69,0,0.7); }
-                                }
-
-                                /* Icon fire using ha-state-icon */
-
-                                {% if mode == 'heating' %}
-                                  ha-state-icon {
-                                      animation: bounce 1.5s ease-in-out infinite
-                                  }
-                                {% else %}
-                                  ha-state-icon {
-                                      animation: none;
-                                  }
-                                {% endif %}
-
-                                /* Spin keyframes */
-
-                                @keyframes bounce {
-                                    0%, 20%, 50%, 80%, 100% {transform: translateY(0); } 
-                                    40% { transform: translateY(-1.2px) rotate(5deg); } 
-                                    60% { transform: translateY(-1.1px) rotate(-4deg); } 
-                                  }
-                          - type: custom:mushroom-legacy-template-card
-                            entity: timer.ev9_climate_timer
-                            primary: >
-                              {% set mode =
-                              states('input_select.bluelink_remote_climate_mode')
-                              %}
-
-                              {% set timer_state =
-                              states('timer.ev9_climate_timer') %}
-
-                              {% if mode == 'cooling' and timer_state ==
-                              'active' %}
-                                Cooling ({{ states('sensor.ev9_climate_timer_status') }} Remaining)
-                              {% elif mode == 'cooling' and timer_state !=
-                              'active' %}
-                                Cooling Initializing
-                              {% else %}
-                                Request Remote Cooling
-                              {% endif %}
-                            icon: mdi:snowflake
-                            icon_color: >
-                              {% if
-                              states('input_select.ev9_remote_climate_mode') ==
-                              'cooling' %}
-                                white
-                              {% else %}
-                                grey
-                              {% endif %}
-                            tap_action:
-                              action: call-service
-                              service: script.ev9_climate_start_cool
-                            fill_container: true
-                            grid_options:
-                              columns: full
-                            card_mod:
-                              style: >
-                                {% set mode =
-                                states('input_select.ev9_remote_climate_mode')
-                                %}
-
-                                {% set timer_state =
-                                states('timer.ev9_climate_timer') %}
-
-                                /* Background */
-
-                                {% if mode == 'cooling' and timer_state !=
-                                'active' %}
-                                  ha-card { animation: flash-bg 7s infinite; }
-                                {% elif mode == 'cooling' and timer_state ==
-                                'active' %}
-                                  ha-card { background-color: #1E90FF; }
-                                {% else %}
-
-                                {% endif %}
-
-                                /* Background keyframes */
-
-                                @keyframes flash-bg {
-                                      0%, 10%, 90%, 100% { background-color: rgba(0, 153, 255, 0.7); }
-                                      50% { background-color: rgba(0, 153, 255, 0.1); }
-                                }
-
-                                /* Icon spin using mushroom-shape-icon$ */
-                                 {% if mode == 'cooling' and timer_state == 'active' %}
-                                  ha-state-icon {
-                                      animation: spin 5s linear infinite;
-                                    }
-                                {% else %}
-                                  ha-state-icon {
-                                      animation: none;
-                                    }
-                                {% endif %}
-
-                                /* Spin keyframes */
-
-                                @keyframes spin {
-                                  0% { transform: rotate(0deg); }
-                                  100% { transform: rotate(360deg); }
+                  action: ''
                 hold_action:
                   action: none
                 double_tap_action:
@@ -3899,7 +3735,7 @@ views:
                     state_background: true
                     tap_action:
                       action: perform-action
-                      perform_action: kia_uvo.update
+                      perform_action: kia_uvo_hotfix.update
                       target: {}
                       data:
                         device_id: e49b59ec76276227e659e302509b1fcf
@@ -3924,7 +3760,7 @@ views:
                 button_action: {}
                 tap_action:
                   action: perform-action
-                  perform_action: kia_uvo.update
+                  perform_action: kia_uvo_hotfix.update
                   target: {}
                   data:
                     device_id: e49b59ec76276227e659e302509b1fcf
@@ -3960,7 +3796,7 @@ views:
                       {% endif %}
                     tap_action:
                       action: call-service
-                      service: script.ev9_climate_start_heat
+                      service: script.ev9_climate_start_heat_hotfix
                     fill_container: true
                     grid_options:
                       columns: full
@@ -4032,8 +3868,9 @@ views:
                         grey
                       {% endif %}
                     tap_action:
-                      action: call-service
-                      service: script.ev9_climate_start_cool
+                      action: perform-action
+                      perform_action: script.ev9_climate_start_cool_duplicate
+                      target: {}
                     fill_container: true
                     grid_options:
                       columns: full
@@ -4730,7 +4567,16 @@ views:
                   action: toggle
         column_span: 3
       - type: grid
-        cards: []
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: pop-up
+                hash: '#mass-pu'
+              - type: iframe
+                url: >-
+                  http://10.11.11.15:8123/api/hassio_ingress/cP-EpcMMU3cGJUspIAI4U72EW0eDNKua_-ZnZv_yaew/#/home
+                aspect_ratio: 50%
         column_span: 3
     subview: false
     cards: []
@@ -5680,6 +5526,14 @@ views:
                 }
         column_span: 4
     cards: []
+  - type: panel
+    path: mass
+    title: Music Assistant
+    cards:
+      - type: iframe
+        url: >-
+          http://10.11.11.15:8123/api/hassio_ingress/J_e341CvojU6YzKMtxHiW3cZSXMPDKXkldVbpIa6iV0/#/home
+        aspect_ratio: 50%
 type: vertical-stack
 cards:
   - type: horizontal-stack
