@@ -1,0 +1,93 @@
+sequence:
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: fan.double_switch
+            state:
+              - "off"
+          - condition: state
+            entity_id: switch.hpr_01
+            state:
+              - "off"
+            enabled: false
+        sequence:
+          - action: switch.turn_on
+            metadata: {}
+            target:
+              entity_id: switch.hpr_01
+            data: {}
+            enabled: false
+          - action: fan.turn_on
+            metadata: {}
+            target:
+              entity_id:
+                - switch.double_switch
+            data: {}
+      - conditions:
+          - condition: state
+            entity_id: fan.double_switch
+            state:
+              - "on"
+          - condition: state
+            entity_id: switch.hpr_01
+            state:
+              - "on"
+            enabled: false
+          - condition: state
+            entity_id: timer.bathroom_fan_timer
+            state:
+              - active
+        sequence:
+          - action: timer.finish
+            metadata: {}
+            target:
+              entity_id: timer.bathroom_fan_timer
+            data: {}
+      - conditions:
+          - condition: state
+            entity_id: fan.double_switch
+            state:
+              - "on"
+          - condition: state
+            entity_id: switch.hpr_01
+            state:
+              - "on"
+            enabled: false
+          - condition: state
+            entity_id: input_boolean.primary_bathroom_humidity_fan_active
+            state:
+              - "on"
+        sequence: []
+      - conditions:
+          - condition: state
+            entity_id: fan.double_switch
+            state:
+              - "on"
+          - condition: state
+            entity_id: switch.hpr_01
+            state:
+              - "on"
+            enabled: false
+          - condition: state
+            entity_id: timer.bathroom_fan_timer
+            state:
+              - idle
+          - condition: state
+            entity_id: input_boolean.primary_bathroom_humidity_fan_active
+            state:
+              - "off"
+        sequence:
+          - action: switch.turn_off
+            metadata: {}
+            target:
+              entity_id: switch.hpr_01
+            data: {}
+            enabled: false
+          - action: fan.turn_off
+            metadata: {}
+            target:
+              entity_id: fan.double_switch
+            data: {}
+            enabled: true
+alias: "Primary Bathroom Kiosk Fan Control "
+description: ""
