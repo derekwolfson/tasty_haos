@@ -1,0 +1,54 @@
+alias: Bathroom Fan Timer Script
+description: Turn on fan for specified duration
+fields:
+  minutes:
+    description: Duration in minutes
+    example: 30
+    selector:
+      number:
+        min: 1
+        max: 999
+        mode: box
+sequence:
+  - action: switch.turn_on
+    target:
+      entity_id:
+        - switch.outdoor_double_plug_05_2
+        - switch.hpr_01
+    data: {}
+    enabled: false
+  - action: switch.turn_on
+    data: {}
+    target:
+      entity_id: switch.double_switch
+    enabled: true
+  - action: timer.start
+    target:
+      entity_id: timer.bathroom_fan_timer
+    data:
+      duration: "{{ '00:' ~ '%02d' | format(minutes | int) ~ ':00' }}"
+  - wait_for_trigger:
+      - event_type: timer.finished
+        event_data:
+          entity_id: timer.bathroom_fan_timer
+        trigger: event
+    timeout: "{{ (minutes | int) * 60 + 10 }}"
+    continue_on_timeout: false
+  - condition: state
+    state:
+      - "off"
+    entity_id: input_boolean.primary_bathroom_humidity_fan_active
+  - action: switch.turn_off
+    target:
+      entity_id:
+        - switch.outdoor_double_plug_05_2
+        - switch.hpr_01
+    data: {}
+    enabled: false
+  - action: switch.turn_off
+    target:
+      entity_id:
+        - switch.double_switch
+    data: {}
+    enabled: true
+mode: restart
