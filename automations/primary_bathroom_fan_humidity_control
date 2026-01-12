@@ -33,18 +33,44 @@ actions:
       entity_id:
         - fan.double_switch
   - data:
-      value: "{{ states('sensor.bathroom_humidity_baseline') | float + 3 }}"
+      value: >-
+        {% set bedroom = states('sensor.zse44_01_humidity') | float(50) %}
+
+        {% set bathroom_baseline =
+        states('sensor.primary_bathroom_humidity_baseline') | float(50) %}
+
+
+        {# Calculate two possible targets #}
+
+        {% set bedroom_target = bedroom + 5 %}
+
+        {% set bathroom_target = bathroom_baseline + 3 %}
+
+
+        {# Use the LOWER of the two (most conservative) #}
+
+        {% set conservative_target = [bedroom_target, bathroom_target] | min %}
+
+
+        {# But never go below absolute minimum #}
+
+        {% set min_safe = 45 %}
+
+        {% set final_target = [conservative_target, min_safe] | max %}
+
+
+        {{ final_target }}
     action: input_number.set_value
     target:
       entity_id: input_number.primary_bathroom_humidity_target
   - wait_template: |
-      {{ states('sensor.bathroom_humidity') | float(100) <= 
-         states('input_number.bathroom_humidity_target') | float(100) }}
+      {{ states('sensor.zse44_02_humidity') | float(100) <= 
+      states('input_number.primary_bathroom_humidity_target') | float(100) }}
     timeout: "02:00:00"
     continue_on_timeout: true
   - delay:
       hours: 0
-      minutes: 10
+      minutes: 5
       seconds: 0
       milliseconds: 0
   - action: input_boolean.turn_off
