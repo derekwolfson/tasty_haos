@@ -1,0 +1,326 @@
+kiosk_mode:
+  hide_header: false
+  hide_sidebar: true
+views:
+  - title: Home
+    sections:
+      - type: grid
+        cards:
+          - type: custom:clock-weather-card
+            entity: weather.forecast_home
+            forecast_rows: 1
+            card_mod:
+              style: |
+                ha-card {
+                  padding: 0px !important;
+                }
+                .card-content {
+                  padding-top: 0px !important;
+                }
+          - type: thermostat
+            entity: climate.node_39
+            show_current_as_primary: true
+            grid_options:
+              columns: 12
+              rows: 5
+            name:
+              type: area
+        column_span: 1
+      - type: grid
+        cards:
+          - type: heading
+            icon: mdi:lightbulb-group
+            heading: Lights
+            heading_style: subtitle
+          - type: horizontal-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: button
+                button_type: slider
+                entity: light.lamp_2
+                show_last_changed: false
+                show_last_updated: true
+                show_attribute: false
+                show_state: true
+                tap_action:
+                  action: toggle
+                button_action: {}
+                show_icon: true
+                styles: |-
+                  .bubble-button-background {
+                    opacity: 1 !important;
+                    background-color: ${state === 'on' ? 'rgba(0, 150, 255, 0.5)': ''} !important;
+                  }
+                  .bubble-icon {
+                    color: ${state === 'on' ? 'rgba(0, 150, 255, 0.9)' : ''} !important;
+                  }
+                card_layout: large
+                rows: '1'
+                allow_light_slider_to_0: true
+                tap_to_slide: false
+                relative_slide: true
+                slider_live_update: true
+                light_transition: true
+                use_accent_color: true
+                sub_button:
+                  - entity: light.lamp_2
+                    show_attribute: true
+                    attribute: brightness
+                    icon: mdi:car-light-dimmed
+                attribute: brightness
+                light_transition_time: '1000'
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: heading
+            icon: mdi:fan-clock
+            heading: Fan & Timers
+            heading_style: subtitle
+          - type: horizontal-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: button
+                button_type: switch
+                entity: switch.hpr_01
+                show_icon: true
+                name: Bathroom Fan
+                icon: mdi:fan
+                show_last_updated: false
+                show_state: true
+                force_icon: false
+                tap_action:
+                  action: perform-action
+                  perform_action: script.primary_bathroom_kiosk_fan_control
+                  target: {}
+                button_action:
+                  tap_action:
+                    action: perform-action
+                    perform_action: script.primary_bathroom_kiosk_fan_control
+                    target: {}
+                styles: >-
+                  .bubble-button-background {
+                    opacity: 1 !important;
+                    background-color: ${state === 'on' ? 'rgba(0, 150, 255, 0.9)': ''} !important;
+                  }
+
+                  .bubble-icon {
+                    color: ${state === 'on' ? 'rgba(0, 150, 255, 0.9)' : ''} !important;
+                    animation: ${state === 'on' ? 'slow-rotate 4s linear infinite' : ''};
+                  }
+
+                  .bubble-icon-container {
+                    background: ${hass.states['input_boolean.primary_bathroom_humidity_fan_active'].state === 'on' ? 'rgba(240, 245, 250, 0.95)' : ''} !important;
+                  }
+
+                  .bubble-sub-button[data-entity="input_number.primary_bathroom_humidity_target"],
+
+                  .bubble-sub-button[data-entity="sensor.zse44_02_humidity"] {
+                    background-color: rgba(255, 255, 255, 0.95) !important;
+                  }
+
+                  .bubble-sub-button[data-entity="input_number.primary_bathroom_humidity_target"]
+                  *,
+
+                  .bubble-sub-button[data-entity="sensor.zse44_02_humidity"] * {
+                    color: rgba(0, 0, 0, 0.9) !important;
+                  }
+
+                  @keyframes slow-rotate {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                card_layout: large
+                show_attribute: false
+                show_last_changed: true
+                sub_button:
+                  - name: Time Remaining
+                    icon: mdi:camera-timer
+                    entity: sensor.bathroom_fan_timer_remaining
+                    show_attribute: false
+                    show_name: false
+                    show_state: true
+                    show_background: true
+                    state_background: true
+                    visibility:
+                      - condition: state
+                        entity: timer.bathroom_fan_timer
+                        state: active
+                  - entity: input_number.primary_bathroom_humidity_target
+                    name: Target
+                    icon: mdi:bullseye-arrow
+                    show_name: false
+                    show_state: true
+                    visibility:
+                      - condition: state
+                        entity: input_boolean.primary_bathroom_humidity_fan_active
+                        state: 'on'
+                  - entity: sensor.zse44_02_humidity
+                    name: 'Current:'
+                    icon: mdi:water-percent-alert
+                    show_state: true
+                    show_name: false
+                    visibility:
+                      - condition: state
+                        entity: input_boolean.primary_bathroom_humidity_fan_active
+                        state: 'on'
+                hold_action:
+                  action: toggle
+          - type: horizontal-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: button
+                button_type: name
+                name: 10 Min
+                icon: mdi:fan-clock
+                tap_action:
+                  action: perform-action
+                  perform_action: script.bathroom_fan_timer_script
+                  target: {}
+                  data:
+                    minutes: 10
+                button_action:
+                  tap_action:
+                    action: perform-action
+                    perform_action: script.bathroom_fan_timer_script
+                    target: {}
+                    data:
+                      minutes: 10
+              - type: custom:bubble-card
+                card_type: button
+                button_type: name
+                name: 20 Min
+                icon: mdi:fan-clock
+                tap_action:
+                  action: perform-action
+                  perform_action: script.bathroom_fan_timer_script
+                  target: {}
+                  data:
+                    minutes: 20
+                button_action:
+                  tap_action:
+                    action: perform-action
+                    perform_action: script.bathroom_fan_timer_script
+                    target: {}
+                    data:
+                      minutes: 20
+              - type: custom:bubble-card
+                card_type: button
+                button_type: name
+                name: 30 Min
+                icon: mdi:fan-clock
+                tap_action:
+                  action: perform-action
+                  perform_action: script.bathroom_fan_timer_script
+                  target: {}
+                  data:
+                    minutes: 30
+                button_action:
+                  tap_action:
+                    action: perform-action
+                    perform_action: script.bathroom_fan_timer_script
+                    target: {}
+                    data:
+                      minutes: 30
+          - type: horizontal-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: button
+                button_type: name
+                name: 1 Hr
+                icon: mdi:fan-clock
+                tap_action:
+                  action: perform-action
+                  perform_action: script.bathroom_fan_timer_script
+                  target: {}
+                  data:
+                    minutes: 60
+                button_action:
+                  tap_action:
+                    action: perform-action
+                    perform_action: script.bathroom_fan_timer_script
+                    target: {}
+                    data:
+                      minutes: 60
+              - type: custom:bubble-card
+                card_type: button
+                button_type: name
+                name: 2 Hr
+                icon: mdi:fan-clock
+                tap_action:
+                  action: perform-action
+                  perform_action: script.bathroom_fan_timer_script
+                  target: {}
+                  data:
+                    minutes: 120
+                button_action:
+                  tap_action:
+                    action: perform-action
+                    perform_action: script.bathroom_fan_timer_script
+                    target: {}
+                    data:
+                      minutes: 120
+              - type: custom:bubble-card
+                card_type: button
+                button_type: name
+                name: 3 Hr
+                icon: mdi:fan-clock
+                tap_action:
+                  action: perform-action
+                  perform_action: script.bathroom_fan_timer_script
+                  target: {}
+                  data:
+                    minutes: 180
+                button_action:
+                  tap_action:
+                    action: perform-action
+                    perform_action: script.bathroom_fan_timer_script
+                    target: {}
+                    data:
+                      minutes: 180
+              - type: custom:bubble-card
+                card_type: button
+                button_type: name
+                name: ∞
+                icon: mdi:fan-clock
+                tap_action:
+                  action: perform-action
+                  perform_action: script.bathroom_fan_timer_script
+                  target: {}
+                  data:
+                    minutes: 180
+                button_action:
+                  tap_action:
+                    action: perform-action
+                    perform_action: script.bathroom_fan_timer_script
+                    target: {}
+                    data:
+                      minutes: 180
+          - type: heading
+            icon: mdi:help-box-multiple-outline
+            heading: Helpers
+            heading_style: subtitle
+          - type: horizontal-stack
+            cards:
+              - type: custom:bubble-card
+                card_type: button
+                button_type: state
+                entity: sensor.zse44_02_air_temperature
+                name: Temp
+                scrolling_effect: false
+                force_icon: false
+                show_state: true
+                sub_button: []
+              - type: custom:bubble-card
+                card_type: button
+                button_type: state
+                entity: sensor.zse44_02_humidity
+                name: Humidity
+                sub_button:
+                  - entity: input_boolean.primary_bathroom_humidity_fan_active
+    type: sections
+    max_columns: 2
+    cards: []
+    header:
+      layout: responsive
+      badges_position: bottom
+      badges_wrap: wrap
