@@ -254,23 +254,21 @@ views:
                       }
                       {% endif %}
                     {% endif %}
-              - type: custom:mushroom-legacy-template-card
-                icon: mdi:checkbox
-                icon_color: grey
-                tap_action:
-                  action: navigate
-                  navigation_path: '#mass-pu'
+              - type: custom:mushroom-person-card
+                entity: person.derek_wolfson
                 hold_action:
-                  action: more-info
+                  action: navigate
+                  navigation_path: '#derekwolfson'
                 double_tap_action:
-                  action: none
+                  action: url
+                  url_path: '?enable_km'
                 view_layout:
                   grid-area: a3
                 card_mod:
                   style: |
                     ha-card {
-                      transform: scale(0.8);
-                      transform-origin: top left;
+                      transform: scale(0.8);   /* 50% width, 100% height */
+                      transform-origin: top left; /* anchor the shrink */
                       margin-top: -9px;
                       margin-right: -40px;
                     }
@@ -376,44 +374,61 @@ views:
                       {% endif %}
                     }
               - type: custom:mushroom-legacy-template-card
-                icon: mdi:checkbox
-                icon_color: grey
+                icon: >
+                  {% set replace_batteries =
+                  states('input_boolean.replace_batteries')%} {% if
+                  replace_batteries == 'on' %}
+                    mdi:battery-alert-variant
+                  {% else %}
+                    mdi:battery-check
+                  {% endif %}
+                icon_color: >
+                  {% set replace_batteries =
+                  states('input_boolean.replace_batteries')%} {% if
+                  replace_batteries == 'on' %}
+                    red
+                  {% else %}
+                    blue
+                  {% endif %}
                 tap_action:
-                  action: none
+                  action: navigate
+                  navigation_path: '#batteries'
                 hold_action:
                   action: more-info
                 double_tap_action:
                   action: none
+                entity: input_boolean.replace_batteries
+                secondary: >
+                  {% set replace_batteries =
+                  states('input_boolean.replace_batteries')%}
+                   {% if replace_batteries == 'on' %}
+                     Replace Batteries
+                   {% else %}
+                     Batteries OK
+                   {% endif %}
+                primary: Batteries
                 view_layout:
                   grid-area: b2
                 card_mod:
                   style: |
                     ha-card {
-                        transform: scale(0.8);   /* 50% width, 100% height */
-                        transform-origin: top left; /* anchor the shrink */
-                        margin-top: -15px;
-                        margin-right: -40px;
-                        margin-bottom: -20px;
-                    }
-              - type: custom:mushroom-legacy-template-card
-                icon: mdi:checkbox
-                icon_color: grey
-                tap_action:
-                  action: none
-                hold_action:
-                  action: more-info
-                double_tap_action:
-                  action: none
+                      transform: scale(0.8);   /* 50% width, 100% height */
+                      transform-origin: top left; /* anchor the shrink */
+                      margin-top: -15px;
+                      margin-right: -40px;
+                      margin-bottom: -30px;
+              - type: custom:mushroom-person-card
+                entity: person.lauren_incavo
                 view_layout:
                   grid-area: b3
                 card_mod:
                   style: |
                     ha-card {
-                        transform: scale(0.8);   /* 50% width, 100% height */
-                        transform-origin: top left; /* anchor the shrink */
-                        margin-top: -15px;
-                        margin-right: -40px;
-                        margin-bottom: -20px;
+                      transform: scale(0.8);   /* 50% width, 100% height */
+                      transform-origin: top left; /* anchor the shrink */
+                      margin-top: -15px;
+                      margin-right: -40px;
+                      margin-bottom: -30px;
                     }
             layout:
               grid-template-columns: 33% 33% 33%
@@ -481,19 +496,11 @@ views:
                 grid_options:
                   columns: 12
                   rows: 1
-              - clock_style: analog
-                clock_size: small
-                show_seconds: true
-                no_background: true
-                border: true
-                ticks: hour
-                type: clock
-                card_mod:
-                  style: |
-                    ha-card {
-                      transform: scale(0.6);
-                      transform-origin: top;
-                    }
+              - type: custom:mediocre-media-player-card
+                entity_id: media_player.homebase
+                use_art_colors: true
+                ma_entity_id: media_player.homebase
+                ma_favorite_button_entity_id: button.homebase_favorite_current_song
             grid_options:
               columns: 12
               rows: 2
