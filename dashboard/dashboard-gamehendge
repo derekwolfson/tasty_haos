@@ -8,6 +8,11 @@ views:
     icon: mdi:home
     sections:
       - type: grid
+        card_mod:
+          style: |
+            ha-card {
+              margin-top: -30px;   /* positive = more space, negative = tighter */
+            }
         cards:
           - type: custom:layout-card
             layout_type: custom:grid-layout
@@ -24,8 +29,8 @@ views:
                   style: |
                     ha-card {
                       transform-origin: top left; 
-                      margin-bottom: 0px;
-                      margin-top: -10px;
+                      margin-bottom: -15px;
+                      margin-top: -25px;
                     }  
               - type: custom:mushroom-legacy-template-card
                 primary: Smoke Alarm
@@ -261,7 +266,7 @@ views:
                   navigation_path: '#derekwolfson'
                 double_tap_action:
                   action: url
-                  url_path: '?enable_km'
+                  url_path: ?enable_km
                 view_layout:
                   grid-area: a3
                 card_mod:
@@ -435,6 +440,9 @@ views:
               grid-template-rows: auto auto auto
               grid-template-areas: |
                 "1 1 1"  "a1 a2 a3" "b1 b2 b3"
+            grid_options:
+              columns: 12
+              rows: 2
           - type: vertical-stack
             cards:
               - type: custom:mushroom-chips-card
@@ -457,7 +465,7 @@ views:
                     card_mod:
                       style: |
                         ha-card {
-                          zoom: 1.25 !important;
+                          zoom: 1.5 !important;
                         }
                   - type: entity
                     entity: sensor.full_date
@@ -475,7 +483,7 @@ views:
                     card_mod:
                       style: |
                         ha-card {
-                          zoom: 1.25 !important;
+                          zoom: 1.5 !important;
                         }   
                   - type: entity
                     entity: sensor.time_am_pm
@@ -490,186 +498,59 @@ views:
                     card_mod:
                       style: |
                         ha-card {
-                          zoom: 1.25 !important;
+                          zoom: 1.5 !important;
                         }
                 alignment: center
                 grid_options:
                   columns: 12
                   rows: 1
-              - type: custom:mediocre-media-player-card
-                entity_id: media_player.homebase
-                use_art_colors: true
-                ma_entity_id: media_player.homebase
-                ma_favorite_button_entity_id: button.homebase_favorite_current_song
             grid_options:
               columns: 12
               rows: 2
           - type: custom:layout-card
             layout_type: custom:grid-layout
             cards:
-              - type: heading
-                heading_style: subtitle
-                heading: Status
-                icon: mdi:list-status
+              - type: custom:mediocre-media-player-card
+                entity_id: media_player.homebase
+                use_art_colors: true
+                action:
+                  tap_action:
+                    action: navigate
+                    navigation_path: /dashboard-planner/mass
+                  hold_action:
+                    action: navigate
+                    navigation_path: /d5369777_music_assistant
+                  double_tap_action:
+                    action: none
+                ma_entity_id: media_player.homebase
+                ma_favorite_button_entity_id: button.homebase_favorite_current_song
+                options:
+                  always_show_power_button: true
+                  show_volume_step_buttons: true
                 view_layout:
                   grid-area: 1
                   grid-column-start: 1
-                  grid-column-end: 3
-                card_mod:
-                  style: |
-                    ha-card {
-                      transform-origin: top left; 
-                      margin-bottom: 0px;
-                      margin-top: -10px;
-                    }
-              - type: custom:mushroom-person-card
-                entity: person.derek_wolfson
-                hold_action:
-                  action: navigate
-                  navigation_path: '#derekwolfson'
-                double_tap_action:
-                  action: url
-                  url_path: '?enable_km'
-                view_layout:
-                  grid-area: a1
+                  grid-column-end: 4
                 card_mod:
                   style: >
-                    {% set stage = states('sensor.ev9_battery_level_stage') |
-                    int(0) %}
+                    ha-card {
+                      transform: scale(0.9);
+                      transform-origin: top;
+                      --search-button-display: none;
+                    }
 
-                    ha-card {
-                      transform: scale(0.8);   /* 50% width, 100% height */
-                      transform-origin: top left; /* anchor the shrink */
-                      margin-top: -9px;
-                      margin-right: -40px;
-                    }
-              - type: custom:mushroom-legacy-template-card
-                icon: >
-                  {% set replace_batteries =
-                  states('input_boolean.replace_batteries')%} {% if
-                  replace_batteries == 'on' %}
-                    mdi:battery-alert-variant
-                  {% else %}
-                    mdi:battery-check
-                  {% endif %}
-                icon_color: >
-                  {% set replace_batteries =
-                  states('input_boolean.replace_batteries')%} {% if
-                  replace_batteries == 'on' %}
-                    red
-                  {% else %}
-                    blue
-                  {% endif %}
-                tap_action:
-                  action: navigate
-                  navigation_path: '#batteries'
-                hold_action:
-                  action: more-info
-                double_tap_action:
-                  action: none
-                entity: input_boolean.replace_batteries
-                secondary: >
-                  {% set replace_batteries =
-                  states('input_boolean.replace_batteries')%}
-                   {% if replace_batteries == 'on' %}
-                     Replace Batteries
-                   {% else %}
-                     Batteries OK
-                   {% endif %}
-                primary: Batteries
-                view_layout:
-                  grid-area: a2
-                card_mod:
-                  style: |
-                    ha-card {
-                      transform: scale(0.8);   /* 50% width, 100% height */
-                      transform-origin: top left; /* anchor the shrink */
-                      margin-top: -9px;
-                      margin-right: -40px;      
-                    }
-              - type: custom:mushroom-legacy-template-card
-                icon: mdi:checkbox
-                icon_color: grey
-                tap_action:
-                  action: none
-                hold_action:
-                  action: more-info
-                double_tap_action:
-                  action: none
-                view_layout:
-                  grid-area: a3
-                card_mod:
-                  style: |
-                    ha-card {
-                      transform: scale(0.8);   /* 50% width, 100% height */
-                      transform-origin: top left; /* anchor the shrink */
-                      margin-top: -9px;
-                      margin-right: -40px;      
-                    }
-              - type: custom:mushroom-person-card
-                entity: person.lauren_incavo
-                view_layout:
-                  grid-area: b1
-                card_mod:
-                  style: |
-                    ha-card {
-                      transform: scale(0.8);   /* 50% width, 100% height */
-                      transform-origin: top left; /* anchor the shrink */
-                      margin-top: -15px;
-                      margin-right: -40px;
-                      margin-bottom: -30px;
-                    }
-              - type: custom:mushroom-legacy-template-card
-                icon: mdi:checkbox
-                icon_color: grey
-                tap_action:
-                  action: none
-                hold_action:
-                  action: more-info
-                double_tap_action:
-                  action: none
-                view_layout:
-                  grid-area: b2
-                card_mod:
-                  style: |
-                    ha-card {
-                        transform: scale(0.8);   /* 50% width, 100% height */
-                        transform-origin: top left; /* anchor the shrink */
-                        margin-top: -15px;
-                        margin-right: -40px;
-                        margin-bottom: -20px;
-                    }
-              - type: custom:mushroom-legacy-template-card
-                icon: mdi:checkbox
-                icon_color: grey
-                tap_action:
-                  action: none
-                hold_action:
-                  action: more-info
-                double_tap_action:
-                  action: none
-                view_layout:
-                  grid-area: b3
-                card_mod:
-                  style: |
-                    ha-card {
-                        transform: scale(0.8);   /* 50% width, 100% height */
-                        transform-origin: top left; /* anchor the shrink */
-                        margin-top: -15px;
-                        margin-right: -40px;
-                        margin-bottom: -20px;
+                    .mmpc-19ny0jy .mmpc-17t3dnt
+                    button.mmpc-1etnzp2:not([popovertarget]) {
+                      display: none !important;
                     }
             layout:
               grid-template-columns: 33% 33% 33%
               grid-template-rows: auto auto auto
               grid-template-areas: |
-                "1 1 1"  "a1 a2 a3" "b1 b2 b3"
+                "1 1 1"  "1 1 1" "1 1 1"
             grid_options:
               columns: 12
-              rows: auto
-          - type: custom:layout-break
-            grid_options:
-              columns: full
+              rows: 2
         column_span: 3
       - type: grid
         cards:
@@ -682,7 +563,7 @@ views:
             features:
               - style: icons
                 type: climate-fan-modes
-            name: ' '
+            name: " "
             card_mod:
               style: |
                 ha-card {
@@ -995,10 +876,10 @@ views:
                 card_mod:
                   style: |
                     ha-card {
-                        margin-top: 0px;
+                        margin-top: -0px;
                         transform: scale(0.8);   /* 50% width, 100% height */
                         transform-origin: top left; 
-                        margin-bottom: -20px;
+                        margin-bottom: -25px;
                         margin-top: -25px;
                       }
                       
@@ -1120,7 +1001,7 @@ views:
                   grid-area: g
             grid_options:
               columns: 12
-              rows: 2
+              rows: auto
           - type: custom:layout-card
             layout_type: custom:grid-layout
             layout:
@@ -1137,11 +1018,10 @@ views:
                 card_mod:
                   style: |
                     ha-card {
-                        margin-top: 0px;
                         transform: scale(0.8);   /* 50% width, 100% height */
                         transform-origin: top left; 
                         margin-bottom: -20px;
-                        margin-top: -25px;
+                        margin-top: -20px;
                       }
                       
               - type: custom:mushroom-legacy-template-card
@@ -1737,7 +1617,7 @@ views:
         cards:
           - type: custom:simple-weather-card
             entity: weather.turner
-            name: ' '
+            name: " "
             primary_info:
               - extrema
               - humidity
@@ -1760,7 +1640,7 @@ views:
               action: more-info
           - type: custom:simple-weather-card
             entity: weather.openweathermap
-            name: ' '
+            name: " "
             primary_info:
               - extrema
               - humidity
@@ -1790,7 +1670,17 @@ views:
             show_precipitation_amounts: false
             show_precipitation_probability: false
             icons: true
-            name: ' '
+            name: null
+            auto_label_spacing: false
+            show_current: false
+            grid_options:
+              rows: auto
+            card_mod:
+              style: |
+                .card-content {
+                  padding-top: 3 !important;
+                  padding-bottom: 3px !important;
+                }
           - type: horizontal-stack
             cards:
               - type: custom:mushroom-template-card
@@ -2032,11 +1922,9 @@ views:
                     }
           - type: custom:clock-weather-card
             entity: weather.openweathermap
-            title: null
             sun_entity: sun.sun
             temperature_sensor: sensor.openweathermap_temperature
             humidity_sensor: sensor.outdoor_humidity
-            weather_icon_type: line
             animated_icon: true
             forecast_rows: 5
             date_pattern: DDD | cccc
@@ -2048,12 +1936,22 @@ views:
             show_decimal: false
             hide_date: false
             apparent_sensor: sensor.openweathermap_feels_like_temperature
+            sections:
+              header:
+                hide: true
+              forecast_list:
+                animated_icons: true
+                row_height: 25px
+                bar_thickness: 70%
+              forecast_strip:
+                hide: true
+            weather_icon_type: fill
           - square: false
             type: grid
             columns: 2
             grid_options:
               columns: 12
-              rows: 3
+              rows: auto
             cards:
               - type: custom:horizon-card
                 moon: false
@@ -2077,9 +1975,18 @@ views:
                 card_mod:
                   style: >
                     ha-card {
-                      min-height: 161px   
-                    } /* Each field container: vertical layout, small gap
-                    between label and value */
+                      padding: 12px;
+                      padding-top: -0px;
+                      font-family: inherit;
+                      line-height: 1.5;
+                      border-radius: 12px;
+                      background: linear-gradient(135deg, rgba(200,200,196,0.05), rgba(255,255,255,0.01));
+                      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                      flex-direction: column;
+                      align-items: center;
+                      height: 140px;
+                      box-sizing: border-box;
+                    }
 
                     .horizon-card-text-container {
                       display: flex;
@@ -2140,6 +2047,7 @@ views:
                   style: >
                     ha-card {
                       padding: 12px;
+                      padding-top: 20px;
                       font-family: inherit;
                       line-height: 1.2;
                       border-radius: 12px;
@@ -2148,7 +2056,8 @@ views:
                       display: flex;
                       flex-direction: column;
                       align-items: center;
-                      min-height: 161px
+                      height: 140px;
+                      box-sizing: border-box;
                     }
 
 
@@ -2214,8 +2123,8 @@ views:
                     /* Moon icon itself */
 
                     .horizon-card-field-moon-phase {
-                      font-size:20px;
-                      margin-top: 12px;
+                      font-size:30px;
+                      margin-top: -5px;
                     }
 
 
@@ -2660,7 +2569,7 @@ views:
                     ha-card {
                       transform-origin: top left; 
                       margin-bottom: 0px;
-                      margin-top: -10px;
+                      margin-top: -22px;
                     }
               - type: custom:mushroom-legacy-template-card
                 view_layout:
@@ -3153,14 +3062,16 @@ views:
                   - 5f537710fd6b4bd4a643b454e4129e40
                   - 74ac0a991d504a3384ab26ac625ecbc9
                   - dcc1fd6982334d65b3bcafa1f7ad8ebe
+            grid_options:
+              rows: auto
           - type: custom:layout-card
             layout_type: custom:grid-layout
             layout:
               grid-template-columns: repeat(16)
-              grid-template-rows: auto auto auto
+              grid-template-rows: auto auto auto auto
               grid-template-areas: >
                 "t t t t t t t t t t t t" "a a a a b b b b c c c c" "d d d e e e
-                f f f g g g"
+                f f f g g g" "h h h h h h i i i i i i"
             cards:
               - type: custom:mushroom-title-card
                 subtitle: Lights & Scenes
@@ -3173,7 +3084,7 @@ views:
                       transform: scale(0.8);
                       transform-origin: top left; 
                       margin-bottom: -20px;
-                      margin-top: -25px;
+                      margin-top: -35px;
                     }
               - type: custom:mushroom-legacy-template-card
                 primary: Daytime
@@ -3407,22 +3318,17 @@ views:
                   {% else %}
                     var(--accent-color)
                   {% endif %}
-            grid_options:
-              columns: 12
-              rows: auto
-          - type: custom:layout-card
-            layout_type: custom:grid-layout
-            layout:
-              grid-template-columns: repeat(16)
-              grid-template-rows: auto auto auto
-              grid-template-areas: >
-                "t t t t t t t t t t t t" "a a a a a a b b b b b b" "d d d e e e
-                f f f g g g"
-            cards:
               - type: custom:mushroom-legacy-template-card
                 entity: light.indoor_lights
                 view_layout:
-                  grid-area: a
+                  grid-area: h
+                card_mod:
+                  style: |
+                    ha-card {
+                      transform-origin: top left; 
+                      margin-bottom: 0px;
+                      margin-top: 4px;
+                    }
                 primary: Indoor
                 secondary: >
                   {% set lights = expand('light.indoor_lights') %}  {% set
@@ -3500,7 +3406,14 @@ views:
                 entity: light.outdoor_lights
                 primary: Outdoor
                 view_layout:
-                  grid-area: b
+                  grid-area: i
+                card_mod:
+                  style: |
+                    ha-card {
+                      transform-origin: top left; 
+                      margin-bottom: 0px;
+                      margin-top: 4px;
+                    }    
                 secondary: >
                   {% set lights = expand('light.outdoor_lights') %}   {% set
                   on_lights = lights | selectattr('state', 'eq', 'on') | list
@@ -3569,18 +3482,20 @@ views:
                                           color: var(--secondary-text-color);
                                           opacity: 0.7;
                                         }
+            grid_options:
+              columns: 12
+              rows: auto
         column_span: 1
       - type: grid
         cards:
-          - type: vertical-stack
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: '#trashpickup'
+            button_type: name
+            show_header: true
+            name: Trash Pickup
+            icon: mdi:delete-empty
             cards:
-              - type: custom:bubble-card
-                card_type: pop-up
-                hash: '#trashpickup'
-                button_type: name
-                show_header: true
-                name: Trash Pickup
-                icon: mdi:delete-empty
               - type: custom:bubble-card
                 card_type: button
                 button_type: switch
@@ -3596,6 +3511,8 @@ views:
                 show_last_changed: true
                 show_state: false
                 name: ''
+                grid_options:
+                  columns: 12
               - type: custom:bubble-card
                 card_type: button
                 button_type: switch
@@ -3611,6 +3528,8 @@ views:
                 show_last_changed: true
                 show_state: false
                 name: ''
+                grid_options:
+                  columns: 12
               - type: custom:bubble-card
                 card_type: button
                 button_type: switch
@@ -3626,20 +3545,21 @@ views:
                 show_last_changed: true
                 show_state: false
                 name: ''
+                grid_options:
+                  columns: 12
             grid_options:
               columns: full
-          - type: vertical-stack
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: '#batteries'
+            button_type: state
+            name: Battery Replacement Status
+            icon: mdi:battery
+            entity: input_boolean.replace_batteries
+            state_content:
+              - state
+              - last_changed
             cards:
-              - type: custom:bubble-card
-                card_type: pop-up
-                hash: '#batteries'
-                button_type: state
-                name: Battery Replacement Status
-                icon: mdi:battery
-                entity: input_boolean.replace_batteries
-                show_last_changed: true
-                show_last_updated: false
-                show_attribute: false
               - type: custom:auto-entities
                 card:
                   type: entities
@@ -3659,18 +3579,20 @@ views:
                   reverse: false
                   numeric: true
                 show_empty: true
+                grid_options:
+                  columns: 12
+                  rows: auto
             grid_options:
               columns: full
-          - type: vertical-stack
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: '#airquality'
+            button_type: name
+            name: Air Quality
+            icon: mdi:air-filter
+            card_layout: large
+            bg_color: ''
             cards:
-              - type: custom:bubble-card
-                card_type: pop-up
-                hash: '#airquality'
-                button_type: name
-                name: Air Quality
-                icon: mdi:air-filter
-                card_layout: large
-                bg_color: ''
               - type: entities
                 entities:
                   - entity: sensor.airnow_air_quality_index
@@ -3678,6 +3600,9 @@ views:
                   - entity: sensor.airnow_pm2_5
                   - entity: sensor.airnow_pm10
                   - entity: sensor.airnow_reporting_station
+                grid_options:
+                  columns: 12
+                  rows: auto
               - type: markdown
                 content: >-
                   <small><small>
@@ -3720,43 +3645,45 @@ views:
                   </small></small>
 
                   Data provided by EPA AirNow.
+                grid_options:
+                  columns: 12
+                  rows: auto
             grid_options:
               columns: full
-          - type: vertical-stack
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: '#kia-ev9'
+            button_type: name
+            name: Kia EV9
+            icon: mdi:car-estate
+            sub_button:
+              main:
+                - entity: sensor.ev9_last_updated_at
+                  name: Last Updated
+                  show_name: true
+                  show_background: true
+                  state_background: true
+                  tap_action:
+                    action: perform-action
+                    perform_action: kia_uvo.update
+                    target: {}
+                    data:
+                      device_id: e49b59ec76276227e659e302509b1fcf
+                  state_content: last_changed
+                - entity: sensor.ev9_last_updated_at
+                  name: ''
+                  show_icon: false
+                  state_background: false
+                  show_background: false
+                  tap_action:
+                    action: none
+                  state_content: state
+              bottom: []
+            card_layout: large-2-rows
+            show_header: true
+            button_action: {}
+            auto_close: '60000'
             cards:
-              - type: custom:bubble-card
-                card_type: pop-up
-                hash: '#kia-ev9'
-                button_type: name
-                name: Kia EV9
-                icon: mdi:car-estate
-                sub_button:
-                  - entity: sensor.ev9_last_updated_at
-                    name: Last Updated
-                    show_state: false
-                    show_last_changed: true
-                    show_name: true
-                    show_last_updated: false
-                    show_attribute: false
-                    show_background: true
-                    state_background: true
-                    tap_action:
-                      action: perform-action
-                      perform_action: kia_uvo_hotfix.update
-                      target: {}
-                      data:
-                        device_id: e49b59ec76276227e659e302509b1fcf
-                  - entity: sensor.ev9_last_updated_at
-                    name: ''
-                    show_icon: false
-                    show_last_changed: false
-                    show_state: true
-                    state_background: false
-                    show_background: false
-                    tap_action:
-                      action: none
-                card_layout: large-2-rows
-                show_header: true
               - type: custom:bubble-card
                 card_type: button
                 button_type: state
@@ -3766,16 +3693,24 @@ views:
                 sub_button: []
                 button_action: {}
                 tap_action:
-                  action: perform-action
-                  perform_action: kia_uvo_hotfix.update
+                  action: call-service
                   target: {}
                   data:
                     device_id: e49b59ec76276227e659e302509b1fcf
+                  service: kia_uvo.update
                 show_last_updated: true
                 show_last_changed: false
                 show_attribute: false
                 attribute: device_class
                 force_icon: false
+                hold_action:
+                  action: perform-action
+                  perform_action: kia_uvo.force_update
+                  target: {}
+                  data:
+                    device_id: e49b59ec76276227e659e302509b1fcf
+                grid_options:
+                  columns: 12
               - type: vertical-stack
                 cards:
                   - type: custom:mushroom-legacy-template-card
@@ -3802,8 +3737,9 @@ views:
                         grey
                       {% endif %}
                     tap_action:
-                      action: call-service
-                      service: script.ev9_climate_start_heat_hotfix
+                      action: perform-action
+                      perform_action: script.ev9_climate_start_heat
+                      target: {}
                     fill_container: true
                     grid_options:
                       columns: full
@@ -3853,9 +3789,9 @@ views:
                           }
                   - type: custom:mushroom-legacy-template-card
                     entity: timer.ev9_climate_timer
-                    primary: >
+                    primary: >-
                       {% set mode =
-                      states('input_select.bluelink_remote_climate_mode') %}
+                      states('input_select.ev9_remote_climate_mode') %}
 
                       {% set timer_state = states('timer.ev9_climate_timer') %}
 
@@ -3876,7 +3812,7 @@ views:
                       {% endif %}
                     tap_action:
                       action: perform-action
-                      perform_action: script.ev9_climate_start_cool_duplicate
+                      perform_action: script.ev9_climate_start_cool
                       target: {}
                     fill_container: true
                     grid_options:
@@ -3922,28 +3858,64 @@ views:
                         @keyframes spin {
                           0% { transform: rotate(0deg); }
                           100% { transform: rotate(360deg); }
+                grid_options:
+                  columns: 12
+                  rows: auto
               - type: custom:mushroom-number-card
                 entity: number.ev9_ac_charging_limit
                 display_mode: slider
                 tap_action:
                   action: more-info
+                grid_options:
+                  columns: 12
+                  rows: auto
               - type: custom:mushroom-number-card
                 entity: number.ev9_dc_charging_limit
                 display_mode: slider
                 tap_action:
                   action: more-info
                 fill_container: false
+                grid_options:
+                  columns: 12
+                  rows: auto
+              - type: custom:bubble-card
+                card_type: button
+                button_type: switch
+                entity: sensor.ev9_ev_charging_power
+                show_state: true
+                sub_button:
+                  - name: Stop Charge
+                    icon: mdi:flash-off
+                    show_name: true
+                    tap_action:
+                      action: perform-action
+                      perform_action: kia_uvo.stop_charge
+                      target: {}
+                      data:
+                        device_id: e49b59ec76276227e659e302509b1fcf
+                  - name: Start Charge
+                    icon: mdi:flash
+                    show_name: true
+                    tap_action:
+                      action: perform-action
+                      perform_action: kia_uvo.start_charge
+                      target: {}
+                      data:
+                        device_id: e49b59ec76276227e659e302509b1fcf
+                show_name: true
+                name: Charging Status
+                grid_options:
+                  columns: 12
             grid_options:
               columns: 18
               rows: auto
-          - type: vertical-stack
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: '#hyundai-ioniq5'
+            button_type: name
+            name: Hyundai Ioniq 5
+            icon: mdi:car-sports
             cards:
-              - type: custom:bubble-card
-                card_type: pop-up
-                hash: '#hyundai-ioniq5'
-                button_type: name
-                name: Hyundai Ioniq 5
-                icon: mdi:car-sports
               - type: custom:bubble-card
                 card_type: button
                 button_type: state
@@ -3961,6 +3933,8 @@ views:
                 show_attribute: false
                 show_last_updated: true
                 show_last_changed: false
+                grid_options:
+                  columns: 12
               - type: vertical-stack
                 cards:
                   - type: custom:mushroom-legacy-template-card
@@ -4108,6 +4082,9 @@ views:
                         @keyframes spin {
                           0% { transform: rotate(0deg); }
                           100% { transform: rotate(360deg); }
+                grid_options:
+                  columns: 12
+                  rows: auto
               - type: custom:mushroom-number-card
                 entity: number.2025_ioniq_5_ac_charging_limit
                 name: AC Charging Limit
@@ -4117,6 +4094,9 @@ views:
                   action: none
                 double_tap_action:
                   action: none
+                grid_options:
+                  columns: 12
+                  rows: auto
               - type: custom:mushroom-number-card
                 entity: number.2025_ioniq_5_dc_charging_limit
                 name: DC Charging Limit
@@ -4126,17 +4106,19 @@ views:
                   action: none
                 double_tap_action:
                   action: none
+                grid_options:
+                  columns: 12
+                  rows: auto
             grid_options:
               columns: 18
               rows: auto
-          - type: vertical-stack
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: '#smoke-alarm'
+            button_type: name
+            name: Smoke & CO Alarm Detail
+            icon: mdi:smoke-detector-alert
             cards:
-              - type: custom:bubble-card
-                card_type: pop-up
-                hash: '#smoke-alarm'
-                button_type: name
-                name: Smoke & CO Alarm Detail
-                icon: mdi:smoke-detector-alert
               - type: custom:bubble-card
                 card_type: button
                 event_action:
@@ -4152,6 +4134,8 @@ views:
                 icon: mdi:smoke-detector
                 show_last_updated: false
                 show_last_changed: true
+                grid_options:
+                  columns: 12
               - type: custom:bubble-card
                 card_type: button
                 event_action:
@@ -4167,6 +4151,8 @@ views:
                 icon: mdi:smoke-detector
                 show_last_changed: true
                 show_last_updated: false
+                grid_options:
+                  columns: 12
               - type: custom:auto-entities
                 card:
                   type: entities
@@ -4179,6 +4165,9 @@ views:
                       device_model: ZCOMBO
                       name: '*Battery*'
                   exclude: []
+                grid_options:
+                  columns: 12
+                  rows: auto
               - type: custom:auto-entities
                 card:
                   type: entities
@@ -4191,6 +4180,9 @@ views:
                       device_model: ZCOMBO
                       name: '*Smoke Detected*'
                   exclude: []
+                grid_options:
+                  columns: 12
+                  rows: auto
               - type: custom:auto-entities
                 card:
                   type: entities
@@ -4203,16 +4195,18 @@ views:
                       device_model: ZCOMBO
                       name: '*CO Detected*'
                   exclude: []
+                grid_options:
+                  columns: 12
+                  rows: auto
             grid_options:
               columns: full
-          - type: vertical-stack
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: '#derekwolfson'
+            button_type: name
+            name: Derek
+            icon: mdi:hockey-sticks
             cards:
-              - type: custom:bubble-card
-                card_type: pop-up
-                hash: '#derekwolfson'
-                button_type: name
-                name: Derek
-                icon: mdi:hockey-sticks
               - type: custom:bubble-card
                 card_type: button
                 button_type: switch
@@ -4235,6 +4229,8 @@ views:
                 show_attribute: false
                 force_icon: false
                 show_name: true
+                grid_options:
+                  columns: 12
               - type: custom:bubble-card
                 card_type: button
                 button_type: switch
@@ -4258,6 +4254,8 @@ views:
                     icon: mdi:keyboard-return
                     show_state: false
                     show_name: true
+                grid_options:
+                  columns: 12
               - type: custom:bubble-card
                 button_type: switch
                 button_action:
@@ -4283,20 +4281,24 @@ views:
                 entity: input_boolean.disco_mode_active
                 tap_action:
                   action: toggle
+                grid_options:
+                  columns: 12
               - type: entity
                 entity: input_boolean.disco_mode_active
                 name:
                   type: entity
+                grid_options:
+                  columns: 12
+                  rows: auto
             grid_options:
               columns: full
-          - type: vertical-stack
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: '#weather'
+            button_type: name
+            name: Weather Report
+            icon: mdi:cloud
             cards:
-              - type: custom:bubble-card
-                card_type: pop-up
-                hash: '#weather'
-                button_type: name
-                name: Weather Report
-                icon: mdi:cloud
               - type: custom:mushroom-select-card
                 entity: input_select.weather_report_selection
                 fill_container: false
@@ -4307,6 +4309,9 @@ views:
                 double_tap_action:
                   action: none
                 name: Featured Dashboard Weather Report
+                grid_options:
+                  columns: 12
+                  rows: auto
               - type: custom:weather-chart-card
                 entity: weather.turner
                 show_main: true
@@ -4356,6 +4361,9 @@ views:
                 wind_gust_speed: sensor.turner_wind_gust
                 current_temp_size: '26'
                 press: sensor.turner_pressure_barometric
+                grid_options:
+                  columns: 12
+                  rows: auto
               - type: custom:weather-chart-card
                 entity: weather.openweathermap
                 show_main: true
@@ -4398,16 +4406,18 @@ views:
                   speed: ''
                 title: OpenWeatherMap
                 current_temp_size: '26'
+                grid_options:
+                  columns: 12
+                  rows: auto
             grid_options:
               columns: full
-          - type: vertical-stack
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: '#connex-1'
+            button_type: name
+            name: 'Connex #1'
+            icon: mdi:train-car-container
             cards:
-              - type: custom:bubble-card
-                card_type: pop-up
-                hash: '#connex-1'
-                button_type: name
-                name: 'Connex #1'
-                icon: mdi:train-car-container
               - type: custom:bubble-card
                 card_type: button
                 button_type: switch
@@ -4425,6 +4435,8 @@ views:
                 sub_button: []
                 card_layout: large-sub-buttons-grid
                 rows: '1'
+                grid_options:
+                  columns: 12
               - type: custom:bubble-card
                 card_type: button
                 button_type: state
@@ -4439,24 +4451,33 @@ views:
                   double_tap_action:
                     action: none
                 name: 'Lock Status (Connex #1)'
+                grid_options:
+                  columns: 12
               - type: custom:bubble-card
                 card_type: separator
                 button_type: name
                 name: Entity Health
+                grid_options:
+                  columns: 12
               - type: custom:mushroom-entity-card
                 entity: sensor.ring_outdoor_contact_sensor_connex1_last_seen
                 fill_container: false
+                grid_options:
+                  columns: 12
+                  rows: auto
               - type: custom:mushroom-entity-card
                 entity: sensor.contact_sensor_gen2_connex_01_lock_last_seen
                 fill_container: false
-          - type: vertical-stack
+                grid_options:
+                  columns: 12
+                  rows: auto
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: '#connex-2'
+            button_type: name
+            name: 'Connex #2'
+            icon: mdi:train-car-container
             cards:
-              - type: custom:bubble-card
-                card_type: pop-up
-                hash: '#connex-2'
-                button_type: name
-                name: 'Connex #2'
-                icon: mdi:train-car-container
               - type: custom:bubble-card
                 card_type: button
                 button_type: switch
@@ -4474,6 +4495,8 @@ views:
                 sub_button: []
                 card_layout: large-sub-buttons-grid
                 rows: '1'
+                grid_options:
+                  columns: 12
               - type: custom:bubble-card
                 card_type: button
                 button_type: state
@@ -4488,31 +4511,39 @@ views:
                   double_tap_action:
                     action: none
                 name: 'Lock Status (Connex #2)'
+                grid_options:
+                  columns: 12
               - type: custom:bubble-card
                 card_type: separator
                 button_type: name
                 name: Entity Health
+                grid_options:
+                  columns: 12
               - type: custom:mushroom-entity-card
                 entity: sensor.ring_contact_sensor_gen2_connex_2_padlock_last_seen
                 fill_container: false
+                grid_options:
+                  columns: 12
+                  rows: auto
               - type: custom:mushroom-entity-card
                 entity: sensor.ring_outdoor_contact_sensor_connex2_door_last_seen
                 fill_container: false
-          - type: vertical-stack
+                grid_options:
+                  columns: 12
+                  rows: auto
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: '#woodstove'
+            button_type: name
+            name: Woodstove Activity
+            icon: mdi:campfire
+            show_name: true
+            button_action: {}
+            show_icon: true
+            state_content:
+              - state
+              - last_changed
             cards:
-              - type: custom:bubble-card
-                card_type: pop-up
-                hash: '#woodstove'
-                button_type: name
-                name: Woodstove Activity
-                icon: mdi:campfire
-                show_last_updated: false
-                show_last_changed: true
-                show_attribute: false
-                show_name: true
-                show_state: true
-                button_action: {}
-                show_icon: true
               - type: custom:bubble-card
                 card_type: button
                 hash: '#woodstove'
@@ -4526,6 +4557,8 @@ views:
                 show_name: true
                 show_state: true
                 button_action: {}
+                grid_options:
+                  columns: 12
               - type: custom:bubble-card
                 card_type: button
                 button_type: slider
@@ -4537,6 +4570,8 @@ views:
                 max_value: 100
                 allow_light_slider_to_0: true
                 light_transition: false
+                grid_options:
+                  columns: 12
               - type: custom:apexcharts-card
                 header:
                   show: true
@@ -4544,25 +4579,32 @@ views:
                   show_states: true
                   colorize_states: true
                 series:
-                  - entity: >-
-                      sensor.woodstove_thermocouple_woodstove_flue_temp_adjusted_f
-                  - entity: >-
-                      sensor.woodstove_thermocouple_woodstove_fan_temp_adjusted_f
+                  - entity: sensor.woodstove_thermocouple_woodstove_flue_temp_adjusted_f
+                  - entity: sensor.woodstove_thermocouple_woodstove_fan_temp_adjusted_f
                 apex_config:
                   stroke:
                     width: 1
+                grid_options:
+                  columns: 12
+                  rows: auto
               - type: custom:bubble-card
                 card_type: button
                 button_type: state
                 entity: binary_sensor.woodstove_creosote_warning
+                grid_options:
+                  columns: 12
               - type: custom:bubble-card
                 card_type: button
                 button_type: state
                 entity: binary_sensor.woodstove_overfire
+                grid_options:
+                  columns: 12
               - type: custom:bubble-card
                 card_type: button
                 button_type: state
                 entity: binary_sensor.woodstove_efficient_burn
+                grid_options:
+                  columns: 12
               - type: custom:bubble-card
                 card_type: button
                 button_type: state
@@ -4572,21 +4614,12 @@ views:
                     action: toggle
                 tap_action:
                   action: toggle
-        column_span: 3
-      - type: grid
-        cards:
-          - type: vertical-stack
-            cards:
-              - type: custom:bubble-card
-                card_type: pop-up
-                hash: '#mass-pu'
-              - type: iframe
-                url: >-
-                  http://10.11.11.15:8123/api/hassio_ingress/cP-EpcMMU3cGJUspIAI4U72EW0eDNKua_-ZnZv_yaew/#/home
-                aspect_ratio: 50%
+                grid_options:
+                  columns: 12
         column_span: 3
     subview: false
     cards: []
+    header: //
   - type: sections
     max_columns: 4
     title: Calendars
@@ -5029,7 +5062,7 @@ views:
             texts:
               fullDay: All-Day
               moreEvents: More...
-              noEvents: ' '
+              noEvents: " "
             showTitle: true
             showDescription: false
             dayFormat: <big><big><b>dd</b> | </big>ccc</big>
@@ -5303,7 +5336,7 @@ views:
             texts:
               fullDay: All-Day
               moreEvents: More...
-              noEvents: ' '
+              noEvents: " "
             showTitle: true
             showDescription: false
             dayFormat: <big><big><b>dd</b> | </big>ccc</big>
@@ -5538,9 +5571,23 @@ views:
     title: Music Assistant
     cards:
       - type: iframe
-        url: >-
-          http://10.11.11.15:8123/api/hassio_ingress/J_e341CvojU6YzKMtxHiW3cZSXMPDKXkldVbpIa6iV0/#/home
+        url: http://10.11.11.15:8123/api/hassio_ingress/J_e341CvojU6YzKMtxHiW3cZSXMPDKXkldVbpIa6iV0/#/home
         aspect_ratio: 50%
+  - type: sections
+    max_columns: 4
+    path: cameras
+    title: Cameras
+    sections:
+      - type: grid
+        cards:
+          - type: custom:advanced-camera-card
+            cameras:
+              - camera_entity: camera.floodlight_poe_upper_driveway_fluent
+              - camera_entity: camera.floodlight_poe_lower_driveway_fluent
+            grid_options:
+              columns: full
+              rows: 4
+        column_span: 4
 type: vertical-stack
 cards:
   - type: horizontal-stack
